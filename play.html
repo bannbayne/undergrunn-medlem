@@ -4,6 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#000000" />
+    <script>
+      try {
+        if (localStorage.getItem("6ix-theme") === "light") {
+          document.documentElement.classList.remove("dark-theme");
+        } else {
+          document.documentElement.classList.add("dark-theme");
+        }
+      } catch(e) {}
+    </script>
+
     <title>Medlem</title>
     <link rel="icon" type="image/png" href="./favicon.png" />
     <link rel="shortcut icon" href="./favicon.ico" />
@@ -27,7 +37,7 @@
     <script type="module" crossorigin src="./assets/index-offline.js?v=1794425200000"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-Be8o02GI.css?v=1794425200000">
   </head>
-  <body>
+  <body class="dark-theme">
     <div id="app"></div>
   </body>
 </html>
