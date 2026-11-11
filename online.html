@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Medlem Online</title>
+  <link rel="icon" type="image/png" href="./favicon.png">
+  <link rel="shortcut icon" href="./favicon.ico">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1c325c url(./ios7-wallpaper.jpg) center center / cover no-repeat;
+      font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #000000;
+      padding: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(30px) saturate(180%);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      border-radius: 20px;
+      padding: 32px 28px 24px;
+      width: min(480px, 100%);
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      margin: 0 0 6px;
+      letter-spacing: -0.5px;
+      color: #000000;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #8e8e93;
+      margin-bottom: 20px;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 600;
+      background: rgba(142, 142, 147, 0.12);
+      color: #8e8e93;
+      margin-bottom: 16px;
+    }
+    .status-badge .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ffcc00;
+    }
+    .status-badge.ok {
+      background: rgba(52, 199, 89, 0.15);
+      color: #248a3d;
+    }
+    .status-badge.ok .dot {
+      background: #34c759;
+    }
+    .url-box {
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #007aff;
+      word-break: break-all;
+      user-select: all;
+      -webkit-user-select: all;
+      margin-bottom: 16px;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    canvas {
+      width: 180px;
+      height: 180px;
+      margin: 0 auto 16px;
+      display: block;
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 6px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.15s ease;
+    }
+    .btn:active { opacity: 0.7; }
+    .btn-primary {
+      background: #007aff;
+      color: #ffffff;
+      flex: 1;
+    }
+    .btn-primary:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+    .btn-secondary {
+      background: rgba(142, 142, 147, 0.15);
+      color: #007aff;
+    }
+    .instructions {
+      text-align: left;
+      background: rgba(0, 0, 0, 0.03);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #3c3c43;
+      margin: 0;
+      padding-left: 32px;
+    }
+    .instructions li {
+      margin-bottom: 6px;
+    }
+    .instructions li:last-child {
+      margin-bottom: 0;
+    }
+    .online-counter {
+      margin-top: 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #8e8e93;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🩸 Medlem Online</h1>
+    <div class="subtitle">Flerspiller over Internett</div>
+
+    <div class="status-badge" id="statusBadge">
+      <span class="dot"></span>
+      <span id="statusText">Lager den offentlige lenken…</span>
+    </div>
+
+    <div class="url-box" id="urlDisplay">Vennligst vent…</div>
+
+    <canvas id="qrCanvas" hidden></canvas>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="copyBtn" disabled>📋 Kopier lenken</button>
+      <a class="btn btn-secondary" href="/play.html">⚡ Spill her</a>
+    </div>
+
+    <ol class="instructions">
+      <li><b>Send lenken</b> til de du vil spille med. De kan være på andre Wi-Fi eller mobilnett (4G/5G).</li>
+      <li><b>Mobil og PC:</b> Spillet åpnes direkte i nettleseren (Safari, Chrome, osv.) uten å måtte laste ned app.</li>
+      <li><b>La server-vinduet være åpent:</b> Så lenge det svarte vinduet er åpent, kan alle spille sammen i sanntid.</li>
+    </ol>
+
+    <div class="online-counter" id="onlineCounter"></div>
+  </div>
+
+  <script src="./qr.js"></script>
+  <script>
+    let activeUrl = "";
+    const statusBadge = document.getElementById("statusBadge");
+    const statusText = document.getElementById("statusText");
+    const urlDisplay = document.getElementById("urlDisplay");
+    const copyBtn = document.getElementById("copyBtn");
+    const qrCanvas = document.getElementById("qrCanvas");
+    const onlineCounter = document.getElementById("onlineCounter");
+
+    async function checkStatus() {
+      try {
+        const res = await fetch("/api/online-status?t=" + Date.now(), { cache: "no-store" });
+        if (!res.ok) throw new Error("Status error");
+        const data = await res.json();
+
+        if (data.url) {
+          if (data.url !== activeUrl) {
+            activeUrl = data.url;
+            urlDisplay.textContent = activeUrl;
+            copyBtn.disabled = false;
+            qrCanvas.hidden = false;
+            try {
+              if (typeof qrDraw === "function") {
+                qrDraw(qrCanvas, activeUrl, 6);
+              }
+            } catch(e) {
+              console.warn("QR draw error:", e);
+            }
+          }
+          statusBadge.className = "status-badge ok";
+          statusText.textContent = "Lenken er aktiv og klar!";
+        } else {
+          statusBadge.className = "status-badge";
+          statusText.textContent = data.status === "feil" ? "Fikk ikke laget tunnel. Sjekk konsollen." : "Lager online lenke…";
+          urlDisplay.textContent = "Kobler til Cloudflare…";
+          copyBtn.disabled = true;
+          qrCanvas.hidden = true;
+        }
+
+        if (typeof data.clients === "number") {
+          onlineCounter.textContent = data.clients > 0 ? (data.clients === 1 ? "1 spiller tilkoblet" : data.clients + " spillere tilkoblet") : "";
+        }
+      } catch(err) {
+        statusBadge.className = "status-badge";
+        statusText.textContent = "Server svarer ikke…";
+      }
+    }
+
+    copyBtn.addEventListener("click", async () => {
+      if (!activeUrl) return;
+      try {
+        await navigator.clipboard.writeText(activeUrl);
+      } catch(e) {
+        const range = document.createRange();
+        range.selectNodeContents(urlDisplay);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand("copy");
+      }
+      copyBtn.textContent = "✓ Kopiert!";
+      setTimeout(() => { copyBtn.textContent = "📋 Kopier lenken"; }, 2000);
+    });
+
+    checkStatus();
+    setInterval(checkStatus, 1500);
+  </script>
+</body>
+</html>

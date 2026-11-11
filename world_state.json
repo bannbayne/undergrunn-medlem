@@ -1,0 +1,819 @@
+{
+  "furni": {
+    "lobby": [
+      {
+        "id": "lobby2",
+        "kind": "dumpster",
+        "x": 0,
+        "y": 9,
+        "dir": 2
+      },
+      {
+        "id": "lobby3",
+        "kind": "dumpster",
+        "x": 0,
+        "y": 5,
+        "dir": 2
+      },
+      {
+        "id": "lobby5",
+        "kind": "dumpster",
+        "x": 0,
+        "y": 13,
+        "dir": 2
+      },
+      {
+        "id": "lobby11",
+        "kind": "seccam",
+        "x": 4,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "lobby13",
+        "kind": "sink",
+        "x": 11,
+        "y": 4,
+        "dir": 6
+      },
+      {
+        "id": "furni_1793717459259_zmal",
+        "kind": "rchair",
+        "x": 0,
+        "y": 15,
+        "dir": 4
+      },
+      {
+        "id": "furni_1793719752492_jrpe",
+        "kind": "rtable",
+        "x": 0,
+        "y": 16,
+        "dir": 2
+      },
+      {
+        "id": "furni_1793719786923_060a",
+        "kind": "rchair",
+        "x": 0,
+        "y": 18,
+        "dir": 0
+      },
+      {
+        "id": "lobby_bodybag",
+        "kind": "f_bodybag",
+        "x": 7,
+        "y": 5,
+        "dir": 0
+      }
+    ],
+    "shop": [
+      {
+        "id": "shop_wardrobe",
+        "kind": "wardrobe",
+        "x": 0,
+        "y": 4,
+        "dir": 2
+      },
+      {
+        "id": "shop_vending",
+        "kind": "vending",
+        "x": 0,
+        "y": 2,
+        "dir": 2
+      },
+      {
+        "id": "shop_counter",
+        "kind": "counter",
+        "x": 6,
+        "y": 1,
+        "dir": 2
+      },
+      {
+        "id": "shop_poster",
+        "kind": "shopposter",
+        "x": 5,
+        "y": 0,
+        "dir": 4
+      },
+      {
+        "id": "shop_ducky",
+        "kind": "ducky",
+        "x": 0,
+        "y": 9,
+        "dir": 2
+      },
+      {
+        "id": "shop_raffle_table",
+        "kind": "raffletable",
+        "x": 0,
+        "y": 11,
+        "dir": 2
+      },
+      {
+        "id": "shop_raffle",
+        "kind": "gacha",
+        "x": 0,
+        "y": 11,
+        "dir": 0
+      },
+      {
+        "id": "shop_disp0",
+        "kind": "f_brickwall",
+        "x": 6,
+        "y": 5,
+        "dir": 2
+      },
+      {
+        "id": "shop_disp1",
+        "kind": "f_scrapbook",
+        "x": 11,
+        "y": 6,
+        "dir": 2
+      },
+      {
+        "id": "shop_disp2",
+        "kind": "f_nokiaphone",
+        "x": 4,
+        "y": 9,
+        "dir": 4
+      },
+      {
+        "id": "shop_disp3",
+        "kind": "f_shark",
+        "x": 11,
+        "y": 11,
+        "dir": 2
+      },
+      {
+        "id": "furni_1794336998382_8v28",
+        "kind": "vinyltable",
+        "x": 0,
+        "y": 7,
+        "dir": 2
+      },
+      {
+        "id": "furni_1794337055324_zaiy",
+        "kind": "st_planttree",
+        "x": 0,
+        "y": 0,
+        "dir": 0
+      },
+      {
+        "id": "furni_1794337223853_6nll",
+        "kind": "tshirtshop",
+        "x": 11,
+        "y": 0,
+        "dir": 0
+      },
+      {
+        "id": "furni_1794385347674_9m4r",
+        "kind": "recordplayer",
+        "x": 0,
+        "y": 7,
+        "dir": 0
+      },
+      {
+        "id": "furni_1794396268944_ce9x",
+        "kind": "counter",
+        "x": 8,
+        "y": 1,
+        "dir": 2
+      }
+    ],
+    "u_player_local": [
+      {
+        "id": "h_stash",
+        "kind": "stashbox",
+        "x": 2,
+        "y": 4,
+        "dir": 2
+      },
+      {
+        "id": "furni_1793783227227_xz37",
+        "kind": "f_planter",
+        "x": 6,
+        "y": 6,
+        "dir": 2
+      },
+      {
+        "id": "furni_1793783230447_31sh",
+        "kind": "f_planter",
+        "x": 11,
+        "y": 6,
+        "dir": 2
+      }
+    ],
+    "u_u_barter2": [
+      {
+        "id": "bed",
+        "kind": "bed",
+        "x": 3,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "bag",
+        "kind": "bag",
+        "x": 0,
+        "y": 2,
+        "dir": 2
+      },
+      {
+        "id": "toolbox",
+        "kind": "toolbox",
+        "x": 0,
+        "y": 5,
+        "dir": 2
+      },
+      {
+        "id": "boombox",
+        "kind": "boombox",
+        "x": 0,
+        "y": 3,
+        "dir": 4
+      },
+      {
+        "id": "stashbox",
+        "kind": "stashbox",
+        "x": 0,
+        "y": 6,
+        "dir": 0
+      },
+      {
+        "id": "furni_1793962373280_k0kc",
+        "kind": "f_sofa",
+        "x": 3,
+        "y": 5,
+        "dir": 0
+      }
+    ],
+    "u_u_barter": [
+      {
+        "id": "bed",
+        "kind": "bed",
+        "x": 3,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "bag",
+        "kind": "bag",
+        "x": 7,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "toolbox",
+        "kind": "toolbox",
+        "x": 6,
+        "y": 0,
+        "dir": 4
+      },
+      {
+        "id": "boombox",
+        "kind": "boombox",
+        "x": 0,
+        "y": 3,
+        "dir": 4
+      },
+      {
+        "id": "stashbox",
+        "kind": "stashbox",
+        "x": 2,
+        "y": 0,
+        "dir": 2
+      }
+    ],
+    "u_u_liv_k": [
+      {
+        "id": "bed",
+        "kind": "bed",
+        "x": 3,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "bag",
+        "kind": "bag",
+        "x": 7,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "toolbox",
+        "kind": "toolbox",
+        "x": 6,
+        "y": 0,
+        "dir": 4
+      },
+      {
+        "id": "boombox",
+        "kind": "boombox",
+        "x": 0,
+        "y": 3,
+        "dir": 4
+      },
+      {
+        "id": "stashbox",
+        "kind": "stashbox",
+        "x": 0,
+        "y": 4,
+        "dir": 2
+      }
+    ],
+    "u_u_barter1": [
+      {
+        "id": "bed",
+        "kind": "bed",
+        "x": 3,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "bag",
+        "kind": "bag",
+        "x": 7,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "toolbox",
+        "kind": "toolbox",
+        "x": 6,
+        "y": 0,
+        "dir": 4
+      },
+      {
+        "id": "boombox",
+        "kind": "boombox",
+        "x": 0,
+        "y": 3,
+        "dir": 4
+      },
+      {
+        "id": "stashbox",
+        "kind": "stashbox",
+        "x": 0,
+        "y": 6,
+        "dir": 2
+      }
+    ],
+    "u_u_barter65": [
+      {
+        "id": "bed",
+        "kind": "bed",
+        "x": 3,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "bag",
+        "kind": "bag",
+        "x": 7,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "toolbox",
+        "kind": "toolbox",
+        "x": 6,
+        "y": 0,
+        "dir": 4
+      },
+      {
+        "id": "boombox",
+        "kind": "boombox",
+        "x": 0,
+        "y": 3,
+        "dir": 4
+      },
+      {
+        "id": "stashbox",
+        "kind": "stashbox",
+        "x": 0,
+        "y": 1,
+        "dir": 2
+      }
+    ],
+    "tut_u_barter65": [
+      {
+        "id": "lobby2",
+        "kind": "dumpster",
+        "x": 0,
+        "y": 9,
+        "dir": 2
+      },
+      {
+        "id": "lobby3",
+        "kind": "dumpster",
+        "x": 0,
+        "y": 5,
+        "dir": 2
+      },
+      {
+        "id": "lobby5",
+        "kind": "dumpster",
+        "x": 0,
+        "y": 13,
+        "dir": 2
+      },
+      {
+        "id": "lobby11",
+        "kind": "seccam",
+        "x": 4,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "lobby13",
+        "kind": "sink",
+        "x": 11,
+        "y": 5,
+        "dir": 6
+      },
+      {
+        "id": "lobby_bodybag",
+        "kind": "f_bodybag",
+        "x": 7,
+        "y": 5,
+        "dir": 0
+      }
+    ],
+    "tut_u_barter1": [
+      {
+        "id": "lobby2",
+        "kind": "dumpster",
+        "x": 0,
+        "y": 9,
+        "dir": 2
+      },
+      {
+        "id": "lobby3",
+        "kind": "dumpster",
+        "x": 0,
+        "y": 5,
+        "dir": 2
+      },
+      {
+        "id": "lobby5",
+        "kind": "dumpster",
+        "x": 0,
+        "y": 13,
+        "dir": 2
+      },
+      {
+        "id": "lobby11",
+        "kind": "seccam",
+        "x": 4,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "lobby13",
+        "kind": "sink",
+        "x": 11,
+        "y": 5,
+        "dir": 6
+      }
+    ],
+    "u_u_barter32": [
+      {
+        "id": "bed",
+        "kind": "bed",
+        "x": 3,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "bag",
+        "kind": "bag",
+        "x": 7,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "toolbox",
+        "kind": "toolbox",
+        "x": 6,
+        "y": 0,
+        "dir": 4
+      },
+      {
+        "id": "boombox",
+        "kind": "boombox",
+        "x": 0,
+        "y": 3,
+        "dir": 4
+      },
+      {
+        "id": "stashbox",
+        "kind": "stashbox",
+        "x": 0,
+        "y": 1,
+        "dir": 2
+      }
+    ],
+    "tut_u_barter32": [
+      {
+        "id": "lobby2",
+        "kind": "dumpster",
+        "x": 0,
+        "y": 9,
+        "dir": 2
+      },
+      {
+        "id": "lobby3",
+        "kind": "dumpster",
+        "x": 0,
+        "y": 5,
+        "dir": 2
+      },
+      {
+        "id": "lobby5",
+        "kind": "dumpster",
+        "x": 0,
+        "y": 13,
+        "dir": 2
+      },
+      {
+        "id": "lobby11",
+        "kind": "seccam",
+        "x": 4,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "lobby13",
+        "kind": "sink",
+        "x": 11,
+        "y": 5,
+        "dir": 6
+      }
+    ],
+    "u_u_barter44": [
+      {
+        "id": "bed",
+        "kind": "bed",
+        "x": 3,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "bag",
+        "kind": "bag",
+        "x": 7,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "toolbox",
+        "kind": "toolbox",
+        "x": 6,
+        "y": 0,
+        "dir": 4
+      },
+      {
+        "id": "boombox",
+        "kind": "boombox",
+        "x": 0,
+        "y": 3,
+        "dir": 4
+      },
+      {
+        "id": "stashbox",
+        "kind": "stashbox",
+        "x": 1,
+        "y": 4,
+        "dir": 2
+      }
+    ],
+    "u_u_bartererr": [
+      {
+        "id": "bed",
+        "kind": "bed",
+        "x": 3,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "bag",
+        "kind": "bag",
+        "x": 7,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "toolbox",
+        "kind": "toolbox",
+        "x": 6,
+        "y": 0,
+        "dir": 4
+      },
+      {
+        "id": "boombox",
+        "kind": "boombox",
+        "x": 0,
+        "y": 3,
+        "dir": 4
+      },
+      {
+        "id": "stashbox",
+        "kind": "stashbox",
+        "x": 0,
+        "y": 4,
+        "dir": 2
+      },
+      {
+        "id": "furni_1794331799402_dxui",
+        "kind": "f_sofa",
+        "x": 2,
+        "y": 6,
+        "dir": 2
+      }
+    ],
+    "u_u_barterrrer": [
+      {
+        "id": "bed",
+        "kind": "bed",
+        "x": 3,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "bag",
+        "kind": "bag",
+        "x": 7,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "toolbox",
+        "kind": "toolbox",
+        "x": 6,
+        "y": 0,
+        "dir": 4
+      },
+      {
+        "id": "boombox",
+        "kind": "boombox",
+        "x": 0,
+        "y": 3,
+        "dir": 4
+      },
+      {
+        "id": "stashbox",
+        "kind": "stashbox",
+        "x": 0,
+        "y": 4,
+        "dir": 2
+      },
+      {
+        "id": "furni_1794333407418_95uh",
+        "kind": "f_planter",
+        "x": 4,
+        "y": 6,
+        "dir": 2
+      }
+    ],
+    "u_u_barterr034": [
+      {
+        "id": "bed",
+        "kind": "bed",
+        "x": 3,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "bag",
+        "kind": "bag",
+        "x": 7,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "toolbox",
+        "kind": "toolbox",
+        "x": 6,
+        "y": 0,
+        "dir": 4
+      },
+      {
+        "id": "boombox",
+        "kind": "boombox",
+        "x": 0,
+        "y": 3,
+        "dir": 4
+      },
+      {
+        "id": "stashbox",
+        "kind": "stashbox",
+        "x": 0,
+        "y": 2,
+        "dir": 4
+      },
+      {
+        "id": "furni_1794335246181_6vjr",
+        "kind": "f_planter",
+        "x": 1,
+        "y": 5,
+        "dir": 2
+      }
+    ],
+    "u_u_barter6": [
+      {
+        "id": "bed",
+        "kind": "bed",
+        "x": 3,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "bag",
+        "kind": "bag",
+        "x": 7,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "toolbox",
+        "kind": "toolbox",
+        "x": 6,
+        "y": 0,
+        "dir": 4
+      },
+      {
+        "id": "boombox",
+        "kind": "boombox",
+        "x": 0,
+        "y": 3,
+        "dir": 4
+      },
+      {
+        "id": "stashbox",
+        "kind": "stashbox",
+        "x": 0,
+        "y": 2,
+        "dir": 4
+      },
+      {
+        "id": "furni_1794381787855_2cnp",
+        "kind": "f_planter",
+        "x": 0,
+        "y": 5,
+        "dir": 2
+      }
+    ],
+    "u_u_barter5": [
+      {
+        "id": "bed",
+        "kind": "bed",
+        "x": 3,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "bag",
+        "kind": "bag",
+        "x": 7,
+        "y": 0,
+        "dir": 2
+      },
+      {
+        "id": "toolbox",
+        "kind": "toolbox",
+        "x": 6,
+        "y": 0,
+        "dir": 4
+      },
+      {
+        "id": "boombox",
+        "kind": "boombox",
+        "x": 0,
+        "y": 3,
+        "dir": 4
+      },
+      {
+        "id": "stashbox",
+        "kind": "stashbox",
+        "x": 0,
+        "y": 2,
+        "dir": 4
+      },
+      {
+        "id": "furni_1794382330983_ii6e",
+        "kind": "f_planter",
+        "x": 0,
+        "y": 4,
+        "dir": 2
+      }
+    ]
+  },
+  "settings": {
+    "6ix-npc-name": "bayne",
+    "6ix-landlord-name": "SNØFRESER",
+    "6ix-npc-look": "{\"figure\":\"hd-180-20.hr-115-1028.ea-99011-9001.ch-210-110.cc-3294-9001-9001.ca-3856-9001-9001.lg-3320-110-110.sh-3068-110-110\",\"gender\":\"M\"}",
+    "6ix-landlord-look": "hd-180-1370.hr-3525-9001.ch-255-x0d0d0d.cc-3389-9001-9001.ca-3989-64-64.lg-3521-xd9f2ff-80.sh-906-9001",
+    "6ix-landlord-gender": "M",
+    "6ix-npc-pos-landlord": "{\"x\":8,\"y\":0,\"dir\":4}",
+    "6ix-revolut-pay": "https://paypal.me/UndergrunnMedlem"
+  }
+}

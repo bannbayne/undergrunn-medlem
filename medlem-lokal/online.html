@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Medlem online</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ff6b5f'/%3E%3Cstop offset='1' stop-color='%23c8102e'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='2' y='2' width='60' height='60' rx='14' fill='url%28%23g%29'/%3E%3Cpath d='M32 11c-4.6 10-13.5 16.5-13.5 26.5a13.5 13.5 0 0027 0C45.5 27.5 36.6 21 32 11z' fill='%23fff'/%3E%3C/svg%3E">
+<style>
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#15121f url(stjerner.jpg) center/cover no-repeat;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;color:#111}
+.card{background:rgba(255,255,255,.96);border-radius:18px;padding:28px 30px 24px;width:min(440px,calc(100vw - 40px));box-sizing:border-box;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+h1{font-size:23px;font-weight:500;margin:0 0 4px}
+.st{font-size:14px;color:#8e8e93;min-height:18px;display:flex;align-items:center;justify-content:center;gap:7px}
+.st i{width:8px;height:8px;border-radius:50%;background:#ffcc00;display:inline-block}
+.st.ok i{background:#34c759}.st.bad i{background:#ff3b30}
+canvas{width:200px;height:200px;image-rendering:pixelated;margin:14px auto 4px;display:block}
+.url{font-size:17px;font-weight:600;color:#007aff;word-break:break-all;margin:8px 0 0;user-select:all;-webkit-user-select:all}
+.row{display:flex;gap:10px;justify-content:center;margin-top:16px}
+button,a.btn{border:0;border-radius:10px;padding:10px 18px;font:inherit;font-size:15px;cursor:pointer;text-decoration:none}
+.pri{background:#007aff;color:#fff}.sec{background:#e5e5ea;color:#007aff}
+button:disabled{opacity:.45;cursor:default}
+ol{text-align:left;color:#444;font-size:14px;line-height:1.5;padding-left:20px;margin:18px 0 0}
+.inne{margin-top:12px;font-size:13px;color:#8e8e93}
+</style></head><body>
+<div class="card">
+  <h1>🩸 Medlem online</h1>
+  <div class="st" id="st"><i></i><span>Lager lenken …</span></div>
+  <canvas id="qr" hidden></canvas>
+  <div class="url" id="url"></div>
+  <div class="row"><button class="pri" id="copy" disabled>Kopier lenken</button><a class="btn sec" href="./">Spill på denne PC-en</a></div>
+  <ol>
+    <li>Send lenken til de du vil spille med. Den virker på telefon og PC, uten app.</li>
+    <li>La det svarte vinduet være åpent, og ikke slå av PC-en, mens dere spiller.</li>
+    <li>Lenken blir ny hver gang du starter Spill_Medlem_Online.bat.</li>
+  </ol>
+  <div class="inne" id="inne"></div>
+</div>
+<script src="qr.js"></script>
+<script>
+let shown='';
+const st=document.getElementById('st'),url=document.getElementById('url'),cp=document.getElementById('copy'),qr=document.getElementById('qr');
+function set(cls,t){st.className='st '+cls;st.querySelector('span').textContent=t;}
+async function tick(){
+  try{const j=await (await fetch('/medlem-adresse.json',{cache:'no-store'})).json();
+    if(j.online){
+      if(j.online!==shown){shown=j.online;url.textContent=shown;qr.hidden=false;try{qrDraw(qr,shown,6);}catch(e){qr.hidden=true;}cp.disabled=false;}
+      if(j.status==='klar')set('ok','Lenken virker');else set('','Lenken er laget – den virker om noen sekunder …');
+    }else{shown='';url.textContent='';qr.hidden=true;cp.disabled=true;
+      set(j.status==='feil'?'bad':'',j.status==='feil'?'Fikk ikke laget lenken. Se det svarte vinduet.':j.status==='av'?'Start Spill_Medlem_Online.bat for å få en lenke.':'Lager lenken …');}
+    document.getElementById('inne').textContent=j.inne?`${j.inne} ${j.inne===1?'spiller':'spillere'} inne nå`:'';
+  }catch(e){set('bad','Serveren svarer ikke. Er det svarte vinduet lukket?');}
+}
+cp.onclick=async()=>{try{await navigator.clipboard.writeText(shown);}catch(e){const r=document.createRange();r.selectNodeContents(url);const s=getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy');}
+  cp.textContent='Kopiert!';setTimeout(()=>cp.textContent='Kopier lenken',1600);};
+tick();setInterval(tick,1500);
+</script>
+</body></html>

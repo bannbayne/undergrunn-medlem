@@ -1,0 +1,12 @@
+*.tmp
+*.log
+*.pid
+server.pid
+online_link.txt
+cloudflared.exe
+scratch/
+__pycache__/
+
+BlodigOktober/
+*.bin
+*.pdb

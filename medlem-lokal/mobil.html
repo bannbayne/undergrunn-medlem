@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Medlem på telefonen</title>
+<style>
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#efeff4;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;color:#111}
+.card{background:#fff;border-radius:18px;padding:28px 30px;max-width:420px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.12)}
+h1{font-size:22px;margin:0 0 6px}p{color:#555;font-size:15px;line-height:1.45;margin:8px 0}
+canvas{width:240px;height:240px;image-rendering:pixelated;margin:14px auto 6px;display:block}
+.url{font-size:17px;font-weight:600;color:#007aff;word-break:break-all;margin:6px 0 2px}
+.alt{font-size:13px;color:#8e8e93}
+ol{text-align:left;color:#444;font-size:14px;line-height:1.5;padding-left:20px;margin:14px 0 4px}
+a.btn{display:inline-block;margin-top:14px;background:#007aff;color:#fff;text-decoration:none;padding:10px 18px;border-radius:10px;font-size:15px}
+</style></head><body>
+<div class="card">
+  <h1>Spill Medlem på telefonen</h1>
+  <p>Skann koden med kameraet på telefonen.</p>
+  <canvas id="qr"></canvas>
+  <div class="url" id="url"></div>
+  <div class="alt" id="alt"></div>
+  <ol>
+    <li>Telefonen må være på samme Wi-Fi som PC-en.</li>
+    <li>Hvis Windows spør om brannmur, trykk «Tillat tilgang».</li>
+    <li>La det svarte vinduet på PC-en være åpent mens du spiller.</li>
+  </ol>
+  <a class="btn" href="./">Spill på denne PC-en</a>
+</div>
+<script src="qr.js"></script>
+<script>
+let urls=decodeURIComponent(location.hash.slice(1)).split('|').filter(Boolean);
+if(!urls.length&&!/^(localhost|127\.0\.0\.1)$/.test(location.hostname))urls=[location.origin+'/medlem-lokal/'];
+if(urls.length){qrDraw(document.getElementById('qr'),urls[0],8);document.getElementById('url').textContent=urls[0];
+  if(urls.length>1)document.getElementById('alt').textContent='Virker ikke koden? Prøv: '+urls.slice(1).join('  eller  ');}
+else{document.getElementById('qr').style.display='none';document.getElementById('url').textContent='Start Spill_Medlem_Mobil.bat for å få adressen.';}
+</script>
+</body></html>

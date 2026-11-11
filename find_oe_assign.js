@@ -1,0 +1,13 @@
+const fs = require('fs');
+const code = fs.readFileSync('assets/index-offline.js', 'utf8');
+
+let idx = 0;
+while ((idx = code.indexOf('Oe=', idx)) !== -1) {
+  console.log('Oe= at ' + idx + ':', code.slice(Math.max(0, idx - 40), idx + 60));
+  idx += 3;
+}
+idx = 0;
+while ((idx = code.indexOf('Oe =', idx)) !== -1) {
+  console.log('Oe = at ' + idx + ':', code.slice(Math.max(0, idx - 40), idx + 60));
+  idx += 4;
+}
