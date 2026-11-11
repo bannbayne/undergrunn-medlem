@@ -5619,7 +5619,7 @@ Admin > Studio > your design > Import: drop the PNG files (or a ZIP of them). On
     n.modBloodGranted = true;
     try { localStorage.setItem("6ix-profile-" + t.uid, JSON.stringify(n)); } catch(_e){}
   }
-  if(!n.owned)n.owned={};if(!n.stash)n.stash={};if(!l.owned)l.owned={};
+  if(!n.owned)n.owned={};if(!n.stash)n.stash={};
   const l=n;await AF(l);const c=Zj(l.uid);if(await c.ready,l.isMod&&l.name.toLowerCase()===JF){Mo();const be=o("div",{class:"shell modonly"},o("header",{class:"navbar"},o("div",{class:"nav-left"},o("div",{class:"nav-logo"},"🛡 Chat mod")),o("span",{}),o("div",{class:"nav-right"},o("button",{class:"btn small",onclick:()=>void Xh()},r?"Logg ut":"Log out")))),R=o("main",{class:"page"});be.append(R),eo.append(be),bx(R,{profile:l}),i(),s(),a();return}const d=PF(l),u=LF(l),p=jF(l,()=>void Oe()),m=FF(l,be=>{pe(`Your name is ${be} now. The page reloads.`),window.setTimeout(()=>window.location.reload(),1600)}),b=BF(),v=CB(l.uid),x=HF(l.uid);if(await f8(l.uid))return i(),s(),a(),h2("busy");Ax(l);const N=_F(l.uid),E=HB(l),w=m9(l),T=RL(),S=UF(l,(be,R)=>ge("room",{roomId:be,from:vt,force:!0,...R?{arrival:"stage"}:{}})),P=l.isAdmin?EU():()=>{},A=m8(l.uid,()=>{A(),xs==null||xs(),xs=null,C==null||C.dispose(),C=null,p8(l.uid),w(),T(),S(),i(),s(),a(),h2("taken")});let D=null,C=null,L="",U=hn(l.uid),F=null,K=null;const M={profile:l,navigate:(be,R)=>ge(be,R),refreshHeader:()=>D==null?void 0:D.refreshBlood(l.blood),lookChanged:()=>C==null?void 0:C.figureChanged(),endForever:()=>void he()};let re=null;try{re=await Vf(hn(l.uid))}catch{}
   if(!l.figure)l.figure="hd-180-1.ch-210-66.lg-270-82.sh-300-64";
   if(!re){try{await eB(l);re=await Vf(hn(l.uid))}catch(_){}}
