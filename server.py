@@ -2,6 +2,7 @@
 import http.server
 import socketserver
 import json
+import gzip
 import urllib.parse
 import os
 import sys
@@ -228,7 +229,13 @@ class GameRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', '*')
-        self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+        req_path = getattr(self, 'path', '')
+        if req_path.startswith('/api/') or req_path.endswith('.html') or req_path in ('/', ''):
+            self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+        elif any(req_path.endswith(ext) for ext in ('.js', '.css', '.png', '.jpg', '.jpeg', '.svg', '.json', '.mp3', '.ogg', '.wav', '.woff', '.woff2', '.ico', '.nitro')):
+            self.send_header('Cache-Control', 'public, max-age=86400, stale-while-revalidate=3600')
+        else:
+            self.send_header('Cache-Control', 'no-cache, must-revalidate')
         super().end_headers()
 
     def do_OPTIONS(self):
@@ -315,6 +322,27 @@ class GameRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(data)
             return
+
+        # Fast gzip static file serving
+        clean_path = p.path.split('?')[0]
+        file_path = self.translate_path(clean_path)
+        if os.path.isfile(file_path) and any(clean_path.endswith(ext) for ext in ('.js', '.css', '.json', '.svg')):
+            if "gzip" in self.headers.get("Accept-Encoding", ""):
+                try:
+                    with open(file_path, "rb") as f:
+                        raw_data = f.read()
+                    if len(raw_data) > 512:
+                        ctype = self.guess_type(clean_path)
+                        compressed = gzip.compress(raw_data, compresslevel=6)
+                        self.send_response(200)
+                        self.send_header('Content-Type', ctype)
+                        self.send_header('Content-Encoding', 'gzip')
+                        self.send_header('Content-Length', str(len(compressed)))
+                        self.end_headers()
+                        self.wfile.write(compressed)
+                        return
+                except Exception:
+                    pass
 
         return super().do_GET()
 
