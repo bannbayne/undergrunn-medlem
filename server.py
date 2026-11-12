@@ -165,6 +165,32 @@ class NetSyncServer:
             path = path.strip("/")
             if path in self.db:
                 return self.db[path]
+            # Smart fallback for usernames/<name>
+            if path.startswith("usernames/"):
+                uname = path[len("usernames/"):].lower().strip()
+                # 1. Search profiles/<uid>/name
+                for p, v in self.db.items():
+                    if p.startswith("profiles/") and p.endswith("/name") and isinstance(v, str):
+                        if v.lower().strip() == uname:
+                            uid = p.split("/")[1]
+                            self.db[path] = uid
+                            return uid
+                # 2. Search room players
+                for p, v in self.db.items():
+                    if "/players/" in p and isinstance(v, dict):
+                        pname = str(v.get("name", "")).lower().strip()
+                        if pname == uname:
+                            uid = v.get("uid") or p.split("/players/")[-1].split("/")[0]
+                            if uid:
+                                self.db[path] = uid
+                                return uid
+                # 3. If uname looks like a valid uid itself
+                if uname in ("barter6", "admin", "adminsidia") or len(uname) >= 3:
+                    for p in self.db.keys():
+                        if p.startswith(f"profiles/{uname}"):
+                            self.db[path] = uname
+                            return uname
+
             prefix = path + "/"
             sub = {}
             found = False
