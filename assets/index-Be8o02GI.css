@@ -1915,3 +1915,13 @@ body.dark-theme .onb-steps span.on,
     height: 275px !important;
   }
 }
+
+.nav-logo-icon {
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 4px !important;
+  margin-right: 5px !important;
+  vertical-align: middle !important;
+  display: inline-block !important;
+  object-fit: cover !important;
+}
