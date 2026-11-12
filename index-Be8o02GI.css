@@ -3012,6 +3012,352 @@ body.dark-theme .onb-next {
   filter: none !important;
 }
 
+/* =========================================================
+   iOS 7 Styling for Janikalami Room Shop (.cd-popup.landlord)
+   ========================================================= */
+.cd-popup.landlord {
+  width: 320px !important;
+  max-width: 92vw !important;
+  max-height: calc(100% - 40px) !important;
+  background: rgba(248, 248, 250, 0.88) !important;
+  backdrop-filter: blur(25px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 12px 38px rgba(0, 0, 0, 0.22) !important;
+  border-radius: 14px !important;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  color: #000000 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.dark-theme .cd-popup.landlord {
+  background: rgba(28, 28, 30, 0.88) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.6) !important;
+  color: #ffffff !important;
+}
+
+/* Modal Header */
+.cd-popup.landlord .cd-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 12px 16px !important;
+  background: rgba(255, 255, 255, 0.65) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.dark-theme .cd-popup.landlord .cd-head {
+  background: rgba(44, 44, 46, 0.65) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.cd-popup.landlord .cd-head strong {
+  font-size: 17px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.4px !important;
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+.dark-theme .cd-popup.landlord .cd-head strong {
+  color: #ffffff !important;
+}
+
+.cd-popup.landlord .cd-head .btn.small {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50% !important;
+  background: rgba(142, 142, 147, 0.16) !important;
+  color: #8e8e93 !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  transition: background 0.15s, color 0.15s !important;
+}
+
+.cd-popup.landlord .cd-head .btn.small:hover {
+  background: rgba(142, 142, 147, 0.3) !important;
+  color: #000000 !important;
+}
+
+.dark-theme .cd-popup.landlord .cd-head .btn.small:hover {
+  color: #ffffff !important;
+}
+
+/* Modal Body */
+.cd-popup.landlord .landlord-body {
+  padding: 14px 16px !important;
+  overflow-y: auto !important;
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+/* iOS 7 Segmented Control for Tabs (Rom / Seng & garderobe) */
+.cd-popup.landlord .rp-chips:first-of-type {
+  display: flex !important;
+  width: 100% !important;
+  border: 1px solid #007aff !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  background: transparent !important;
+  margin-bottom: 8px !important;
+}
+
+.cd-popup.landlord .rp-chips:first-of-type .chip {
+  flex: 1 !important;
+  margin: 0 !important;
+  padding: 7px 10px !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #007aff !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  border-right: 1px solid #007aff !important;
+  transition: background 0.15s, color 0.15s !important;
+}
+
+.cd-popup.landlord .rp-chips:first-of-type .chip:last-child {
+  border-right: none !important;
+}
+
+.cd-popup.landlord .rp-chips:first-of-type .chip.on {
+  background: #007aff !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+/* Section Labels (Romoppgraderinger, Farger, etc.) */
+.cd-popup.landlord .ll-label {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  color: #8e8e93 !important;
+  margin-top: 8px !important;
+  margin-bottom: 2px !important;
+  text-shadow: none !important;
+}
+
+.dark-theme .cd-popup.landlord .ll-label {
+  color: #98989d !important;
+}
+
+/* Sub-part headers (Gulv, Vegger, Teppe, Seng, Klespose) */
+.cd-popup.landlord .ll-part {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #000000 !important;
+  margin-top: 6px !important;
+  margin-bottom: 4px !important;
+  text-shadow: none !important;
+}
+
+.dark-theme .cd-popup.landlord .ll-part {
+  color: #ffffff !important;
+}
+
+/* Hint text */
+.cd-popup.landlord .hint {
+  font-size: 13px !important;
+  color: #636366 !important;
+  line-height: 1.35 !important;
+  text-shadow: none !important;
+  margin: 2px 0 !important;
+}
+
+.dark-theme .cd-popup.landlord .hint {
+  color: #aeaeb2 !important;
+}
+
+/* List rows for room upgrades */
+.cd-popup.landlord .ll-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border-radius: 10px !important;
+  padding: 10px 14px !important;
+  margin-bottom: 4px !important;
+}
+
+.dark-theme .cd-popup.landlord .ll-row {
+  background: rgba(44, 44, 46, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.cd-popup.landlord .ll-name {
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+.dark-theme .cd-popup.landlord .ll-name {
+  color: #ffffff !important;
+}
+
+.cd-popup.landlord .ll-done {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #34c759 !important;
+  text-shadow: none !important;
+}
+
+/* Room preview canvas */
+.cd-popup.landlord .ll-preview {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.6), rgba(215, 225, 235, 0.4)) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border-radius: 12px !important;
+  padding: 8px !important;
+  margin: 6px 0 !important;
+}
+
+.dark-theme .cd-popup.landlord .ll-preview {
+  background: radial-gradient(ellipse at 50% 50%, rgba(58, 58, 60, 0.6), rgba(28, 28, 30, 0.8)) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.cd-popup.landlord .ll-preview canvas {
+  border-radius: 8px !important;
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* Color chip swatches */
+.cd-popup.landlord .rp-chips:not(:first-of-type) {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  align-items: center !important;
+}
+
+.cd-popup.landlord .chip.swatch2 {
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 50% !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22) !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  transition: transform 0.15s, box-shadow 0.15s !important;
+}
+
+.cd-popup.landlord .chip.swatch2:hover {
+  transform: scale(1.1) !important;
+}
+
+.cd-popup.landlord .chip.swatch2.on {
+  box-shadow: 0 0 0 2px #007aff, 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+  transform: scale(1.15) !important;
+}
+
+/* Tint / Color picker input */
+.cd-popup.landlord .tint-picker {
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 50% !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22) !important;
+  cursor: pointer !important;
+}
+
+/* Skin chips for Bed & Bag */
+.cd-popup.landlord .chip.ll-skin {
+  border-radius: 14px !important;
+  padding: 6px 12px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  background: rgba(0, 122, 255, 0.08) !important;
+  border: 1px solid rgba(0, 122, 255, 0.3) !important;
+  color: #007aff !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  transition: background 0.15s, color 0.15s !important;
+}
+
+.cd-popup.landlord .chip.ll-skin.on {
+  background: #007aff !important;
+  color: #ffffff !important;
+  border-color: #007aff !important;
+  font-weight: 600 !important;
+}
+
+/* Action button (Bruk / Apply) */
+.cd-popup.landlord .btn.primary {
+  background: #007aff !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 20px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  padding: 10px 22px !important;
+  box-shadow: 0 3px 10px rgba(0, 122, 255, 0.35) !important;
+  cursor: pointer !important;
+  text-shadow: none !important;
+  transition: opacity 0.15s, transform 0.1s !important;
+}
+
+.cd-popup.landlord .btn.primary:disabled {
+  background: rgba(142, 142, 147, 0.24) !important;
+  color: #8e8e93 !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+}
+
+.cd-popup.landlord .btn.small {
+  background: rgba(142, 142, 147, 0.16) !important;
+  color: #007aff !important;
+  border: none !important;
+  border-radius: 14px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  padding: 6px 12px !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  cursor: pointer !important;
+}
+
+.cd-popup.landlord .ll-row .btn.small {
+  background: #007aff !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 14px !important;
+  padding: 6px 14px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 6px rgba(0, 122, 255, 0.3) !important;
+}
+
+.cd-popup.landlord .ll-row .btn.small:disabled {
+  background: rgba(142, 142, 147, 0.2) !important;
+  color: #8e8e93 !important;
+  box-shadow: none !important;
+}
+
 
 /* --- iOS 7 / macOS Medlem Layout Styles (matching media_1794498589574_87e255c6.jpg) --- */
 
@@ -3726,4 +4072,67 @@ body.dark .msFr.on {
 }
 .online .npc {
   color: rgba(255, 255, 255, 0.65);
+}
+
+
+/* ==========================================================================
+   MOBILE LOCK SCREEN FIX: FULL VIEWPORT COVERAGE WITHOUT VOID/BLACK GAPS
+   ========================================================================== */
+html.lock-screen-active,
+body.lock-screen-active,
+html:has(.lock-shell),
+body:has(.lock-shell),
+html:has(.lock),
+body:has(.lock) {
+  background: #1c325c url(./ios7-wallpaper.jpg) center center / cover no-repeat fixed !important;
+  min-height: 100% !important;
+  height: 100% !important;
+}
+
+html.lock-screen-active #app,
+body.lock-screen-active #app,
+html:has(.lock-shell) #app,
+body:has(.lock-shell) #app,
+html.kb.lock-screen-active #app,
+html.kb:has(.lock-shell) #app,
+html.kb:has(.lock) #app {
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  min-height: 100dvh !important;
+  height: auto !important;
+  background: transparent !important;
+}
+
+.lock-shell,
+.shell:has(.lock),
+body:has(.lock) .shell,
+body.lock-screen-active .shell {
+  min-height: 100dvh !important;
+  height: 100% !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.lock {
+  flex: 1 0 auto !important;
+  min-height: 100% !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Nav SVG icons for clean vector display in header */
+.nav-svg-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 22px !important;
+  height: 22px !important;
+  color: inherit !important;
+  vertical-align: middle !important;
+}
+.nav-svg-icon svg {
+  display: block !important;
+  fill: currentColor !important;
 }

@@ -4073,3 +4073,66 @@ body.dark .msFr.on {
 .online .npc {
   color: rgba(255, 255, 255, 0.65);
 }
+
+
+/* ==========================================================================
+   MOBILE LOCK SCREEN FIX: FULL VIEWPORT COVERAGE WITHOUT VOID/BLACK GAPS
+   ========================================================================== */
+html.lock-screen-active,
+body.lock-screen-active,
+html:has(.lock-shell),
+body:has(.lock-shell),
+html:has(.lock),
+body:has(.lock) {
+  background: #1c325c url(./ios7-wallpaper.jpg) center center / cover no-repeat fixed !important;
+  min-height: 100% !important;
+  height: 100% !important;
+}
+
+html.lock-screen-active #app,
+body.lock-screen-active #app,
+html:has(.lock-shell) #app,
+body:has(.lock-shell) #app,
+html.kb.lock-screen-active #app,
+html.kb:has(.lock-shell) #app,
+html.kb:has(.lock) #app {
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  min-height: 100dvh !important;
+  height: auto !important;
+  background: transparent !important;
+}
+
+.lock-shell,
+.shell:has(.lock),
+body:has(.lock) .shell,
+body.lock-screen-active .shell {
+  min-height: 100dvh !important;
+  height: 100% !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.lock {
+  flex: 1 0 auto !important;
+  min-height: 100% !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Nav SVG icons for clean vector display in header */
+.nav-svg-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 22px !important;
+  height: 22px !important;
+  color: inherit !important;
+  vertical-align: middle !important;
+}
+.nav-svg-icon svg {
+  display: block !important;
+  fill: currentColor !important;
+}
