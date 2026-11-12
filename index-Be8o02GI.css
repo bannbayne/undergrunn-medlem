@@ -3898,3 +3898,357 @@ html.dark-theme .roompanel .invite-row .btn,
 body.dark-theme .roompanel .invite-row .btn {
   background: #0a84ff !important;
 }
+
+
+/* =========================================================
+   iOS 7 Styling for Chat Window / Private Messages (Image 1)
+   ========================================================= */
+
+.chat-windows {
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 10px !important;
+  z-index: 9999 !important;
+}
+
+.chat-window {
+  width: 300px !important;
+  height: 380px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
+  border: 0.5px solid rgba(0, 0, 0, 0.15) !important;
+  border-bottom: none !important;
+  border-radius: 14px 14px 0 0 !important;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif !important;
+  transition: height 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s !important;
+}
+
+.dark-theme .chat-window,
+html.dark-theme .chat-window,
+body.dark-theme .chat-window {
+  background: #1c1c1e !important;
+  border: 0.5px solid rgba(255, 255, 255, 0.15) !important;
+  border-bottom: none !important;
+  box-shadow: 0 -4px 28px rgba(0, 0, 0, 0.45) !important;
+}
+
+.chat-window.min {
+  height: 44px !important;
+}
+
+/* iOS 7 Translucent Frosted Header */
+.cw-head {
+  flex: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  height: 44px !important;
+  padding: 0 12px !important;
+  cursor: pointer !important;
+  background: rgba(248, 248, 248, 0.92) !important;
+  backdrop-filter: blur(25px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: none !important;
+}
+
+.dark-theme .cw-head,
+html.dark-theme .cw-head,
+body.dark-theme .cw-head {
+  background: rgba(28, 28, 30, 0.92) !important;
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+.cw-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.2px !important;
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+.dark-theme .cw-title,
+html.dark-theme .cw-title,
+body.dark-theme .cw-title {
+  color: #ffffff !important;
+}
+
+.cw-title .dot {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background: #8e8e93 !important;
+  box-shadow: none !important;
+}
+
+.cw-title .dot.on {
+  background: #34c759 !important;
+  box-shadow: 0 0 6px rgba(52, 199, 89, 0.8) !important;
+}
+
+/* Close button */
+.cw-x {
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 50% !important;
+  background: rgba(0, 0, 0, 0.06) !important;
+  color: #8e8e93 !important;
+  border: none !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: background 0.15s, color 0.15s !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+}
+
+.cw-x:hover {
+  background: rgba(0, 0, 0, 0.12) !important;
+  color: #000000 !important;
+}
+
+.dark-theme .cw-x,
+html.dark-theme .cw-x,
+body.dark-theme .cw-x {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #ebebf5 !important;
+}
+
+.dark-theme .cw-x:hover,
+html.dark-theme .cw-x:hover,
+body.dark-theme .cw-x:hover {
+  background: rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+}
+
+/* iOS 7 Chat Log (Clean Solid Background, NO STRIPES) */
+.cw-log {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  padding: 12px 14px 10px 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  background: #ffffff !important;
+}
+
+.dark-theme .cw-log,
+html.dark-theme .cw-log,
+body.dark-theme .cw-log {
+  background: #1c1c1e !important;
+}
+
+.cw-empty {
+  margin: auto !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  color: #8e8e93 !important;
+  text-shadow: none !important;
+}
+
+.dark-theme .cw-empty,
+html.dark-theme .cw-empty,
+body.dark-theme .cw-empty {
+  color: #8e8e93 !important;
+}
+
+/* iOS 7 Date/Time Stamp */
+.cw-stamp {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: #8e8e93 !important;
+  text-align: center !important;
+  margin: 10px 0 4px 0 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.3px !important;
+  text-shadow: none !important;
+}
+
+/* iOS 7 Delivered indicator */
+.cw-delivered {
+  font-size: 11px !important;
+  color: #8e8e93 !important;
+  text-align: right !important;
+  margin-top: 2px !important;
+  padding-right: 4px !important;
+  text-shadow: none !important;
+}
+
+/* iOS 7 Message Bubbles (iMessage) */
+.cw-msg {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+}
+
+.cw-msg.mine {
+  align-items: flex-end !important;
+}
+
+.cw-bubble {
+  max-width: 80% !important;
+  position: relative !important;
+  padding: 8px 14px 9px 14px !important;
+  box-sizing: border-box !important;
+  border: none !important;
+  border-radius: 18px !important;
+  word-break: break-word !important;
+  font-size: 15px !important;
+  line-height: 1.35 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Incoming bubble (Light Grey) */
+.cw-msg:not(.mine) .cw-bubble {
+  background: #e9e9eb !important;
+  color: #000000 !important;
+  border-bottom-left-radius: 5px !important;
+}
+
+.dark-theme .cw-msg:not(.mine) .cw-bubble,
+html.dark-theme .cw-msg:not(.mine) .cw-bubble,
+body.dark-theme .cw-msg:not(.mine) .cw-bubble {
+  background: #2c2c2e !important;
+  color: #ffffff !important;
+}
+
+/* Outgoing bubble (iMessage iOS Blue) */
+.cw-msg.mine .cw-bubble {
+  background: #007aff !important;
+  color: #ffffff !important;
+  border-bottom-right-radius: 5px !important;
+}
+
+.dark-theme .cw-msg.mine .cw-bubble,
+html.dark-theme .cw-msg.mine .cw-bubble,
+body.dark-theme .cw-msg.mine .cw-bubble {
+  background: #0a84ff !important;
+  color: #ffffff !important;
+}
+
+/* Remove old skeuomorphic gradient tails */
+.cw-bubble:after,
+.cw-msg.tail .cw-bubble:after,
+.cw-msg.mine.tail .cw-bubble:after {
+  display: none !important;
+}
+
+/* iOS 7 Translucent Frosted Input Bar */
+.cw-form {
+  flex: none !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 7px 10px !important;
+  background: rgba(248, 248, 248, 0.94) !important;
+  backdrop-filter: blur(25px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+  border-top: 0.5px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: none !important;
+}
+
+.dark-theme .cw-form,
+html.dark-theme .cw-form,
+body.dark-theme .cw-form {
+  background: rgba(28, 28, 30, 0.94) !important;
+  border-top: 0.5px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+.cw-input {
+  flex: 1 !important;
+  min-width: 0 !important;
+  height: 34px !important;
+  padding: 0 14px !important;
+  box-sizing: border-box !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  border-radius: 17px !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  font-size: 14px !important;
+  font-family: inherit !important;
+  box-shadow: none !important;
+  outline: none !important;
+  transition: border-color 0.15s !important;
+}
+
+.cw-input:focus {
+  border-color: #007aff !important;
+}
+
+.dark-theme .cw-input,
+html.dark-theme .cw-input,
+body.dark-theme .cw-input {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .cw-input:focus,
+html.dark-theme .cw-input:focus,
+body.dark-theme .cw-input:focus {
+  border-color: #0a84ff !important;
+}
+
+/* iOS 7 Send button */
+.cw-send {
+  flex: none !important;
+  height: 34px !important;
+  padding: 0 6px !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #007aff !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  font-family: inherit !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  transition: opacity 0.15s, color 0.15s !important;
+}
+
+.cw-send:disabled {
+  color: rgba(0, 122, 255, 0.35) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  cursor: default !important;
+}
+
+.dark-theme .cw-send,
+html.dark-theme .cw-send,
+body.dark-theme .cw-send {
+  color: #0a84ff !important;
+}
+
+.dark-theme .cw-send:disabled,
+html.dark-theme .cw-send:disabled,
+body.dark-theme .cw-send:disabled {
+  color: rgba(10, 132, 255, 0.35) !important;
+  background: transparent !important;
+}
+
+/* Landlord Room Upgrades active pill */
+.cd-popup.landlord .ll-done.on {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 4px 10px !important;
+  border-radius: 12px !important;
+  background: rgba(52, 199, 89, 0.15) !important;
+  color: #34c759 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
