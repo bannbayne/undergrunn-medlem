@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#000000" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <script>
       try {
         if (localStorage.getItem("6ix-theme") === "light") {
@@ -15,9 +18,9 @@
     </script>
 
     <title>Medlem</title>
-    <link rel="icon" type="image/png" href="./favicon.png?v=1794517382710" />
-    <link rel="shortcut icon" href="./favicon.ico?v=1794517382710" />
-    <link rel="apple-touch-icon" href="./apple-touch-icon.png?v=1794517382710" />
+    <link rel="icon" type="image/png" href="./favicon.png?v=1794518531628" />
+    <link rel="shortcut icon" href="./favicon.ico?v=1794518531628" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png?v=1794518531628" />
     <script>
       if (window.location.protocol === 'file:') {
         window.addEventListener('DOMContentLoaded', () => {
@@ -34,8 +37,15 @@
         });
       }
     </script>
-    <script type="module" crossorigin src="./assets/index-offline.js?v=1794517382710"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-Be8o02GI.css?v=1794517382710">
+    <script type="module" crossorigin src="./assets/index-offline.js?v=1794518531628"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Be8o02GI.css?v=1794518531628">
+      <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+          for (let reg of regs) { reg.unregister(); }
+        });
+      }
+    </script>
   </head>
   <body>
     <script>
