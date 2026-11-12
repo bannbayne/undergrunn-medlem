@@ -2206,34 +2206,27 @@ body.dark-theme .loading {
 
 
 /* =========================================================
-   TRANSPARENT HEADER & PERFECT SIGNAL SIZING & BATTERY FILL
-   (media_1794468059591_7c3ebe43.jpg)
+   HEADERS MATCH ACTIVE THEME COLOR (LIGHT & DARK)
+   (media_1794468882559_eca05878.jpg)
    ========================================================= */
 
-/* Lock screen full-bleed wallpaper behind transparent header */
+/* --- LOCK SCREEN ONLY (Transparent Status Bar over blue wallpaper) --- */
 .lock-shell,
 .shell:has(.lock),
-body:has(.lock) .shell,
-.shell:has(.onb),
-.shell:has(.onb-host) {
+body:has(.lock) .shell {
   background: #1c325c url(./ios7-wallpaper.jpg) center center / cover no-repeat !important;
 }
 
 .lock-shell .lock,
 .shell:has(.lock) .lock,
-body:has(.lock) .lock,
-.shell:has(.onb) .onb-host {
+body:has(.lock) .lock {
   background: transparent !important;
   background-color: transparent !important;
 }
 
-/* Transparent Status Bar */
-.sb-status,
-body:not(.dark-theme) .sb-status,
-body.dark-theme .sb-status,
-.dark-theme .sb-status,
 .lock-shell .sb-status,
-.shell:has(.lock) .sb-status {
+.shell:has(.lock) .sb-status,
+body:has(.lock) .sb-status {
   background: transparent !important;
   background-color: transparent !important;
   backdrop-filter: none !important;
@@ -2243,61 +2236,26 @@ body.dark-theme .sb-status,
   box-shadow: none !important;
 }
 
-/* Transparent Navigation Bar */
-.navbar,
-body:not(.dark-theme) .navbar,
-body.dark-theme .navbar,
-.dark-theme .navbar {
-  background: transparent !important;
-  backdrop-filter: blur(25px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
-  box-shadow: none !important;
-}
-
-.dark-theme .navbar {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
-}
-
-/* On lock screen (blue wallpaper), status bar text is always crisp white */
 .lock-shell .sb-status,
 .lock-shell .sb-status *,
 .shell:has(.lock) .sb-status,
 .shell:has(.lock) .sb-status *,
-.shell:has(.onb) .sb-status,
-.shell:has(.onb) .sb-status *,
 body:has(.lock) .sb-status,
-body:has(.lock) .sb-status *,
-.lock .sb-status,
-.lock .sb-status * {
+body:has(.lock) .sb-status * {
   color: #ffffff !important;
   fill: #ffffff !important;
   stroke: #ffffff !important;
   text-shadow: none !important;
 }
 
-.lock-shell .sb-status svg,
-.lock-shell .sb-status svg *,
-.shell:has(.lock) .sb-status svg,
-.shell:has(.lock) .sb-status svg *,
-.shell:has(.onb) .sb-status svg,
-.shell:has(.onb) .sb-status svg *,
-body:has(.lock) .sb-status svg,
-body:has(.lock) .sb-status svg * {
-  fill: #ffffff !important;
-  stroke: #ffffff !important;
-}
-
 .lock-shell .sb-bars i,
 .shell:has(.lock) .sb-bars i,
-.shell:has(.onb) .sb-bars i,
 body:has(.lock) .sb-bars i {
   background: #ffffff !important;
 }
 
 .lock-shell .sb-battery rect,
 .shell:has(.lock) .sb-battery rect,
-.shell:has(.onb) .sb-battery rect,
 body:has(.lock) .sb-battery rect {
   stroke: #ffffff !important;
   fill: #ffffff !important;
@@ -2305,12 +2263,160 @@ body:has(.lock) .sb-battery rect {
 
 .lock-shell .sb-battery rect[fill="none"],
 .shell:has(.lock) .sb-battery rect[fill="none"],
-.shell:has(.onb) .sb-battery rect[fill="none"],
 body:has(.lock) .sb-battery rect[fill="none"] {
   fill: none !important;
   stroke: #ffffff !important;
 }
 
+
+/* --- 1. LIGHT THEME HEADERS (Matching Light Theme) --- */
+body:not(.dark-theme) .sb-status,
+:not(.dark-theme) > .sb-status,
+:root:not(.dark-theme) .sb-status,
+html:not(.dark-theme) .sb-status {
+  background: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+  box-shadow: none !important;
+  color: #000000 !important;
+}
+
+body:not(.dark-theme) .sb-status *,
+:not(.dark-theme) > .sb-status *,
+:root:not(.dark-theme) .sb-status *,
+html:not(.dark-theme) .sb-status * {
+  color: #000000 !important;
+  fill: #000000 !important;
+  stroke: #000000 !important;
+  text-shadow: none !important;
+}
+
+body:not(.dark-theme) .sb-bars i,
+html:not(.dark-theme) .sb-bars i {
+  background: #000000 !important;
+}
+
+body:not(.dark-theme) .sb-battery rect,
+html:not(.dark-theme) .sb-battery rect {
+  stroke: #000000 !important;
+  fill: #000000 !important;
+}
+
+body:not(.dark-theme) .sb-battery rect[fill="none"],
+html:not(.dark-theme) .sb-battery rect[fill="none"] {
+  fill: none !important;
+  stroke: #000000 !important;
+}
+
+/* Light Theme Navigation Bar */
+body:not(.dark-theme) .navbar,
+:not(.dark-theme) > .navbar,
+:root:not(.dark-theme) .navbar,
+html:not(.dark-theme) .navbar {
+  background: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+body:not(.dark-theme) .navbar .nav-logo,
+html:not(.dark-theme) .navbar .nav-logo {
+  color: #000000 !important;
+  font-weight: 700 !important;
+  font-size: 17px !important;
+}
+
+body:not(.dark-theme) .navbar .barbtn,
+html:not(.dark-theme) .navbar .barbtn {
+  color: #007aff !important;
+}
+
+body:not(.dark-theme) .navbar .nav-blood,
+html:not(.dark-theme) .navbar .nav-blood {
+  background: rgba(0, 122, 255, 0.08) !important;
+  border: 1px solid rgba(0, 122, 255, 0.25) !important;
+  color: #007aff !important;
+}
+
+
+/* --- 2. DARK THEME HEADERS (Matching Dark Theme) --- */
+body.dark-theme .sb-status,
+.dark-theme .sb-status,
+html.dark-theme .sb-status {
+  background: rgba(28, 28, 30, 0.94) !important;
+  backdrop-filter: blur(20px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+}
+
+body.dark-theme .sb-status *,
+.dark-theme .sb-status *,
+html.dark-theme .sb-status * {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+  text-shadow: none !important;
+}
+
+body.dark-theme .sb-bars i,
+.dark-theme .sb-bars i,
+html.dark-theme .sb-bars i {
+  background: #ffffff !important;
+}
+
+body.dark-theme .sb-battery rect,
+.dark-theme .sb-battery rect,
+html.dark-theme .sb-battery rect {
+  stroke: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+body.dark-theme .sb-battery rect[fill="none"],
+.dark-theme .sb-battery rect[fill="none"],
+html.dark-theme .sb-battery rect[fill="none"] {
+  fill: none !important;
+  stroke: #ffffff !important;
+}
+
+/* Dark Theme Navigation Bar */
+body.dark-theme .navbar,
+.dark-theme .navbar,
+html.dark-theme .navbar {
+  background: rgba(28, 28, 30, 0.94) !important;
+  backdrop-filter: blur(20px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25) !important;
+}
+
+body.dark-theme .navbar .nav-logo,
+.dark-theme .navbar .nav-logo,
+html.dark-theme .navbar .nav-logo {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 17px !important;
+}
+
+body.dark-theme .navbar .barbtn,
+.dark-theme .navbar .barbtn,
+html.dark-theme .navbar .barbtn {
+  color: #0a84ff !important;
+}
+
+body.dark-theme .navbar .nav-blood,
+.dark-theme .navbar .nav-blood,
+html.dark-theme .navbar .nav-blood {
+  background: rgba(10, 132, 255, 0.15) !important;
+  border: 1px solid rgba(10, 132, 255, 0.3) !important;
+  color: #0a84ff !important;
+}
+
+
+/* --- STATUS BAR COMMON LAYOUT --- */
 .sb-status .sb-left {
   display: inline-flex !important;
   align-items: center !important;
@@ -2339,7 +2445,6 @@ body:has(.lock) .sb-battery rect[fill="none"] {
 .sb-bars i {
   width: 2.5px !important;
   border-radius: 0.5px !important;
-  background: currentColor !important;
   display: inline-block !important;
   box-shadow: none !important;
 }
@@ -2355,7 +2460,6 @@ body:has(.lock) .sb-battery rect[fill="none"] {
   height: 9px !important;
   vertical-align: middle !important;
   display: inline-block !important;
-  fill: currentColor !important;
 }
 
 /* Battery icon fill */
@@ -2364,7 +2468,6 @@ body:has(.lock) .sb-battery rect[fill="none"] {
   height: 10px !important;
   vertical-align: middle !important;
   display: inline-block !important;
-  fill: currentColor !important;
 }
 
 .sb-battery .sb-batt-fill {
