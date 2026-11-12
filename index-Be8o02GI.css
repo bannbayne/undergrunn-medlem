@@ -2034,3 +2034,104 @@ body.dark-theme .sb-status,
 .sb-battery {
   margin-left: 2px !important;
 }
+
+
+/* Status Bar Exact Match (media_1794464923738_a5ad7de5.png) */
+.sb-status {
+  position: relative !important;
+  z-index: 10 !important;
+  flex: none !important;
+  height: calc(20px + env(safe-area-inset-top)) !important;
+  padding: env(safe-area-inset-top) 8px 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.1px !important;
+  box-sizing: border-box !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
+body:not(.dark-theme) .sb-status,
+.sb-status {
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(25px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+  color: #000000 !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+body.dark-theme .sb-status,
+.dark-theme .sb-status {
+  background: rgba(20, 20, 22, 0.94) !important;
+  backdrop-filter: blur(25px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(25px) saturate(190%) !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.sb-status .sb-left,
+.sb-status .sb-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.sb-status .sb-time {
+  position: absolute !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: -0.1px !important;
+}
+
+.sb-bars {
+  display: inline-flex !important;
+  align-items: flex-end !important;
+  gap: 1.5px !important;
+  height: 11px !important;
+  margin-right: 4px !important;
+}
+
+.sb-bars i {
+  width: 2.8px !important;
+  border-radius: 0.6px !important;
+  background: currentColor !important;
+  display: inline-block !important;
+  box-shadow: none !important;
+}
+
+.sb-carrier {
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  margin-right: 5px !important;
+  letter-spacing: -0.2px !important;
+}
+
+.sb-wifi {
+  width: 14px !important;
+  height: 11px !important;
+  vertical-align: middle !important;
+  display: inline-block !important;
+  fill: currentColor !important;
+}
+
+.sb-pct {
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  font-variant-numeric: tabular-nums !important;
+  margin-right: 3px !important;
+}
+
+.sb-battery {
+  width: 22px !important;
+  height: 10px !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  fill: currentColor !important;
+}
