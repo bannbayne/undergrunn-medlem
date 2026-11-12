@@ -81,47 +81,105 @@ class NetSyncServer:
         self.version = 1
         self.db = {} # path -> val
         self.history = [] # (version, path, val, client_id)
-        self.clients = {} # client_id -> last_seen
+        self.clients = {} # client_id -> {'last_seen': float, 'paths': set(), 'on_disconnect': dict}
 
         if os.path.exists(NET_DB_FILE):
             try:
-                with open(NET_DB_FILE, "r", encoding="utf-8") as f:
+                with open(NET_DB_FILE, 'r', encoding='utf-8') as f:
                     saved = json.load(f)
                     if isinstance(saved, dict):
-                        self.db = saved
+                        # Filter out stale ephemeral presence and room player entries across restarts
+                        clean = {}
+                        for k, v in saved.items():
+                            if not ('/players/' in k or k.startswith('presence/')):
+                                clean[k] = v
+                        self.db = clean
             except Exception:
                 pass
 
     def save_db(self):
         try:
-            tmp = NET_DB_FILE + ".tmp"
-            with open(tmp, "w", encoding="utf-8") as f:
+            tmp = NET_DB_FILE + '.tmp'
+            with open(tmp, 'w', encoding='utf-8') as f:
                 json.dump(self.db, f, ensure_ascii=False)
             os.replace(tmp, NET_DB_FILE)
         except Exception:
             pass
+
+    def register_on_disconnect(self, client_id, path, val=None, cancel=False):
+        if not client_id:
+            return
+        with self.cv:
+            if client_id not in self.clients:
+                self.clients[client_id] = {'last_seen': time.time(), 'paths': set(), 'on_disconnect': {}}
+            path = path.strip('/')
+            if cancel:
+                self.clients[client_id]['on_disconnect'].pop(path, None)
+            else:
+                self.clients[client_id]['on_disconnect'][path] = val
+
+    def disconnect_client(self, client_id):
+        if not client_id:
+            return
+        with self.cv:
+            info = self.clients.pop(client_id, None)
+            if not info:
+                return
+            on_disc = info.get('on_disconnect', {})
+            paths = info.get('paths', set())
+            removals = dict(on_disc)
+            for p in paths:
+                if '/players/' in p or p.startswith('presence/'):
+                    if p not in removals:
+                        removals[p] = None
+            if removals:
+                self.version += 1
+                for path, val in removals.items():
+                    path = path.strip('/')
+                    if val is None:
+                        self.db.pop(path, None)
+                        prefix = path + '/'
+                        to_del = [k for k in self.db if k.startswith(prefix)]
+                        for k in to_del:
+                            self.db.pop(k, None)
+                    else:
+                        self.db[path] = val
+                    self.history.append((self.version, path, val, None))
+                self.cv.notify_all()
 
     def update_values(self, updates, client_id=None):
         if not isinstance(updates, dict) or not updates:
             return self.version
         with self.cv:
             self.version += 1
+            now = time.time()
+            if client_id:
+                if client_id not in self.clients:
+                    self.clients[client_id] = {'last_seen': now, 'paths': set(), 'on_disconnect': {}}
+                else:
+                    self.clients[client_id]['last_seen'] = now
+
             for path, val in updates.items():
                 if not isinstance(path, str) or not path:
                     continue
-                path = path.strip("/")
+                path = path.strip('/')
+                if client_id:
+                    self.clients[client_id]['paths'].add(path)
+
                 if val is None:
                     self.db.pop(path, None)
+                    prefix = path + '/'
+                    to_del = [k for k in self.db if k.startswith(prefix)]
+                    for k in to_del:
+                        self.db.pop(k, None)
                 elif isinstance(val, dict) and path in self.db and isinstance(self.db[path], dict):
                     self.db[path].update(val)
                 else:
                     self.db[path] = val
                 self.history.append((self.version, path, self.db.get(path), client_id))
             
-            if len(self.history) > 2000:
-                self.history = self.history[-1000:]
-            if client_id:
-                self.clients[client_id] = time.time()
+            if len(self.history) > 3000:
+                self.history = self.history[-1500:]
             self.cv.notify_all()
             return self.version
 
@@ -129,11 +187,37 @@ class NetSyncServer:
         with self.cv:
             now = time.time()
             if client_id:
-                self.clients[client_id] = now
-            # Prune dead clients (inactive > 60s)
-            dead = [cid for cid, t in self.clients.items() if now - t > 60.0]
-            for cid in dead:
-                self.clients.pop(cid, None)
+                if client_id not in self.clients:
+                    self.clients[client_id] = {'last_seen': now, 'paths': set(), 'on_disconnect': {}}
+                else:
+                    self.clients[client_id]['last_seen'] = now
+
+            # Prune dead clients (inactive > 45s)
+            dead = [cid for cid, info in self.clients.items() if now - info['last_seen'] > 45.0]
+            if dead:
+                self.version += 1
+                for cid in dead:
+                    info = self.clients.pop(cid, None)
+                    if info:
+                        on_disc = info.get('on_disconnect', {})
+                        paths = info.get('paths', set())
+                        removals = dict(on_disc)
+                        for p in paths:
+                            if '/players/' in p or p.startswith('presence/'):
+                                if p not in removals:
+                                    removals[p] = None
+                        for path, val in removals.items():
+                            path = path.strip('/')
+                            if val is None:
+                                self.db.pop(path, None)
+                                prefix = path + '/'
+                                to_del = [k for k in self.db if k.startswith(prefix)]
+                                for k in to_del:
+                                    self.db.pop(k, None)
+                            else:
+                                self.db[path] = val
+                            self.history.append((self.version, path, val, None))
+                self.cv.notify_all()
 
             if self.version <= client_v:
                 self.cv.wait(timeout)
@@ -142,10 +226,10 @@ class NetSyncServer:
             min_hist_v = self.history[0][0] if self.history else 1
             if client_v <= 0 or client_v < min_hist_v:
                 return {
-                    "v": self.version,
-                    "full": True,
-                    "updates": dict(self.db),
-                    "onlineCount": len(self.clients)
+                    'v': self.version,
+                    'full': True,
+                    'updates': dict(self.db),
+                    'onlineCount': len(self.clients)
                 }
 
             # Incremental updates
@@ -154,54 +238,64 @@ class NetSyncServer:
                 if v > client_v and cid != client_id:
                     changes[p] = val
             return {
-                "v": self.version,
-                "full": False,
-                "updates": changes,
-                "onlineCount": len(self.clients)
+                'v': self.version,
+                'full': False,
+                'updates': changes,
+                'onlineCount': len(self.clients)
             }
 
     def get_value(self, path):
         with self.lock:
-            path = path.strip("/")
+            path = path.strip('/')
             if path in self.db:
                 return self.db[path]
             # Smart fallback for usernames/<name>
-            if path.startswith("usernames/"):
-                uname = path[len("usernames/"):].lower().strip()
+            if path.startswith('usernames/'):
+                uname = path[len('usernames/'):].lower().strip()
                 # 1. Search profiles/<uid>/name
                 for p, v in self.db.items():
-                    if p.startswith("profiles/") and p.endswith("/name") and isinstance(v, str):
+                    if p.startswith('profiles/') and p.endswith('/name') and isinstance(v, str):
                         if v.lower().strip() == uname:
-                            uid = p.split("/")[1]
+                            uid = p.split('/')[1]
                             self.db[path] = uid
                             return uid
                 # 2. Search room players
                 for p, v in self.db.items():
-                    if "/players/" in p and isinstance(v, dict):
-                        pname = str(v.get("name", "")).lower().strip()
+                    if '/players/' in p and isinstance(v, dict):
+                        pname = str(v.get('name', '')).lower().strip()
                         if pname == uname:
-                            uid = v.get("uid") or p.split("/players/")[-1].split("/")[0]
+                            uid = v.get('uid') or p.split('/players/')[-1].split('/')[0]
                             if uid:
                                 self.db[path] = uid
                                 return uid
                 # 3. If uname looks like a valid uid itself
-                if uname in ("barter6", "admin", "adminsidia") or len(uname) >= 3:
+                if uname in ('barter6', 'admin', 'adminsidia') or len(uname) >= 3:
                     for p in self.db.keys():
-                        if p.startswith(f"profiles/{uname}"):
+                        if p.startswith(f'profiles/{uname}'):
                             self.db[path] = uname
                             return uname
 
-            prefix = path + "/"
+            prefix = (path + '/') if path else ''
             sub = {}
             found = False
             for p, v in self.db.items():
-                if p.startswith(prefix):
+                if prefix and p.startswith(prefix):
                     found = True
-                    rest = p[len(prefix):]
-                    sub[rest] = v
+                    rel = p[len(prefix):]
+                    parts = rel.split('/')
+                    if len(parts) == 1:
+                        sub[parts[0]] = v
+                    else:
+                        cur = sub
+                        for part in parts[:-1]:
+                            if part not in cur or not isinstance(cur[part], dict):
+                                cur[part] = {}
+                            cur = cur[part]
+                        cur[parts[-1]] = v
             if found:
                 return sub
             return None
+
 
 NET_SYNC = NetSyncServer()
 
@@ -383,6 +477,10 @@ class GameRequestHandler(http.server.SimpleHTTPRequestHandler):
                 payload = json.loads(post_data.decode("utf-8"))
                 client_id = payload.get("clientId")
                 updates = payload.get("updates", {})
+                on_disc = payload.get("onDisconnect")
+                if on_disc and isinstance(on_disc, dict) and client_id:
+                    for op_path, op_val in on_disc.items():
+                        NET_SYNC.register_on_disconnect(client_id, op_path, op_val)
                 new_v = NET_SYNC.update_values(updates, client_id)
                 resp = json.dumps({"ok": True, "v": new_v}).encode("utf-8")
             except Exception as e:
@@ -394,7 +492,43 @@ class GameRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(resp)
             return
 
-        # World state: save furniture
+        # Real-time Multiplayer On-Disconnect Registry
+        if p.path == "/api/net/on-disconnect":
+            try:
+                payload = json.loads(post_data.decode("utf-8")) if post_data else {}
+                client_id = payload.get("clientId")
+                op_path = payload.get("path")
+                op_val = payload.get("val")
+                cancel = payload.get("cancel", False)
+                if client_id and op_path:
+                    NET_SYNC.register_on_disconnect(client_id, op_path, op_val, cancel)
+                resp = b'{"ok": true}'
+            except Exception as e:
+                resp = json.dumps({"ok": False, "error": str(e)}).encode("utf-8")
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Content-Length', str(len(resp)))
+            self.end_headers()
+            self.wfile.write(resp)
+            return
+
+        # Real-time Multiplayer Explicit Disconnect
+        if p.path == "/api/net/disconnect":
+            try:
+                payload = json.loads(post_data.decode("utf-8")) if post_data else {}
+                client_id = payload.get("clientId")
+                if client_id:
+                    NET_SYNC.disconnect_client(client_id)
+                resp = b'{"ok": true}'
+            except Exception as e:
+                resp = json.dumps({"ok": False, "error": str(e)}).encode("utf-8")
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Content-Length', str(len(resp)))
+            self.end_headers()
+            self.wfile.write(resp)
+            return
+
         if p.path == "/api/save-room-furni":
             try:
                 payload = json.loads(post_data.decode("utf-8"))

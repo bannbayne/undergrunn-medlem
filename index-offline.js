@@ -7,6 +7,7 @@ window.__medlemNet = (function() {
   const state = new Map();
   const valueListeners = new Map();
   const childListeners = new Map();
+  const onDisconnectMap = new Map();
   let serverVer = 0;
   let polling = false;
 
@@ -28,17 +29,55 @@ window.__medlemNet = (function() {
     return "";
   }
 
+  function getNode(path) {
+    path = norm(path);
+    const prefix = path ? path + "/" : "";
+    let composite = null;
+    if (state.has(path)) {
+      const v = state.get(path);
+      composite = (v && typeof v === "object" && !Array.isArray(v)) ? { ...v } : v;
+    }
+    for (const [k, v] of state.entries()) {
+      if (prefix ? k.startsWith(prefix) : true) {
+        const rel = prefix ? k.slice(prefix.length) : k;
+        if (!rel) continue;
+        if (composite === null || typeof composite !== "object" || Array.isArray(composite)) {
+          composite = {};
+        }
+        const parts = rel.split("/");
+        let cur = composite;
+        for (let i = 0; i < parts.length - 1; i++) {
+          if (!cur[parts[i]] || typeof cur[parts[i]] !== "object" || Array.isArray(cur[parts[i]])) {
+            cur[parts[i]] = {};
+          }
+          cur = cur[parts[i]];
+        }
+        cur[parts[parts.length - 1]] = (v && typeof v === "object") ? JSON.parse(JSON.stringify(v)) : v;
+      }
+    }
+    return composite;
+  }
+
   function makeSnap(path, val) {
-    const parts = norm(path).split("/").filter(Boolean);
+    path = norm(path);
+    if (val === undefined) {
+      val = getNode(path);
+    }
+    const parts = path ? path.split("/").filter(Boolean) : [];
     const key = parts.length > 0 ? parts[parts.length - 1] : null;
     return {
       key: key,
+      ref: { _path: path, key: key },
       val: () => (val === undefined || val === null ? null : JSON.parse(JSON.stringify(val))),
       exists: () => val !== null && val !== undefined,
+      child: (subKey) => {
+        const subPath = norm(path ? path + "/" + subKey : subKey);
+        return makeSnap(subPath);
+      },
       forEach: (cb) => {
-        if (val && typeof val === "object") {
+        if (val && typeof val === "object" && !Array.isArray(val)) {
           for (const k of Object.keys(val)) {
-            const cs = makeSnap(norm(path) + "/" + k, val[k]);
+            const cs = makeSnap(norm(path ? path + "/" + k : k), val[k]);
             if (cb(cs) === true) break;
           }
         }
@@ -51,24 +90,20 @@ window.__medlemNet = (function() {
     const oldVal = state.get(path);
     if (newVal === null || newVal === undefined) {
       state.delete(path);
+      const prefix = path ? path + "/" : "";
+      if (prefix) {
+        for (const k of Array.from(state.keys())) {
+          if (k.startsWith(prefix)) state.delete(k);
+        }
+      }
     } else {
       state.set(path, newVal);
     }
 
-    // 1. Value listeners on exact path
-    const vbs = valueListeners.get(path);
-    if (vbs) {
-      const snap = makeSnap(path, newVal);
-      for (const cb of vbs) {
-        try { cb(snap); } catch(e) { console.warn("[MedlemNet] Value error:", e); }
-      }
-    }
-
-    // 2. Child listeners on parent path
+    // 1. Child listeners on direct parent
     const lastSlash = path.lastIndexOf("/");
     if (lastSlash !== -1) {
       const parent = path.slice(0, lastSlash);
-      const childKey = path.slice(lastSlash + 1);
       const cls = childListeners.get(parent);
       if (cls) {
         const snap = makeSnap(path, newVal);
@@ -87,6 +122,48 @@ window.__medlemNet = (function() {
         }
       }
     }
+
+    // 2. Value listeners on exact path
+    const vbs = valueListeners.get(path);
+    if (vbs && vbs.size > 0) {
+      const snap = makeSnap(path, newVal);
+      for (const cb of vbs) {
+        try { cb(snap); } catch(e) { console.warn("[MedlemNet] Value error:", e); }
+      }
+    }
+
+    // 3. Value listeners on all ancestors
+    let cur = path;
+    while (cur.includes("/")) {
+      cur = cur.slice(0, cur.lastIndexOf("/"));
+      const set = valueListeners.get(cur);
+      if (set && set.size > 0) {
+        const snap = makeSnap(cur);
+        for (const cb of set) {
+          try { cb(snap); } catch(e) { console.warn("[MedlemNet] Ancestor value error:", e); }
+        }
+      }
+    }
+    const rootSet = valueListeners.get("");
+    if (rootSet && rootSet.size > 0) {
+      const snap = makeSnap("");
+      for (const cb of rootSet) {
+        try { cb(snap); } catch(e) { console.warn("[MedlemNet] Root value error:", e); }
+      }
+    }
+
+    // 4. If newVal is object/null, also notify any descendant value listeners
+    const prefix = path ? path + "/" : "";
+    if (prefix) {
+      for (const [lp, set] of valueListeners.entries()) {
+        if (lp.startsWith(prefix) && set && set.size > 0) {
+          const snap = makeSnap(lp);
+          for (const cb of set) {
+            try { cb(snap); } catch(e) { console.warn("[MedlemNet] Descendant value error:", e); }
+          }
+        }
+      }
+    }
   }
 
   // Batch network sending
@@ -96,7 +173,7 @@ window.__medlemNet = (function() {
   function queueSend(path, val) {
     pendingUpdates[norm(path)] = val;
     if (!sendTimer) {
-      sendTimer = setTimeout(flushSend, 40);
+      sendTimer = setTimeout(flushSend, 30);
     }
   }
 
@@ -142,16 +219,58 @@ window.__medlemNet = (function() {
           }
         }
       } catch(err) {
-        await new Promise(r => setTimeout(r, 1500));
+        await new Promise(r => setTimeout(r, 1000));
       }
     }
   }
 
-  setTimeout(pollLoop, 100);
+  setTimeout(pollLoop, 50);
+
+  // Unload handler for clean disconnect
+  const cleanupOnUnload = () => {
+    const toSend = {};
+    for (const [p, v] of onDisconnectMap.entries()) {
+      toSend[p] = v;
+    }
+    if (Object.keys(toSend).length > 0) {
+      const payload = JSON.stringify({ clientId, updates: toSend });
+      if (typeof navigator !== "undefined" && navigator.sendBeacon) {
+        navigator.sendBeacon("/api/net/send", payload);
+      } else if (typeof fetch === "function") {
+        fetch("/api/net/send", { method: "POST", headers: { "Content-Type": "application/json" }, body: payload, keepalive: true }).catch(() => {});
+      }
+    }
+  };
+  if (typeof window !== "undefined" && typeof window.addEventListener === "function") {
+    window.addEventListener("beforeunload", cleanupOnUnload);
+    window.addEventListener("pagehide", cleanupOnUnload);
+  }
 
   return {
     getPath,
     makeSnap,
+    registerOnDisconnect(path, val) {
+      const p = norm(path);
+      onDisconnectMap.set(p, val);
+      if (typeof fetch === "function") {
+        fetch("/api/net/on-disconnect", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ clientId, path: p, val })
+        }).catch(() => {});
+      }
+    },
+    cancelOnDisconnect(path) {
+      const p = norm(path);
+      onDisconnectMap.delete(p);
+      if (typeof fetch === "function") {
+        fetch("/api/net/on-disconnect", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ clientId, path: p, cancel: true })
+        }).catch(() => {});
+      }
+    },
     set(t, val) {
       const path = getPath(t);
       dispatchUpdate(path, val, false);
@@ -184,8 +303,9 @@ window.__medlemNet = (function() {
     },
     get(t) {
       const path = getPath(t);
-      if (state.has(path)) {
-        return Promise.resolve(makeSnap(path, state.get(path)));
+      const node = getNode(path);
+      if (node !== undefined && node !== null) {
+        return Promise.resolve(makeSnap(path, node));
       }
       return fetch(`/api/net/get?p=${encodeURIComponent(path)}`, { cache: "no-store" })
         .then(r => r.json())
@@ -203,9 +323,8 @@ window.__medlemNet = (function() {
       let set = valueListeners.get(path);
       if (!set) { set = new Set(); valueListeners.set(path, set); }
       set.add(cb);
-      const cur = state.get(path);
       setTimeout(() => {
-        try { cb(makeSnap(path, cur !== undefined ? cur : null)); } catch(e){}
+        try { cb(makeSnap(path)); } catch(e){}
       }, 0);
       return () => set.delete(cb);
     },
@@ -215,12 +334,16 @@ window.__medlemNet = (function() {
       if (!cls) { cls = { added: new Set(), changed: new Set(), removed: new Set() }; childListeners.set(path, cls); }
       cls.added.add(cb);
       setTimeout(() => {
-        const prefix = path + "/";
-        for (const [sp, val] of state.entries()) {
-          if (sp.startsWith(prefix)) {
-            const rest = sp.slice(prefix.length);
-            if (!rest.includes("/")) {
-              try { cb(makeSnap(sp, val)); } catch(e){}
+        const prefix = path ? path + "/" : "";
+        const seen = new Set();
+        for (const k of state.keys()) {
+          if (k.startsWith(prefix)) {
+            const rel = k.slice(prefix.length);
+            const first = rel.split("/")[0];
+            if (first && !seen.has(first)) {
+              seen.add(first);
+              const childPath = path ? path + "/" + first : first;
+              try { cb(makeSnap(childPath)); } catch(e){}
             }
           }
         }
@@ -2960,7 +3083,7 @@ FIREBASE: `))}restoreState_(){this.tryAuth(),this.tryAppCheck();for(const e of t
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */class jr{constructor(e,n,i,s){this._repo=e,this._path=n,this._queryParams=i,this._orderByCalled=s}get key(){return Lt(this._path)?null:Ev(this._path)}get ref(){return new oo(this._repo,this._path)}get _queryIdentifier(){const e=B1(this._queryParams),n=_v(e);return n==="{}"?"default":n}get _queryObject(){return B1(this._queryParams)}isEqual(e){if(e=Fn(e),!(e instanceof jr))return!1;const n=this._repo===e._repo,i=Mv(this._path,e._path),s=this._queryIdentifier===e._queryIdentifier;return n&&i&&s}toJSON(){return this.toString()}toString(){return this._repo.toString()+OR(this._path)}}function ME(t,e){if(t._orderByCalled===!0)throw new Error(e+": You can't combine multiple orderBy calls.")}function Am(t){let e=null,n=null;if(t.hasStart()&&(e=t.getIndexStartValue()),t.hasEnd()&&(n=t.getIndexEndValue()),t.getIndex()===_r){const i="Query: When ordering by key, you may only pass one argument to startAt(), endAt(), or equalTo().",s="Query: When ordering by key, the argument passed to startAt(), startAfter(), endAt(), endBefore(), or equalTo() must be a string.";if(t.hasStart()){if(t.getIndexStartName()!==Pa)throw new Error(i);if(typeof e!="string")throw new Error(s)}if(t.hasEnd()){if(t.getIndexEndName()!==Ir)throw new Error(i);if(typeof n!="string")throw new Error(s)}}else if(t.getIndex()===$n){if(e!=null&&!Ff(e)||n!=null&&!Ff(n))throw new Error("Query: When ordering by priority, the first argument passed to startAt(), startAfter() endAt(), endBefore(), or equalTo() must be a valid priority value (null, a number, or a string).")}else if(lt(t.getIndex()instanceof Dv||t.getIndex()===HT,"unknown index type."),e!=null&&typeof e=="object"||n!=null&&typeof n=="object")throw new Error("Query: First argument passed to startAt(), startAfter(), endAt(), endBefore(), or equalTo() cannot be an object.")}function CE(t){if(t.hasStart()&&t.hasEnd()&&t.hasLimit()&&!t.hasAnchoredLimit())throw new Error("Query: Can't combine startAt(), startAfter(), endAt(), endBefore(), and limit(). Use limitToFirst() or limitToLast() instead.")}class oo extends jr{constructor(e,n){super(e,n,new Av,!1)}get parent(){const e=RT(this._path);return e===null?null:new oo(this._repo,e)}get root(){let e=this;for(;e.parent!==null;)e=e.parent;return e}}class Gl{constructor(e,n,i){this._node=e,this.ref=n,this._index=i}get priority(){return this._node.getPriority().val()}get key(){return this.ref.key}get size(){return this._node.numChildren()}child(e){const n=new rn(e),i=ql(this.ref,e);return new Gl(this._node.getChild(n),i,$n)}exists(){return!this._node.isEmpty()}exportVal(){return this._node.val(!0)}forEach(e){return this._node.isLeafNode()?!1:!!this._node.forEachChild(this._index,(i,s)=>e(new Gl(s,ql(this.ref,i),$n)))}hasChild(e){const n=new rn(e);return!this._node.getChild(n).isEmpty()}hasChildren(){return this._node.isLeafNode()?!1:!this._node.isEmpty()}toJSON(){return this.exportVal()}val(){return this._node.val()}}function le(t,e){return t=Fn(t),t._checkNotDeleted("ref"),e!==void 0?ql(t._root,e):t._root}function ql(t,e){return t=Fn(t),Ot(t._path)===null?S3("child","path",e):Xv("child","path",e),new oo(t._repo,Pn(t._path,e))}function Ci(t){return t=Fn(t),new V3(t._repo,t._path)}function xa(t,e){t=Fn(t),va("push",t._path),Oa("push",e,t._path,!0);const n=vE(t._repo),i=q3(n),s=ql(t,i),a=ql(t,i);let l;return e!=null?l=gn(a,e).then(()=>a):l=Promise.resolve(a),s.then=l.then.bind(l),s.catch=l.then.bind(l,void 0),s}function zn(t){return window.__medlemNet.remove(t)}function gn(t,e){return window.__medlemNet.set(t,e)}function rt(t,e){return window.__medlemNet.update(t,e)}function wt(t){return window.__medlemNet.get(t)}class Pm{constructor(e){this.callbackContext=e}respondsTo(e){return e==="value"}createEvent(e,n){const i=n._queryParams.getIndex();return new SE("value",this,new Gl(e.snapshotNode,new oo(n._repo,n._path),i))}getEventRunner(e){return e.getEventType()==="cancel"?()=>this.callbackContext.onCancel(e.error):()=>this.callbackContext.onValue(e.snapshot,null)}createCancelEvent(e,n){return this.callbackContext.hasCancelCallback?new TE(this,e,n):null}matches(e){return e instanceof Pm?!e.callbackContext||!this.callbackContext?!0:e.callbackContext.matches(this.callbackContext):!1}hasAnyCallback(){return this.callbackContext!==null}}class tk{constructor(e,n){this.eventType=e,this.callbackContext=n}respondsTo(e){let n=e==="children_added"?"child_added":e;return n=n==="children_removed"?"child_removed":n,this.eventType===n}createCancelEvent(e,n){return this.callbackContext.hasCancelCallback?new TE(this,e,n):null}createEvent(e,n){lt(e.childName!=null,"Child events should have a childName.");const i=ql(new oo(n._repo,n._path),e.childName),s=n._queryParams.getIndex();return new SE(e.type,this,new Gl(e.snapshotNode,i,s),e.prevName)}getEventRunner(e){return e.getEventType()==="cancel"?()=>this.callbackContext.onCancel(e.error):()=>this.callbackContext.onValue(e.snapshot,e.prevName)}matches(e){return e instanceof tk?this.eventType===e.eventType&&(!this.callbackContext||!e.callbackContext||this.callbackContext.matches(e.callbackContext)):!1}hasAnyCallback(){return!!this.callbackContext}}function Nm(t,e,n,i,s){let a;if(typeof i=="object"&&(a=void 0,s=i),typeof i=="function"&&(a=i),s&&s.onlyOnce){const d=n,u=(p,m)=>{Z1(t._repo,t,c),d(p,m)};u.userCallback=n.userCallback,u.context=n.context,n=u}const l=new EE(n,a||void 0),c=e==="value"?new Pm(l):new tk(e,l);return F3(t._repo,t,c),()=>Z1(t._repo,t,c)}function Ze(t,e,n,i){return window.__medlemNet.onValue(t,e)}function ss(t,e,n,i){return window.__medlemNet.onChildAdded(t,e)}function dg(t,e,n,i){return window.__medlemNet.onChildChanged(t,e)}function z3(t,e,n,i){return window.__medlemNet.onChildRemoved(t,e)}class cc{}class X3 extends cc{constructor(e,n){super(),this._value=e,this._key=n,this.type="endAt"}_apply(e){Oa("endAt",this._value,e._path,!0);const n=a4(e._queryParams,this._value,this._key);if(CE(n),Am(n),e._queryParams.hasEnd())throw new Error("endAt: Starting point was already set (by another call to endAt, endBefore or equalTo).");return new jr(e._repo,e._path,n,e._orderByCalled)}}class J3 extends cc{constructor(e,n){super(),this._value=e,this._key=n,this.type="startAt"}_apply(e){Oa("startAt",this._value,e._path,!0);const n=r4(e._queryParams,this._value,this._key);if(CE(n),Am(n),e._queryParams.hasStart())throw new Error("startAt: Starting point was already set (by another call to startAt, startBefore or equalTo).");return new jr(e._repo,e._path,n,e._orderByCalled)}}class Q3 extends cc{constructor(e){super(),this._limit=e,this.type="limitToLast"}_apply(e){if(e._queryParams.hasLimit())throw new Error("limitToLast: Limit was already set (by another call to limitToFirst or limitToLast).");return new jr(e._repo,e._path,o4(e._queryParams,this._limit),e._orderByCalled)}}function Gi(t){if(typeof t!="number"||Math.floor(t)!==t||t<=0)throw new Error("limitToLast: First argument must be a positive integer.");return new Q3(t)}class Z3 extends cc{constructor(e){super(),this._path=e,this.type="orderByChild"}_apply(e){ME(e,"orderByChild");const n=new rn(this._path);if(Lt(n))throw new Error("orderByChild: cannot pass in empty path. Use orderByValue() instead.");const i=new Dv(n),s=YT(e._queryParams,i);return Am(s),new jr(e._repo,e._path,s,!0)}}function Do(t){if(t==="$key")throw new Error('orderByChild: "$key" is invalid.  Use orderByKey() instead.');if(t==="$priority")throw new Error('orderByChild: "$priority" is invalid.  Use orderByPriority() instead.');if(t==="$value")throw new Error('orderByChild: "$value" is invalid.  Use orderByValue() instead.');return Xv("orderByChild","path",t),new Z3(t)}class eO extends cc{constructor(){super(...arguments),this.type="orderByKey"}_apply(e){ME(e,"orderByKey");const n=YT(e._queryParams,_r);return Am(n),new jr(e._repo,e._path,n,!0)}}function Uf(){return new eO}class tO extends cc{constructor(e,n){super(),this._value=e,this._key=n,this.type="equalTo"}_apply(e){if(Oa("equalTo",this._value,e._path,!1),e._queryParams.hasStart())throw new Error("equalTo: Starting point was already set (by another call to startAt/startAfter or equalTo).");if(e._queryParams.hasEnd())throw new Error("equalTo: Ending point was already set (by another call to endAt/endBefore or equalTo).");return new X3(this._value,this._key)._apply(new J3(this._value,this._key)._apply(e))}}function nO(t,e){return new tO(t,e)}function qi(t,...e){let n=Fn(t);for(const i of e)n=i._apply(n);return n}z4(oo);e3(oo);/**
+ */class jr{constructor(e,n,i,s){this._repo=e,this._path=n,this._queryParams=i,this._orderByCalled=s}get key(){return Lt(this._path)?null:Ev(this._path)}get ref(){return new oo(this._repo,this._path)}get _queryIdentifier(){const e=B1(this._queryParams),n=_v(e);return n==="{}"?"default":n}get _queryObject(){return B1(this._queryParams)}isEqual(e){if(e=Fn(e),!(e instanceof jr))return!1;const n=this._repo===e._repo,i=Mv(this._path,e._path),s=this._queryIdentifier===e._queryIdentifier;return n&&i&&s}toJSON(){return this.toString()}toString(){return this._repo.toString()+OR(this._path)}}function ME(t,e){if(t._orderByCalled===!0)throw new Error(e+": You can't combine multiple orderBy calls.")}function Am(t){let e=null,n=null;if(t.hasStart()&&(e=t.getIndexStartValue()),t.hasEnd()&&(n=t.getIndexEndValue()),t.getIndex()===_r){const i="Query: When ordering by key, you may only pass one argument to startAt(), endAt(), or equalTo().",s="Query: When ordering by key, the argument passed to startAt(), startAfter(), endAt(), endBefore(), or equalTo() must be a string.";if(t.hasStart()){if(t.getIndexStartName()!==Pa)throw new Error(i);if(typeof e!="string")throw new Error(s)}if(t.hasEnd()){if(t.getIndexEndName()!==Ir)throw new Error(i);if(typeof n!="string")throw new Error(s)}}else if(t.getIndex()===$n){if(e!=null&&!Ff(e)||n!=null&&!Ff(n))throw new Error("Query: When ordering by priority, the first argument passed to startAt(), startAfter() endAt(), endBefore(), or equalTo() must be a valid priority value (null, a number, or a string).")}else if(lt(t.getIndex()instanceof Dv||t.getIndex()===HT,"unknown index type."),e!=null&&typeof e=="object"||n!=null&&typeof n=="object")throw new Error("Query: First argument passed to startAt(), startAfter(), endAt(), endBefore(), or equalTo() cannot be an object.")}function CE(t){if(t.hasStart()&&t.hasEnd()&&t.hasLimit()&&!t.hasAnchoredLimit())throw new Error("Query: Can't combine startAt(), startAfter(), endAt(), endBefore(), and limit(). Use limitToFirst() or limitToLast() instead.")}class oo extends jr{constructor(e,n){super(e,n,new Av,!1)}get parent(){const e=RT(this._path);return e===null?null:new oo(this._repo,e)}get root(){let e=this;for(;e.parent!==null;)e=e.parent;return e}}class Gl{constructor(e,n,i){this._node=e,this.ref=n,this._index=i}get priority(){return this._node.getPriority().val()}get key(){return this.ref.key}get size(){return this._node.numChildren()}child(e){const n=new rn(e),i=ql(this.ref,e);return new Gl(this._node.getChild(n),i,$n)}exists(){return!this._node.isEmpty()}exportVal(){return this._node.val(!0)}forEach(e){return this._node.isLeafNode()?!1:!!this._node.forEachChild(this._index,(i,s)=>e(new Gl(s,ql(this.ref,i),$n)))}hasChild(e){const n=new rn(e);return!this._node.getChild(n).isEmpty()}hasChildren(){return this._node.isLeafNode()?!1:!this._node.isEmpty()}toJSON(){return this.exportVal()}val(){return this._node.val()}}function le(t,e){return t=Fn(t),t._checkNotDeleted("ref"),e!==void 0?ql(t._root,e):t._root}function ql(t,e){return t=Fn(t),Ot(t._path)===null?S3("child","path",e):Xv("child","path",e),new oo(t._repo,Pn(t._path,e))}function Ci(t){const p=window.__medlemNet?window.__medlemNet.getPath(t):"";return{remove(){p&&window.__medlemNet&&window.__medlemNet.registerOnDisconnect(p,null);return Promise.resolve()},set(v){p&&window.__medlemNet&&window.__medlemNet.registerOnDisconnect(p,v);return Promise.resolve()},update(v){p&&window.__medlemNet&&window.__medlemNet.registerOnDisconnect(p,v);return Promise.resolve()},cancel(){p&&window.__medlemNet&&window.__medlemNet.cancelOnDisconnect(p);return Promise.resolve()}}}function xa(t,e){t=Fn(t),va("push",t._path),Oa("push",e,t._path,!0);const n=vE(t._repo),i=q3(n),s=ql(t,i),a=ql(t,i);let l;return e!=null?l=gn(a,e).then(()=>a):l=Promise.resolve(a),s.then=l.then.bind(l),s.catch=l.then.bind(l,void 0),s}function zn(t){return window.__medlemNet.remove(t)}function gn(t,e){return window.__medlemNet.set(t,e)}function rt(t,e){return window.__medlemNet.update(t,e)}function wt(t){return window.__medlemNet.get(t)}class Pm{constructor(e){this.callbackContext=e}respondsTo(e){return e==="value"}createEvent(e,n){const i=n._queryParams.getIndex();return new SE("value",this,new Gl(e.snapshotNode,new oo(n._repo,n._path),i))}getEventRunner(e){return e.getEventType()==="cancel"?()=>this.callbackContext.onCancel(e.error):()=>this.callbackContext.onValue(e.snapshot,null)}createCancelEvent(e,n){return this.callbackContext.hasCancelCallback?new TE(this,e,n):null}matches(e){return e instanceof Pm?!e.callbackContext||!this.callbackContext?!0:e.callbackContext.matches(this.callbackContext):!1}hasAnyCallback(){return this.callbackContext!==null}}class tk{constructor(e,n){this.eventType=e,this.callbackContext=n}respondsTo(e){let n=e==="children_added"?"child_added":e;return n=n==="children_removed"?"child_removed":n,this.eventType===n}createCancelEvent(e,n){return this.callbackContext.hasCancelCallback?new TE(this,e,n):null}createEvent(e,n){lt(e.childName!=null,"Child events should have a childName.");const i=ql(new oo(n._repo,n._path),e.childName),s=n._queryParams.getIndex();return new SE(e.type,this,new Gl(e.snapshotNode,i,s),e.prevName)}getEventRunner(e){return e.getEventType()==="cancel"?()=>this.callbackContext.onCancel(e.error):()=>this.callbackContext.onValue(e.snapshot,e.prevName)}matches(e){return e instanceof tk?this.eventType===e.eventType&&(!this.callbackContext||!e.callbackContext||this.callbackContext.matches(e.callbackContext)):!1}hasAnyCallback(){return!!this.callbackContext}}function Nm(t,e,n,i,s){let a;if(typeof i=="object"&&(a=void 0,s=i),typeof i=="function"&&(a=i),s&&s.onlyOnce){const d=n,u=(p,m)=>{Z1(t._repo,t,c),d(p,m)};u.userCallback=n.userCallback,u.context=n.context,n=u}const l=new EE(n,a||void 0),c=e==="value"?new Pm(l):new tk(e,l);return F3(t._repo,t,c),()=>Z1(t._repo,t,c)}function Ze(t,e,n,i){return window.__medlemNet.onValue(t,e)}function ss(t,e,n,i){return window.__medlemNet.onChildAdded(t,e)}function dg(t,e,n,i){return window.__medlemNet.onChildChanged(t,e)}function z3(t,e,n,i){return window.__medlemNet.onChildRemoved(t,e)}class cc{}class X3 extends cc{constructor(e,n){super(),this._value=e,this._key=n,this.type="endAt"}_apply(e){Oa("endAt",this._value,e._path,!0);const n=a4(e._queryParams,this._value,this._key);if(CE(n),Am(n),e._queryParams.hasEnd())throw new Error("endAt: Starting point was already set (by another call to endAt, endBefore or equalTo).");return new jr(e._repo,e._path,n,e._orderByCalled)}}class J3 extends cc{constructor(e,n){super(),this._value=e,this._key=n,this.type="startAt"}_apply(e){Oa("startAt",this._value,e._path,!0);const n=r4(e._queryParams,this._value,this._key);if(CE(n),Am(n),e._queryParams.hasStart())throw new Error("startAt: Starting point was already set (by another call to startAt, startBefore or equalTo).");return new jr(e._repo,e._path,n,e._orderByCalled)}}class Q3 extends cc{constructor(e){super(),this._limit=e,this.type="limitToLast"}_apply(e){if(e._queryParams.hasLimit())throw new Error("limitToLast: Limit was already set (by another call to limitToFirst or limitToLast).");return new jr(e._repo,e._path,o4(e._queryParams,this._limit),e._orderByCalled)}}function Gi(t){if(typeof t!="number"||Math.floor(t)!==t||t<=0)throw new Error("limitToLast: First argument must be a positive integer.");return new Q3(t)}class Z3 extends cc{constructor(e){super(),this._path=e,this.type="orderByChild"}_apply(e){ME(e,"orderByChild");const n=new rn(this._path);if(Lt(n))throw new Error("orderByChild: cannot pass in empty path. Use orderByValue() instead.");const i=new Dv(n),s=YT(e._queryParams,i);return Am(s),new jr(e._repo,e._path,s,!0)}}function Do(t){if(t==="$key")throw new Error('orderByChild: "$key" is invalid.  Use orderByKey() instead.');if(t==="$priority")throw new Error('orderByChild: "$priority" is invalid.  Use orderByPriority() instead.');if(t==="$value")throw new Error('orderByChild: "$value" is invalid.  Use orderByValue() instead.');return Xv("orderByChild","path",t),new Z3(t)}class eO extends cc{constructor(){super(...arguments),this.type="orderByKey"}_apply(e){ME(e,"orderByKey");const n=YT(e._queryParams,_r);return Am(n),new jr(e._repo,e._path,n,!0)}}function Uf(){return new eO}class tO extends cc{constructor(e,n){super(),this._value=e,this._key=n,this.type="equalTo"}_apply(e){if(Oa("equalTo",this._value,e._path,!1),e._queryParams.hasStart())throw new Error("equalTo: Starting point was already set (by another call to startAt/startAfter or equalTo).");if(e._queryParams.hasEnd())throw new Error("equalTo: Ending point was already set (by another call to endAt/endBefore or equalTo).");return new X3(this._value,this._key)._apply(new J3(this._value,this._key)._apply(e))}}function nO(t,e){return new tO(t,e)}function qi(t,...e){let n=Fn(t);for(const i of e)n=i._apply(n);return n}z4(oo);e3(oo);/**
  * @license
  * Copyright 2020 Google LLC
  *
