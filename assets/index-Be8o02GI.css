@@ -2207,15 +2207,35 @@ body.dark-theme .loading {
 
 /* =========================================================
    TRANSPARENT HEADER & PERFECT SIGNAL SIZING & BATTERY FILL
-   (media_1794465777242_b9ccc799.png)
+   (media_1794468059591_7c3ebe43.jpg)
    ========================================================= */
+
+/* Lock screen full-bleed wallpaper behind transparent header */
+.lock-shell,
+.shell:has(.lock),
+body:has(.lock) .shell,
+.shell:has(.onb),
+.shell:has(.onb-host) {
+  background: #1c325c url(./ios7-wallpaper.jpg) center center / cover no-repeat !important;
+}
+
+.lock-shell .lock,
+.shell:has(.lock) .lock,
+body:has(.lock) .lock,
+.shell:has(.onb) .onb-host {
+  background: transparent !important;
+  background-color: transparent !important;
+}
 
 /* Transparent Status Bar */
 .sb-status,
 body:not(.dark-theme) .sb-status,
 body.dark-theme .sb-status,
-.dark-theme .sb-status {
+.dark-theme .sb-status,
+.lock-shell .sb-status,
+.shell:has(.lock) .sb-status {
   background: transparent !important;
+  background-color: transparent !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   border: none !important;
@@ -2223,11 +2243,72 @@ body.dark-theme .sb-status,
   box-shadow: none !important;
 }
 
+/* Transparent Navigation Bar */
+.navbar,
+body:not(.dark-theme) .navbar,
+body.dark-theme .navbar,
+.dark-theme .navbar {
+  background: transparent !important;
+  backdrop-filter: blur(25px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: none !important;
+}
+
+.dark-theme .navbar {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
 /* On lock screen (blue wallpaper), status bar text is always crisp white */
+.lock-shell .sb-status,
+.lock-shell .sb-status *,
+.shell:has(.lock) .sb-status,
+.shell:has(.lock) .sb-status *,
+.shell:has(.onb) .sb-status,
+.shell:has(.onb) .sb-status *,
+body:has(.lock) .sb-status,
+body:has(.lock) .sb-status *,
 .lock .sb-status,
 .lock .sb-status * {
   color: #ffffff !important;
   fill: #ffffff !important;
+  stroke: #ffffff !important;
+  text-shadow: none !important;
+}
+
+.lock-shell .sb-status svg,
+.lock-shell .sb-status svg *,
+.shell:has(.lock) .sb-status svg,
+.shell:has(.lock) .sb-status svg *,
+.shell:has(.onb) .sb-status svg,
+.shell:has(.onb) .sb-status svg *,
+body:has(.lock) .sb-status svg,
+body:has(.lock) .sb-status svg * {
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+.lock-shell .sb-bars i,
+.shell:has(.lock) .sb-bars i,
+.shell:has(.onb) .sb-bars i,
+body:has(.lock) .sb-bars i {
+  background: #ffffff !important;
+}
+
+.lock-shell .sb-battery rect,
+.shell:has(.lock) .sb-battery rect,
+.shell:has(.onb) .sb-battery rect,
+body:has(.lock) .sb-battery rect {
+  stroke: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+.lock-shell .sb-battery rect[fill="none"],
+.shell:has(.lock) .sb-battery rect[fill="none"],
+.shell:has(.onb) .sb-battery rect[fill="none"],
+body:has(.lock) .sb-battery rect[fill="none"] {
+  fill: none !important;
+  stroke: #ffffff !important;
 }
 
 .sb-status .sb-left {
