@@ -527,18 +527,88 @@ body, html, #app {
   font-size: 17px !important;
   letter-spacing: -0.4px !important;
 }
-.nav-blood {
-  background: rgba(0, 122, 255, 0.08) !important;
-  border: 1px solid rgba(0, 122, 255, 0.25) !important;
-  border-radius: 20px !important;
-  padding: 3px 12px !important;
-  box-shadow: none !important;
-}
-.nav-blood .coins, .nav-blood {
-  color: #007aff !important;
-  font-weight: 600 !important;
-  font-size: 14px !important;
+.nav-blood,
+.navbar .nav-blood {
+  justify-self: center !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 60px !important;
+  width: auto !important;
+  max-width: fit-content !important;
+  height: 28px !important;
+  line-height: 28px !important;
+  padding: 0 12px !important;
+  margin: 0 auto !important;
+  border-radius: 9999px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 0.5px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+  color: #ffffff !important;
   text-shadow: none !important;
+  cursor: default !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease !important;
+}
+
+@media (max-width: 640px) {
+  .nav-blood,
+  .navbar .nav-blood {
+    grid-area: tabs !important;
+    width: auto !important;
+    max-width: fit-content !important;
+    margin: 0 auto !important;
+    height: 28px !important;
+    line-height: 28px !important;
+    border-radius: 9999px !important;
+  }
+}
+
+.nav-blood .coins {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 3px !important;
+  color: inherit !important;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.2px !important;
+  font-feature-settings: "tnum" 1 !important;
+  text-shadow: none !important;
+}
+
+.nav-blood .coins-num {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.2px !important;
+  font-feature-settings: "tnum" 1 !important;
+  line-height: 1 !important;
+  color: inherit !important;
+}
+
+.ios-blood-svg-wrap {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+}
+
+.ios-blood-svg-wrap svg {
+  display: block !important;
+  filter: drop-shadow(0 1px 2px rgba(255, 69, 58, 0.4)) !important;
+}
+
+.nav-blood .blood-ico {
+  width: 12px !important;
+  height: 15px !important;
+  vertical-align: -2px !important;
+  margin-right: 3px !important;
+  filter: drop-shadow(0 1px 2px rgba(255, 69, 58, 0.4)) !important;
 }
 .barbtn {
   background: transparent !important;
@@ -961,10 +1031,19 @@ body.dark-theme, .dark-theme #app {
 .dark-theme .nav-logo {
   color: #ffffff !important;
 }
-.dark-theme .nav-blood {
-  background: rgba(10, 132, 255, 0.15) !important;
-  border-color: rgba(10, 132, 255, 0.3) !important;
-  color: #0a84ff !important;
+.dark-theme .nav-blood,
+.dark-theme .navbar .nav-blood,
+html.dark-theme .navbar .nav-blood {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 0.5px solid rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+.dark-theme .nav-blood .coins,
+.dark-theme .nav-blood .coins-num,
+html.dark-theme .navbar .nav-blood .coins,
+html.dark-theme .navbar .nav-blood .coins-num {
+  color: #ffffff !important;
 }
 .dark-theme .barbtn {
   color: #0a84ff !important;
@@ -2809,9 +2888,16 @@ html:not(.dark-theme) .navbar .barbtn {
 
 body:not(.dark-theme) .navbar .nav-blood,
 html:not(.dark-theme) .navbar .nav-blood {
-  background: rgba(0, 122, 255, 0.08) !important;
-  border: 1px solid rgba(0, 122, 255, 0.25) !important;
-  color: #007aff !important;
+  background: rgba(0, 0, 0, 0.05) !important;
+  border: 0.5px solid rgba(0, 0, 0, 0.12) !important;
+  color: #000000 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+body:not(.dark-theme) .navbar .nav-blood .coins,
+body:not(.dark-theme) .navbar .nav-blood .coins-num,
+html:not(.dark-theme) .navbar .nav-blood .coins,
+html:not(.dark-theme) .navbar .nav-blood .coins-num {
+  color: #000000 !important;
 }
 
 
@@ -2884,9 +2970,18 @@ html.dark-theme .navbar .barbtn {
 body.dark-theme .navbar .nav-blood,
 .dark-theme .navbar .nav-blood,
 html.dark-theme .navbar .nav-blood {
-  background: rgba(10, 132, 255, 0.15) !important;
-  border: 1px solid rgba(10, 132, 255, 0.3) !important;
-  color: #0a84ff !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 0.5px solid rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+body.dark-theme .navbar .nav-blood .coins,
+body.dark-theme .navbar .nav-blood .coins-num,
+.dark-theme .navbar .nav-blood .coins,
+.dark-theme .navbar .nav-blood .coins-num,
+html.dark-theme .navbar .nav-blood .coins,
+html.dark-theme .navbar .nav-blood .coins-num {
+  color: #ffffff !important;
 }
 
 
