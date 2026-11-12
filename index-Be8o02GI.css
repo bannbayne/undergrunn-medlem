@@ -35,13 +35,7 @@ body, html, #app {
   text-shadow: none !important;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
 }
-.sb-bars i {
-  width: 5px !important;
-  height: 5px !important;
-  border-radius: 50% !important;
-  background: #000000 !important;
-  box-shadow: none !important;
-}
+/* removed old dot style */
 .sb-status svg path, .sb-status svg rect {
   fill: #000000 !important;
 }
@@ -2135,3 +2129,26 @@ body.dark-theme .sb-status,
   vertical-align: middle !important;
   fill: currentColor !important;
 }
+
+
+/* Upward Stair-Step Signal Bars */
+.sb-bars {
+  display: inline-flex !important;
+  align-items: flex-end !important;
+  gap: 1.5px !important;
+  height: 12px !important;
+  margin-right: 4px !important;
+}
+
+.sb-bars i {
+  width: 3px !important;
+  border-radius: 0.8px !important;
+  background: currentColor !important;
+  display: inline-block !important;
+  box-shadow: none !important;
+}
+
+.sb-bars i.bar-1, .sb-bars i:nth-child(1) { height: 3px !important; }
+.sb-bars i.bar-2, .sb-bars i:nth-child(2) { height: 5.5px !important; }
+.sb-bars i.bar-3, .sb-bars i:nth-child(3) { height: 8px !important; }
+.sb-bars i.bar-4, .sb-bars i:nth-child(4) { height: 11px !important; }
