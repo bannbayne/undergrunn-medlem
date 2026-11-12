@@ -1603,3 +1603,186 @@ body, #app, button, input, select, textarea, div, span, p, h1, h2, h3, h4, stron
 .dark-theme .muted {
   color: #a2a8b5 !important;
 }
+
+
+/* iOS 7 Dark Onboarding / Avatar Selection */
+.onb {
+  width: 100% !important;
+  min-height: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 20px 10px !important;
+  box-sizing: border-box !important;
+}
+
+.onb-card {
+  width: min(400px, 100%) !important;
+  display: grid !important;
+  gap: 14px !important;
+  padding: 22px 20px !important;
+  background: rgba(28, 28, 30, 0.94) !important;
+  backdrop-filter: blur(30px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(190%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  box-sizing: border-box !important;
+}
+
+.onb-head {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.onb-head h1 {
+  margin: 0 !important;
+  font: 700 21px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif !important;
+  color: #ffffff !important;
+  text-shadow: none !important;
+  letter-spacing: -0.4px !important;
+}
+
+.onb-sub {
+  margin: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  color: rgba(235, 235, 245, 0.65) !important;
+}
+
+.onb-gender {
+  display: flex !important;
+  background: rgba(120, 120, 128, 0.24) !important;
+  border-radius: 9px !important;
+  padding: 2px !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  gap: 2px !important;
+}
+
+.onb-gender .tab {
+  flex: 1 1 50% !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 7px !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-align: center !important;
+}
+
+.onb-gender .tab.on {
+  background: #0a84ff !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  box-shadow: 0 3px 10px rgba(10, 132, 255, 0.45) !important;
+}
+
+.onb-stage {
+  display: grid !important;
+  place-items: center !important;
+  padding: 16px 0 !important;
+  background: radial-gradient(circle at 50% 55%, rgba(255, 255, 255, 0.08) 0%, rgba(18, 18, 22, 0.85) 65%, rgba(10, 10, 12, 0.95) 100%), #141416 !important;
+  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+  border-radius: 16px !important;
+  box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.6) !important;
+}
+
+.onb-avatar {
+  width: 192px !important;
+  height: 330px !important;
+  image-rendering: pixelated !important;
+}
+
+.onb-tools {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.onb-tools .btn {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: #ffffff !important;
+  border-radius: 10px !important;
+  font-weight: 500 !important;
+  font-size: 15px !important;
+  padding: 8px 16px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.onb-tools .btn:hover {
+  background: rgba(255, 255, 255, 0.18) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+}
+
+.onb-tools .btn:active {
+  transform: scale(0.96) !important;
+  background: rgba(255, 255, 255, 0.25) !important;
+}
+
+.onb-dice {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  padding: 8px 22px !important;
+}
+
+.onb-next {
+  width: 100% !important;
+  min-height: 48px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.2px !important;
+  background: #0a84ff !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(10, 132, 255, 0.4) !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  margin-top: 4px !important;
+}
+
+.onb-next:hover {
+  filter: brightness(1.1) !important;
+}
+
+.onb-next:active {
+  transform: scale(0.98) !important;
+  filter: brightness(0.95) !important;
+}
+
+.onb-next[disabled] {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+.onb-steps span {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.25) !important;
+  border: none !important;
+}
+
+.onb-steps span.on {
+  background: #0a84ff !important;
+  box-shadow: 0 0 8px rgba(10, 132, 255, 0.6) !important;
+}
+
+@media (max-width: 760px) {
+  .onb-card {
+    padding: 16px 14px !important;
+    gap: 10px !important;
+  }
+  .onb-avatar {
+    width: 160px !important;
+    height: 275px !important;
+  }
+}
