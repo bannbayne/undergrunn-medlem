@@ -2203,3 +2203,89 @@ body.dark-theme .loading {
   color: #ffffff !important;
   text-shadow: none !important;
 }
+
+
+/* =========================================================
+   TRANSPARENT HEADER & PERFECT SIGNAL SIZING & BATTERY FILL
+   (media_1794465777242_b9ccc799.png)
+   ========================================================= */
+
+/* Transparent Status Bar */
+.sb-status,
+body:not(.dark-theme) .sb-status,
+body.dark-theme .sb-status,
+.dark-theme .sb-status {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+/* On lock screen (blue wallpaper), status bar text is always crisp white */
+.lock .sb-status,
+.lock .sb-status * {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+.sb-status .sb-left {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.sb-carrier {
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  margin-right: 4px !important;
+  letter-spacing: -0.2px !important;
+  display: inline-block !important;
+}
+
+/* Signal bars same height as capital M (~8.8px) */
+.sb-bars {
+  display: inline-flex !important;
+  align-items: flex-end !important;
+  gap: 1.5px !important;
+  height: 9px !important;
+  margin-right: 3px !important;
+  vertical-align: middle !important;
+}
+
+.sb-bars i {
+  width: 2.5px !important;
+  border-radius: 0.5px !important;
+  background: currentColor !important;
+  display: inline-block !important;
+  box-shadow: none !important;
+}
+
+.sb-bars i.bar-1, .sb-bars i:nth-child(1) { height: 2.2px !important; }
+.sb-bars i.bar-2, .sb-bars i:nth-child(2) { height: 4.4px !important; }
+.sb-bars i.bar-3, .sb-bars i:nth-child(3) { height: 6.6px !important; }
+.sb-bars i.bar-4, .sb-bars i:nth-child(4) { height: 8.8px !important; }
+
+/* Wifi icon aligned with M */
+.sb-wifi {
+  width: 12px !important;
+  height: 9px !important;
+  vertical-align: middle !important;
+  display: inline-block !important;
+  fill: currentColor !important;
+}
+
+/* Battery icon fill */
+.sb-battery {
+  width: 22px !important;
+  height: 10px !important;
+  vertical-align: middle !important;
+  display: inline-block !important;
+  fill: currentColor !important;
+}
+
+.sb-battery .sb-batt-fill {
+  transition: width 0.3s ease !important;
+}
