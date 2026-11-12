@@ -1549,7 +1549,7 @@ body, #app, button, input, select, textarea, div, span, p, h1, h2, h3, h4, stron
   background: #007aff !important;
   color: #ffffff !important;
   font-weight: 600 !important;
-  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.35) !important;
+  box-shadow: none !important;
 }
 
 .rt-win .drop-buttons .drop-yes:active {
@@ -1711,12 +1711,14 @@ body, #app, button, input, select, textarea, div, span, p, h1, h2, h3, h4, stron
 }
 
 .onb-next:hover {
-  filter: brightness(1.1) !important;
+  background: #0071eb !important;
+  filter: none !important;
 }
 
 .onb-next:active {
   transform: scale(0.98) !important;
-  filter: brightness(0.95) !important;
+  background: #0062cc !important;
+  filter: none !important;
 }
 
 .onb-next[disabled] {
@@ -1767,7 +1769,7 @@ body:not(.dark-theme) .onb-gender .tab.on,
   background: #007aff !important;
   color: #ffffff !important;
   font-weight: 600 !important;
-  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.35) !important;
+  box-shadow: none !important;
 }
 
 body:not(.dark-theme) .onb-stage,
@@ -1799,7 +1801,7 @@ body:not(.dark-theme) .onb-next,
 .onb-next {
   background: #007aff !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.35) !important;
+  box-shadow: none !important;
 }
 
 body:not(.dark-theme) .onb-steps span,
@@ -1811,7 +1813,7 @@ body:not(.dark-theme) .onb-steps span,
 body:not(.dark-theme) .onb-steps span.on,
 .onb-steps span.on {
   background: #007aff !important;
-  box-shadow: 0 0 6px rgba(0, 122, 255, 0.5) !important;
+  box-shadow: none !important;
 }
 
 /* --- DARK THEME (iOS 7 Dark Frosted Glass) --- */
@@ -1848,10 +1850,10 @@ body.dark-theme .onb-gender .tab,
 
 body.dark-theme .onb-gender .tab.on,
 .dark-theme .onb-gender .tab.on {
-  background: #0a84ff !important;
+  background: #007aff !important;
   color: #ffffff !important;
   font-weight: 600 !important;
-  box-shadow: 0 3px 10px rgba(10, 132, 255, 0.45) !important;
+  box-shadow: none !important;
 }
 
 body.dark-theme .onb-stage,
@@ -1882,9 +1884,9 @@ body.dark-theme .onb-tools .btn:active,
 
 body.dark-theme .onb-next,
 .dark-theme .onb-next {
-  background: #0a84ff !important;
+  background: #007aff !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 16px rgba(10, 132, 255, 0.4) !important;
+  box-shadow: none !important;
 }
 
 body.dark-theme .onb-steps span,
@@ -1895,8 +1897,8 @@ body.dark-theme .onb-steps span,
 
 body.dark-theme .onb-steps span.on,
 .dark-theme .onb-steps span.on {
-  background: #0a84ff !important;
-  box-shadow: 0 0 8px rgba(10, 132, 255, 0.6) !important;
+  background: #007aff !important;
+  box-shadow: none !important;
 }
 
 @media (max-width: 760px) {
@@ -2472,4 +2474,68 @@ html.dark-theme .navbar .nav-blood {
 
 .sb-battery .sb-batt-fill {
   transition: width 0.3s ease !important;
+}
+
+
+/* =========================================================
+   NO GLOWY BUTTONS - NORMAL FLAT CLEAN COLORS
+   (media_1794469598219_a0a54c25.jpg)
+   ========================================================= */
+.onb-next,
+.onb-next:hover,
+.onb-next:active,
+.onb-gender .tab,
+.onb-gender .tab.on,
+.onb-gender .tab.on:hover,
+.onb-gender .tab.on:active,
+.onb-tools .btn,
+.onb-tools .btn:hover,
+.onb-tools .btn:active,
+.btn,
+.btn:hover,
+.btn:active,
+.btn.primary,
+.btn.primary:hover,
+.btn.primary:active,
+.btn.danger,
+.btn.danger:hover,
+.btn.danger:active,
+.drop-yes,
+.drop-no,
+button,
+button:hover,
+button:active {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+.onb-gender .tab.on,
+body:not(.dark-theme) .onb-gender .tab.on,
+body.dark-theme .onb-gender .tab.on {
+  background: #007aff !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.onb-next,
+body:not(.dark-theme) .onb-next,
+body.dark-theme .onb-next {
+  background: #007aff !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.onb-next:hover,
+.onb-gender .tab.on:hover {
+  background: #0071eb !important;
+  filter: none !important;
+}
+
+.onb-next:active,
+.onb-gender .tab.on:active {
+  background: #0062cc !important;
+  filter: none !important;
 }
