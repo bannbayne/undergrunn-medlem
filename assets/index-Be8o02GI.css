@@ -6028,3 +6028,176 @@ body.dark-theme #macBar .mac-bar-title {
   border-radius: 8px !important;
   font-size: 14px !important;
 }
+
+/* =========================================================
+   Trade window (Bytt med …) – dark OS X layout
+   ========================================================= */
+.trade-win {
+  width: min(100%, 468px) !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+}
+.trade-body {
+  gap: 10px !important;
+  padding: 0 0 12px !important;
+}
+.trade-body > .trade-head { margin-bottom: 2px !important; }
+.trade-sec {
+  margin: 0 12px !important;
+  padding: 10px 12px 12px !important;
+  gap: 8px !important;
+  background: #1c1c1e !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: 10px !important;
+}
+.trade-win .trade-label {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 22px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.6px !important;
+  flex-wrap: nowrap !important;
+}
+.trade-label .ok:empty { display: none !important; }
+.trade-label .ok {
+  padding: 2px 8px !important;
+  border-radius: 999px !important;
+  background: rgba(48, 209, 88, 0.16) !important;
+  color: #30d158 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+/* x1 / x5 / x25 / Alle: one segmented control */
+.trade-step {
+  gap: 0 !important;
+  padding: 2px !important;
+  border-radius: 7px !important;
+  background: #2c2c2e !important;
+}
+.trade-step .chip {
+  min-width: 38px !important;
+  padding: 3px 9px !important;
+  border: none !important;
+  border-radius: 5px !important;
+  background: transparent !important;
+  color: #c7c7cc !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+.trade-step .chip.on {
+  background: #0a84ff !important;
+  color: #ffffff !important;
+}
+.trade-grid {
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)) !important;
+  gap: 6px !important;
+}
+.trade-grid.small { min-height: 48px !important; }
+/* the empty-offer text gets the whole row instead of one narrow cell */
+.trade-grid > .hint {
+  grid-column: 1 / -1 !important;
+  align-self: center !important;
+  color: #8e8e93 !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+}
+.trade-grid > .trade-cell + .hint { grid-column: 2 / -1 !important; padding-left: 4px !important; }
+.trade-cell {
+  padding: 4px !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 9px !important;
+  background: #2c2c2e !important;
+  box-shadow: none !important;
+  transition: background 0.12s, border-color 0.12s, transform 0.08s !important;
+}
+.trade-cell:not(:disabled):not(.empty):hover {
+  background: #3a3a3c !important;
+  border-color: rgba(10, 132, 255, 0.7) !important;
+}
+.trade-cell:not(:disabled):not(.empty):active { transform: scale(0.94) !important; }
+.trade-cell.empty {
+  background: transparent !important;
+  border: 1px dashed rgba(255, 255, 255, 0.16) !important;
+}
+.trade-cell.dim { opacity: 0.35 !important; }
+.trade-cell.blood {
+  background: rgba(255, 69, 58, 0.16) !important;
+  border-color: rgba(255, 69, 58, 0.38) !important;
+}
+.trade-cell .qty {
+  right: 4px !important;
+  bottom: 2px !important;
+  font-size: 11px !important;
+  color: #ffd60a !important;
+}
+.trade-body > .hint {
+  margin: 0 14px !important;
+  color: #8e8e93 !important;
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+}
+.trade-body > .hint.warn { color: #ff9f0a !important; }
+.trade-actions {
+  margin: 2px 12px 0 !important;
+  gap: 8px !important;
+  flex-wrap: nowrap !important;
+}
+.trade-actions .btn {
+  flex: 1 1 0 !important;
+  height: 36px !important;
+  padding: 0 12px !important;
+  border: none !important;
+  border-radius: 8px !important;
+  background: #2c2c2e !important;
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  box-shadow: none !important;
+}
+.trade-actions .btn.primary { background: #0a84ff !important; }
+.trade-actions .btn.danger { background: rgba(255, 69, 58, 0.16) !important; color: #ff453a !important; }
+.trade-actions .btn:disabled { opacity: 0.45 !important; }
+.trade-actions .btn:not(:disabled):active { filter: brightness(0.85) !important; }
+.trade-actions .hint { flex: 1 1 0 !important; text-align: center !important; color: #8e8e93 !important; font-size: 13px !important; }
+/* chat row at the bottom */
+.trade-win .tc-box {
+  position: sticky !important;
+  bottom: 0 !important;
+  margin: 0 !important;
+  padding: 8px 12px 10px !important;
+  background: #000000 !important;
+  border-top: 1px solid #1c1c1e !important;
+  border-radius: 0 0 6px 6px !important;
+}
+.trade-win .tc-bar { gap: 8px !important; }
+.trade-win .tc-input {
+  height: 34px !important;
+  padding: 0 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+  background: #1c1c1e !important;
+  color: #ffffff !important;
+  font-size: 14px !important;
+}
+.trade-win .tc-input::placeholder { color: #8e8e93 !important; }
+.trade-win .tc-input:focus { border-color: #0a84ff !important; box-shadow: none !important; }
+.trade-win .tc-send {
+  height: 34px !important;
+  padding: 0 16px !important;
+  border: none !important;
+  border-radius: 8px !important;
+  background: #2c2c2e !important;
+  color: #0a84ff !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
