@@ -8,6 +8,29 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <script>
+      /* Gjor det vanskeligere a snoke i koden (stopper ikke alt: nettleserens
+         egen meny og direkte nedlasting av filene kan ikke blokkeres). */
+      (function () {
+        try {
+          // Suppress the browser's native right-click menu (View source / Inspect).
+          // The game's own right-click item actions still run, so they keep working.
+          document.addEventListener("contextmenu", function (e) { e.preventDefault(); }, true);
+          // Block the common DevTools / view-source keyboard shortcuts.
+          document.addEventListener("keydown", function (e) {
+            var k = (e.key || "").toLowerCase();
+            var mod = e.ctrlKey || e.metaKey;
+            if (e.key === "F12" ||
+                (mod && e.shiftKey && (k === "i" || k === "j" || k === "c")) ||
+                (mod && k === "u")) {
+              e.preventDefault();
+              e.stopPropagation();
+              return false;
+            }
+          }, true);
+        } catch (_e) {}
+      })();
+    </script>
+    <script>
       try {
         if (localStorage.getItem("6ix-theme") === "light") {
           document.documentElement.classList.remove("dark-theme");
@@ -37,8 +60,8 @@
         });
       }
     </script>
-    <script type="module" crossorigin src="./assets/index-offline.js?v=1794581934633"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-Be8o02GI.css?v=1794581934633">
+    <script type="module" crossorigin src="./assets/index-offline.js?v=1794582483194"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Be8o02GI.css?v=1794582483194">
       <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(regs) {
