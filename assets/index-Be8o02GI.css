@@ -5440,3 +5440,18 @@ body:has(.lock),
 }
 
 
+
+
+/* Mobile #macTop: show Innstillinger instead of Rediger, Vindu, Hjelp, and Lyd icon */
+#macTop .mac-mob-settings {
+  display: none;
+}
+@media (max-width: 768px) {
+  #macTop .mac-desk-only,
+  #macTop #macVolI {
+    display: none !important;
+  }
+  #macTop .mac-mob-settings {
+    display: inline-flex !important;
+  }
+}

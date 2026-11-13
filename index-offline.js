@@ -6018,21 +6018,39 @@ function NU(t){
           o("div",{class:"msSec"},"KONTO"),
           o("div",{class:"msGrp"},
             o("div",{class:"msCell"},"Logget inn som",o("span",{class:"tag"},pName)),
-            o("button",{type:"button",class:"msCell",onclick:()=>{w.classList.add("hidden");t.onNav("customize");}},"Endre utseende",o("span",{class:"chev"},"›"))
+            o("button",{type:"button",class:"msCell",onclick:()=>{w.classList.add("hidden");t.onNav("customize");}},r?"Endre utseende (Garderobe)":"Change appearance",o("span",{class:"chev"},"›"))
+          ),
+          o("div",{class:"msSec"},r?"REDIGER & VINDU":"EDIT & WINDOW"),
+          o("div",{class:"msGrp"},
+            o("button",{type:"button",class:"msCell",onclick:()=>{w.classList.add("hidden");t.onNav("room");}},r?"Rom (Medlem)":"Room (Medlem)",o("span",{class:"chev"},"›")),
+            o("button",{type:"button",class:"msCell",onclick:()=>{
+              w.classList.add("hidden");
+              const decBtn=document.querySelector(".decorate-btn");
+              if(decBtn)decBtn.click();
+              else{
+                t.onNav("room");
+                setTimeout(()=>{const b=document.querySelector(".decorate-btn");if(b)b.click();},250);
+              }
+            }},r?"Innred rom":"Furnish room",o("span",{class:"chev"},"›")),
+            o("button",{type:"button",class:"msCell",onclick:()=>{w.classList.add("hidden");window.dispatchEvent(new CustomEvent("toggle-friends"));}},r?"Venner og søk":"Friends & search",o("span",{class:"chev"},"›")),
+            o("button",{type:"button",class:"msCell",onclick:()=>{w.classList.add("hidden");toggleFull();}},document.fullscreenElement?(r?"Avslutt fullskjerm":"Exit Fullscreen"):(r?"Fullskjerm":"Fullscreen"),o("span",{class:"chev"},"›")),
+            ...t.isMod?[o("button",{type:"button",class:"msCell",onclick:()=>{w.classList.add("hidden");t.onNav("mod");}},"🛡 Moderator",o("span",{class:"chev"},"›"))]:[],
+            ...t.isAdmin?[o("button",{type:"button",class:"msCell",onclick:()=>{w.classList.add("hidden");t.onNav("admin");}},r?"🛠 Adminpanel":"🛠 Admin",o("span",{class:"chev"},"›"))]:[]
           ),
           o("div",{class:"msSec"},"UTSEENDE"),
           o("div",{class:"msGrp"},
             o("label",{class:"msCell"},"Mørkt tema",mkSw(isDark,()=>{toggleTheme();})),
             o("button",{type:"button",class:"msCell",onclick:()=>openMacWin("bg")},"Skrivebordsbakgrunn",o("span",{class:"chev"},"›"))
           ),
-          o("div",{class:"msSec"},"HJELP I SPILLET"),
-          o("div",{class:"msGrp"},
-            o("label",{class:"msCell"},"Autoplant",mkSw(ef(),val=>AU(val)))
-          ),
           o("div",{class:"msSec"},"LYD"),
           o("div",{class:"msGrp"},
             o("label",{class:"msCell"},"Musikk",mkSw(!Yi(),val=>{SC(!val);syncVolIcon();})),
             o("label",{class:"msCell"},"Lydeffekter",mkSw(!Zh(),val=>{TC(!val);syncVolIcon();}))
+          ),
+          o("div",{class:"msSec"},r?"HJELP":"HELP"),
+          o("div",{class:"msGrp"},
+            o("button",{type:"button",class:"msCell",onclick:()=>openMacWin("help")},r?"Medlem-hjelp":"Medlem Help",o("span",{class:"chev"},"›")),
+            o("label",{class:"msCell"},"Autoplant",mkSw(ef(),val=>AU(val)))
           ),
           o("div",{class:"msGrp",style:{marginTop:"18px"}},
             o("button",{type:"button",class:"msCell msRed",onclick:()=>{w.classList.add("hidden");t.onLogout();}},"Logg ut")
@@ -6198,8 +6216,19 @@ function NU(t){
     openPop(c, pop);
   }},listIconSpan.firstElementChild || listIconSpan);
 
+  editBtn.classList.add("mac-desk-only");
+  winBtn.classList.add("mac-desk-only");
+  helpBtn.classList.add("mac-desk-only");
+  volSpan.classList.add("mac-desk-only");
+  const settingsMobBtn = o("span",{class:"mi mac-mob-settings",onclick:ev=>{
+    ev.stopPropagation();
+    l();
+    openMacWin("set");
+  }},r?"Innstillinger":"Settings");
+
   const macTop = o("div",{id:"macTop",class:"mac-top"},
     medlemBtn,
+    settingsMobBtn,
     editBtn,
     winBtn,
     helpBtn,
