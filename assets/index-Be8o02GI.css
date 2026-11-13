@@ -5455,3 +5455,64 @@ body:has(.lock),
     display: inline-flex !important;
   }
 }
+
+
+/* Constrain all popups strictly within the game frame (.stage) and fix stash-head / cd-popup layout */
+.stash-win {
+  width: min(660px, calc(100% - 16px)) !important;
+  height: min(460px, calc(100% - 16px)) !important;
+  max-width: calc(100% - 16px) !important;
+  max-height: calc(100% - 16px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+.stash-head .stash-count {
+  position: absolute !important;
+  right: 10px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  flex: none !important;
+  font-size: 11px !important;
+  color: #8e8e93 !important;
+  pointer-events: none !important;
+}
+.stash-win > .stash-bar {
+  padding: 6px 12px 0 !important;
+}
+.stash-win > .stash-wear {
+  padding: 0 12px !important;
+}
+.stash-win > .stash-panes {
+  padding: 0 12px !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+}
+.stash-win > .stash-foot {
+  padding: 2px 12px 10px !important;
+  margin: 0 !important;
+}
+
+/* Direct children inside .cd-popup (such as CD spiller, confirm-pop, poster-editor, st-order) */
+.cd-popup > :not(.cd-head):not(.sixty-body):not(.landlord-body):not(.mixer-body):not(.wk-body):not(.pet-body):not(.furni-buy-body) {
+  margin-left: 12px !important;
+  margin-right: 12px !important;
+}
+.cd-popup > .cd-bar {
+  width: calc(100% - 24px) !important;
+}
+.cd-popup > :last-child:not(.cd-head):not(.sixty-body):not(.landlord-body):not(.mixer-body):not(.wk-body):not(.pet-body):not(.furni-buy-body) {
+  margin-bottom: 12px !important;
+}
+
+/* Keep stage-hosted popups within .stage height */
+.stage > .cd-popup,
+.stage > .cd-popup.sixty-shop,
+.stage > .cd-popup.landlord {
+  max-width: calc(100% - 12px) !important;
+  max-height: calc(100% - 46px) !important;
+}
+.stage > .door-popup {
+  max-width: calc(100% - 12px) !important;
+  max-height: calc(100% - 16px) !important;
+}

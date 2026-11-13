@@ -5657,7 +5657,58 @@ function __cleanMacTitle(txt){
   else if(s==="Værkstedsbord")s="Arbeidsbenk";
   else if(s==="Fælles gjemmested")s="Felles gjemmested";
   else if(s==="Opslagstavle")s="Oppslagstavle";
+  else if(s==="Storage")s="Lagring";
   return s;
+}
+const __MAC_BOX_SEL=".cd-popup, .drop-win, .rt-win, .door-popup, .stash-win, .jb-win, .wb-card, .nb-card, .trade-win, .case-card, .friends-panel, .chat-window, .pw-win, .pw-card";
+function __getGameFrameRect(el){
+  const st=(el&&el.closest&&el.closest(".stage"))||document.querySelector(".stage");
+  if(st&&st.offsetWidth>0&&st.offsetHeight>0){
+    return st.getBoundingClientRect();
+  }
+  const bar=document.getElementById("macBar")||document.getElementById("macTop");
+  const topEdge=bar?Math.max(44,Math.round(bar.getBoundingClientRect().bottom)):44;
+  return {
+    left:0,
+    top:topEdge,
+    right:window.innerWidth,
+    bottom:window.innerHeight,
+    width:window.innerWidth,
+    height:Math.max(100,window.innerHeight-topEdge)
+  };
+}
+function __clampPopupToStage(box){
+  if(!box||!box.isConnected)return;
+  const fRect=__getGameFrameRect(box);
+  const pad=6;
+  const maxW=Math.max(180,Math.floor(fRect.width-pad*2));
+  const maxH=Math.max(120,Math.floor(fRect.height-pad*2));
+  box.style.maxWidth=maxW+"px";
+  box.style.maxHeight=maxH+"px";
+  const bRect=box.getBoundingClientRect();
+  if(!bRect.width&&!bRect.height)return;
+  const dx=Number(box.dataset.macDx||0);
+  const dy=Number(box.dataset.macDy||0);
+  let ddx=0,ddy=0;
+  if(bRect.right>fRect.right-pad){
+    ddx=(fRect.right-pad)-bRect.right;
+  }
+  if(bRect.left+ddx<fRect.left+pad){
+    ddx=(fRect.left+pad)-bRect.left;
+  }
+  if(bRect.bottom>fRect.bottom-pad){
+    ddy=(fRect.bottom-pad)-bRect.bottom;
+  }
+  if(bRect.top+ddy<fRect.top+pad){
+    ddy=(fRect.top+pad)-bRect.top;
+  }
+  if(ddx!==0||ddy!==0){
+    const nx=Math.round(dx+ddx);
+    const ny=Math.round(dy+ddy);
+    box.dataset.macDx=String(nx);
+    box.dataset.macDy=String(ny);
+    box.style.translate=`${nx}px ${ny}px`;
+  }
 }
 function __macUpgradeHead(head){
   if(!head||head.nodeType!==1||!__isMacHead(head.className||""))return;
@@ -5713,7 +5764,7 @@ function __macUpgradeHead(head){
     let dr=null;
     head.addEventListener("pointerdown",ev=>{
       if(ev.button||ev.target.closest(".tl, button, input, a"))return;
-      const box=head.closest(".cd-popup, .drop-win, .door-popup, .stash-win, .jb-win, .wb-card, .nb-card, .trade-win, .case-card, .friends-panel, .chat-window, .pw-win, .pw-card")||head.parentElement;
+      const box=head.closest(__MAC_BOX_SEL)||head.parentElement;
       if(!box)return;
       const dx0=Number(box.dataset.macDx||0);
       const dy0=Number(box.dataset.macDy||0);
@@ -5727,11 +5778,16 @@ function __macUpgradeHead(head){
       dr.box.dataset.macDx=String(nx);
       dr.box.dataset.macDy=String(ny);
       dr.box.style.translate=`${Math.round(nx)}px ${Math.round(ny)}px`;
+      __clampPopupToStage(dr.box);
     });
-    const endDrag=()=>{dr=null;};
+    const endDrag=()=>{if(dr){__clampPopupToStage(dr.box);dr=null;}};
     head.addEventListener("pointerup",endDrag);
     head.addEventListener("pointercancel",endDrag);
   }
+  requestAnimationFrame(()=>{
+    const box=head.closest(__MAC_BOX_SEL)||head.parentElement;
+    if(box)__clampPopupToStage(box);
+  });
 }
 if(typeof window!=="undefined"&&typeof MutationObserver!=="undefined"){
   const __mo=new MutationObserver(muts=>{
@@ -5748,6 +5804,9 @@ if(typeof window!=="undefined"&&typeof MutationObserver!=="undefined"){
   });
   if(document.body)__mo.observe(document.body,{childList:!0,subtree:!0});
   else window.addEventListener("DOMContentLoaded",()=>__mo.observe(document.body,{childList:!0,subtree:!0}));
+  window.addEventListener("resize",()=>{
+    document.querySelectorAll(__MAC_BOX_SEL).forEach(__clampPopupToStage);
+  });
 }
 function o(t,e={},...n){const i=document.createElement(t);for(const[s,a]of Object.entries(e))a==null||a===!1||(s==="class"?i.className=String(a):s==="style"&&typeof a=="object"?Object.assign(i.style,a):s.startsWith("on")&&typeof a=="function"?i.addEventListener(s.slice(2).toLowerCase(),a):s in i?i[s]=a:i.setAttribute(s,String(a)));for(const s of n)s==null||s===!1||i.append(typeof s=="string"?document.createTextNode(s):s);if(__isMacHead(i.className||""))__macUpgradeHead(i);return i}function qm(t){const e=t.getContext("2d");if(!e)return t;const{width:n,height:i}=t,s=e.getImageData(0,0,n,i).data;let a=n,l=i,c=-1,d=-1;for(let p=0;p<i;p++)for(let m=0;m<n;m++)s[(p*n+m)*4+3]>8&&(m<a&&(a=m),m>c&&(c=m),p<l&&(l=p),p>d&&(d=p));if(c<0)return t;const u=document.createElement("canvas");return u.width=c-a+1,u.height=d-l+1,u.getContext("2d").drawImage(t,a,l,u.width,u.height,0,0,u.width,u.height),u}async function nx(t){try{return await navigator.clipboard.writeText(t),!0}catch{}try{const e=document.createElement("textarea");e.value=t,e.style.cssText="position:fixed;left:-999px;top:0",document.body.append(e),e.select();const n=document.execCommand("copy");return e.remove(),n}catch{return!1}}function pe(t,e="ok"){const n=o("div",{class:`toast ${e}`},t);document.body.append(n),setTimeout(()=>n.classList.add("show"),10),setTimeout(()=>{n.classList.remove("show"),setTimeout(()=>n.remove(),300)},2800)}const oF=[{id:"starter",ore:3e3,once:"ducky_starter"},{id:"color",ore:2e3,once:"ducky_color"},{id:"fx",ore:2e3,once:"ducky_fx"},{id:"rename",ore:1e3},{id:"keys",ore:wM.ore},{id:"key1",ore:_M.ore},{id:"vape",ore:2e3}],ix=t=>oF.find(e=>e.id===t),rF=t=>`ducky_${t}`,LM=["shake","wave","rainbow","pulse","big"],by=["#ff3b3b","#ff9f1c","#ffe14d","#46d369","#33c7ff","#6a7bff","#c45bff","#ff6bd6","#ffffff","#111111"],yy=t=>typeof t=="string"&&/^#[0-9a-fA-F]{6}$/.test(t),aF=t=>typeof t=="string"&&LM.includes(t);function sx(t){const e=parseInt(t.slice(1),16),n=e>>16&255,i=e>>8&255,s=e&255;return .299*n+.587*i+.114*s>=70}const ox=/^[A-Za-z0-9_.-]{3,16}$/,BM=t=>`${(t/100).toLocaleString("da-DK",{minimumFractionDigits:t%100?2:0})} kr`,lF=6e4,cF=2e4,jM=["S","M","L","XL"],FM=[{id:"a",name:"6 mafia",hint:"The landlord, 6ixty and bagmand."},{id:"b",name:"trykker bands",hint:"6ixty with the blood going up."},{id:"me",name:"custom",hint:"Your character on a blank shirt."}],dF=t=>FM.some(e=>e.id===t),sa=(t,e,n,i)=>{const s=typeof t=="string"?t.replace(/[\u0000-\u001f\u007f<>]/g,"").replace(/\s+/g," ").trim():"";if(s.length<e)throw new Error(`Fill in ${i}.`);if(s.length>n)throw new Error(`${i[0].toUpperCase()}${i.slice(1)} is too long.`);return s};function uF(t){const e=t&&typeof t=="object"?t:{};if(!dF(e.design))throw new Error("Pick a design.");const n=String(e.size??"");if(!jM.includes(n))throw new Error("Pick a size.");const i=sa(e.zip,3,10,"your postcode");if(!/^[A-Za-z0-9 -]{3,10}$/.test(i))throw new Error("That postcode doesn't look right.");const s=sa(e.email,5,100,"your email");if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s))throw new Error("That email doesn't look right.");const a=sa(e.phone,6,20,"your phone number");if(!/^\+?[0-9 ()-]{6,20}$/.test(a)||a.replace(/\D/g,"").length<6)throw new Error("That phone number doesn't look right.");return{design:e.design,name:sa(e.name,3,60,"your full name"),email:s,phone:a,street:sa(e.street,4,80,"your street and number"),zip:i,city:sa(e.city,2,50,"your city"),country:sa(e.country,2,40,"your country"),size:n}}const fl=1500,rx=751,hF=1010,vy=3.37*2,im=2,UM=26,HM=44,WM=t=>new Promise((e,n)=>{const i=new Image;i.onload=()=>e(i),i.onerror=()=>n(new Error("no "+t)),i.src=t}),fF={a:Ge("tshirt/design-a.png"),b:Ge("tshirt/design-b.png")},mF=Ge("tshirt/blank.png");async function pF(t){try{const e=(await wt(le(ce,`tshirtDesigns/${t}`))).val();return typeof e=="string"&&e.startsWith("data:image/")?e:null}catch{return null}}async function ax(t){return await pF(t)??fF[t]}async function gF(t,e){if(!/^image\/(png|jpeg|webp)$/.test(e.type))throw new Error("Use a PNG, JPG or WebP picture.");const n=await WM(URL.createObjectURL(e)),i=Math.min(1,1e3/Math.max(n.naturalWidth,n.naturalHeight)),s=document.createElement("canvas");s.width=Math.round(n.naturalWidth*i),s.height=Math.round(n.naturalHeight*i),s.getContext("2d").drawImage(n,0,0,s.width,s.height);let l=s.toDataURL("image/png");if(l.length>11e5&&(l=s.toDataURL("image/webp",.92)),l.length>115e4)throw new Error("That picture is too big even after shrinking it. Try a smaller one.");await gn(le(ce,`tshirtDesigns/${t}`),l)}const bF=t=>zn(le(ce,`tshirtDesigns/${t}`));function YM(t){const e=t.getContext("2d").getImageData(0,0,t.width,t.height).data;let n=t.width,i=t.height,s=-1,a=-1;for(let l=0;l<t.height;l++)for(let c=0;c<t.width;c++)e[(l*t.width+c)*4+3]>8&&(n=Math.min(n,c),s=Math.max(s,c),i=Math.min(i,l),a=Math.max(a,l));return s<0?null:{x0:n,y0:i,x1:s,y1:a}}function KM(t,e,n,i,s){const a=Math.max(1,s/12),l=x=>`${Math.max(6,Math.round(x))}px Verdana, 'Apple Color Emoji', sans-serif`,c=document.createElement("canvas"),d=c.getContext("2d",{willReadFrequently:!0}),u=s/a;d.font=l(u);const p=s*14.5/a,m=Math.min(Math.ceil(d.measureText(e).width)+2,Math.ceil(p)+2),b=Math.ceil(u*1.5);c.width=m,c.height=b,d.font=l(u),d.textBaseline="alphabetic",d.textAlign="center",d.fillStyle="#d01f2b",d.fillText(e,m/2,Math.round(u*1.1),Math.max(1,m-2));const v=d.getImageData(0,0,m,b);for(let x=3;x<v.data.length;x+=4)v.data[x]=v.data[x]>110?255:0;d.putImageData(v,0,0),t.save(),t.imageSmoothingEnabled=!1,t.drawImage(c,n-m*a/2,i-Math.round(u*1.1)*a,m*a,b*a),t.restore()}async function yF(t,e,n=900){const i=document.createElement("canvas");i.width=i.height=n;const s=i.getContext("2d");s.imageSmoothingEnabled=!1,s.drawImage(await WM(mF),0,0,n,n);const a=await sn({figure:t,dir:im,headDir:im,actions:["std"],gesture:"std",frame:0}),l=a?YM(a):null;if(a&&l){const c=vy*n/fl,d=rx*n/fl-(l.x0+l.x1+1)/2*c,u=hF*n/fl-(l.y1+1)*c;s.drawImage(a,d,u,a.width*c,a.height*c),e&&KM(s,e,rx*n/fl,u+l.y0*c-UM*n/fl,HM*n/fl)}return i}async function vF(t,e="",n=14){const i=await sn({figure:t,dir:im,headDir:im,actions:["std"],gesture:"std",frame:0});if(!i)return null;const s=YM(i);if(!s)return null;const a=(s.x1-s.x0+1)*n,l=(s.y1-s.y0+1)*n,c=Math.round(HM*(n/vy)),d=Math.round(UM*(n/vy)),u=e?Math.round(c+d):0,p=e?Math.min(c*14.5,c*e.length*.7):0,m=document.createElement("canvas");m.width=Math.ceil(Math.max(a,p)+n*4),m.height=Math.ceil(u+l+n*2);const b=m.getContext("2d");return b.imageSmoothingEnabled=!1,b.drawImage(i,s.x0,s.y0,s.x1-s.x0+1,s.y1-s.y0+1,(m.width-a)/2,u,a,l),e&&KM(b,e,m.width/2,u-d,c),m}const lx=t=>t==="a"?"6 mafia":t==="b"?"trykker bands":t==="me"?"custom":"?";function kF(t,e,n){const i=e.profile,s=o("div",{class:"sixty-body"}),a=o("div",{class:"cd-popup sixty-shop tshirt-shop",role:"dialog","aria-label":"T-shirt shop"},o("div",{class:"cd-head"},o("strong",{},"T-shirt shop"),o("button",{class:"btn small",onclick:()=>E()},"✕")),s);t.append(a);let l=!1,c=!1;const d={design:"",name:"",email:"",phone:"",street:"",zip:"",city:"",country:"Danmark",size:""},u={};async function p(){const[w,T,S]=await Promise.all([ax("a"),ax("b"),yF(i.figure,i.name).then(P=>P.toDataURL("image/png"),()=>"")]);u.a=w,u.b=T,u.me=S,N()}const m=(w,T,S,P)=>o("label",{class:"tshirt-field"},o("span",{class:"hint"},T),o("input",{type:"text",class:"tshirt-input",maxLength:80,placeholder:S,value:d[w],autocomplete:P,oninput:A=>{d[w]=A.target.value}}));async function b(){if(c)return;let w;try{w=uF(d)}catch(T){pe(T.message,"err");return}c=!0,N();try{const T=await nk("tshirt",{order:w});at(i,"buy",`went to pay for a t-shirt (design ${w.design}) at the event`),window.location.assign(T);return}catch(T){pe(T.message||"The shop is stuck.","err")}c=!1,N()}function v(w){const T=o("input",{type:"file",accept:"image/png,image/jpeg,image/webp"});T.onchange=()=>{var P;const S=(P=T.files)==null?void 0:P[0];S&&(c=!0,N(),gF(w,S).then(()=>(pe("The picture is changed."),p()),A=>pe(A.message,"err")).finally(()=>{c=!1,N()}))},T.click()}function x(w){const T=d.design===w.id,S=u[w.id],P=i.isAdmin&&w.id!=="me";return o("div",{class:"tshirt-card"+(T?" on":""),onclick:()=>{d.design=w.id,N()}},S?o("img",{class:"tshirt-pic",src:S,alt:w.name}):o("div",{class:"tshirt-pic loading"},"…"),o("div",{class:"sixty-name"},w.name),o("div",{class:"hint"},w.hint),P?o("div",{class:"tshirt-admin"},o("button",{class:"btn small",disabled:c,onclick:A=>{A.stopPropagation(),v(w.id)}},"Change picture"),o("button",{class:"btn small",disabled:c,onclick:A=>{A.stopPropagation(),c=!0,N(),bF(w.id).then(()=>(pe("The original picture is back."),p()),D=>pe(D.message,"err")).finally(()=>{c=!1,N()})}},"Original")):null)}function N(){if(l)return;const w=o("div",{class:"tshirt-sizes"},...jM.map(T=>o("button",{class:"btn small"+(d.size===T?" primary":""),type:"button",disabled:c,onclick:()=>{d.size=T,N()}},T)));s.replaceChildren(o("div",{class:"hint"},"Pre-order the real t-shirt, for players at the event only. It is posted to you. Pick a design:"),o("div",{class:"tshirt-cards"},...FM.map(x)),o("div",{class:"tshirt-form"},m("name","Full name","Your name, as on the parcel","name"),m("email","Email","you@example.com","email"),m("phone","Phone number","+45 12 34 56 78","tel"),m("street","Street and number","Street 12, 2. th","address-line1"),o("div",{class:"tshirt-row"},m("zip","Postcode","2100","postal-code"),m("city","City","København","address-level2")),m("country","Country","Danmark","country-name"),o("div",{class:"hint"},r?"Størrelse":"Size"),w),o("button",{class:"btn small primary tshirt-go",disabled:c,onclick:()=>void b()},c?"…":`Pre-order · ${BM(cF)}`),o("div",{class:"hint"},"You pay on a payment page. Your name, address, email and phone number are only used to send the shirt and to reach you about it."))}N(),p();function E(){l||(l=!0,a.remove(),n())}return{close:E}}function GM(t,e){const n=o("div",{class:"sixty-body"},o("div",{class:"hint"},"Loading…")),i=o("div",{class:"cd-popup sixty-shop tshirt-shop",role:"dialog","aria-label":"T-shirt orders"},o("div",{class:"cd-head"},o("strong",{},"📦 T-shirt orders"),o("button",{class:"btn small",onclick:()=>l()},"✕")),n);t.append(i);let s=!1;async function a(c){const d=await vF(c.figure??"",c.playerName??"");if(!d){pe("Couldn't draw that character.","err");return}const u=document.createElement("a");u.href=d.toDataURL("image/png"),u.download=`tshirt-${c.playerName??"player"}-${c.id.slice(-6)}.png`,u.click()}wt(le(ce,"tshirtOrders")).then(c=>{if(s)return;const d=Object.entries(c.val()??{}).map(([m,b])=>({id:m,...b})).sort((m,b)=>m.at-b.at),u=d.filter(m=>m.status==="paid"||m.status==="ordered"),p=["player;design;name;email;phone;street;zip;city;country;size;status"].concat(d.map(m=>[m.playerName??"",lx(m.design),m.name,m.email??"",m.phone??"",m.street,m.zip,m.city,m.country,m.size,m.status].map(b=>String(b).replace(/;/g,",")).join(";"))).join(`
 `);n.replaceChildren(o("div",{class:"hint"},`${u.length} paid, ${d.length-u.length} not paid (yet).`),o("button",{class:"btn small primary",onclick:()=>{var m;(m=navigator.clipboard)==null||m.writeText(p).then(()=>pe("Copied: paste it into a spreadsheet."),()=>pe(r?"Kunne ikke kopiere.":"Couldn't copy.","err"))}},"Copy as a table"),...d.map(m=>o("div",{class:"ducky-card"+(m.status==="paid"||m.status==="ordered"?"":" owned")},o("div",{class:"sixty-name"},`${m.name} · ${m.size}`),o("div",{class:"hint"},`${lx(m.design)} · ${m.email??"no email"} · ${m.phone??"no phone"}`),o("div",{class:"hint"},`${m.street}, ${m.zip} ${m.city}, ${m.country}`),o("div",{class:"hint"},`${m.playerName??"?"} · ${m.status}`),m.design==="me"&&m.figure?o("button",{class:"btn small",onclick:()=>void a(m)},"Save the character to print"):null)),...d.length?[]:[o("div",{class:"hint"},"No orders yet.")])},c=>{s||n.replaceChildren(o("div",{class:"hint"},c.message||"Couldn't load the orders."))});function l(){s||(s=!0,i.remove(),e())}return{close:l}}const jc=t=>t.replace(/[.#$\[\]/]/g,"_"),cx=t=>{const e=new Set(t.map(s=>s.title.toLowerCase())),n=new Set,i=[];for(const s of CM){const a=s.file??`album-${s.id}.mp3`;n.has(a)||e.has(s.title.toLowerCase())||(n.add(a),i.push({key:`cd:${s.id}`,title:s.title,by:s.by,src:()=>Promise.resolve(Ge(`music/${a}`))}))}return i};function ky(t,e={}){let n={},i=!1;const s=new Audio;s.preload="auto";let a=[],l=-1;const c=o("div",{class:"fin-text"}),d=o("div",{class:"fin-board"}),u=o("div",{class:"fin-songs"}),p=o("div",{class:"fin-now"},"Pick a song"),m=o("input",{type:"range",min:"0",max:"1000",value:"0",class:"fin-seek","aria-label":"Seek",oninput:L=>{Number.isFinite(s.duration)&&(s.currentTime=Number(L.target.value)/1e3*s.duration)}}),b=o("button",{class:"btn small",type:"button",onclick:()=>{s.paused?s.play().catch(()=>{}):s.pause()}},"▶"),v=o("button",{class:"btn small",type:"button",onclick:()=>void E(-1)},"⏮"),x=o("button",{class:"btn small",type:"button",onclick:()=>void E(1)},"⏭");s.addEventListener("play",()=>{b.textContent="⏸"}),s.addEventListener("pause",()=>{b.textContent="▶"}),s.addEventListener("ended",()=>void E(1)),s.addEventListener("timeupdate",()=>{Number.isFinite(s.duration)&&s.duration>0&&(m.value=String(Math.round(s.currentTime/s.duration*1e3)))});async function N(L){const U=a[L];if(U){l=L,p.textContent=`${U.title} · ${U.by}`;try{s.src=await U.src(),await s.play()}catch(F){p.textContent=`${U.title}: ${F.message||"couldn't play"}`}T()}}async function E(L){a.length&&await N((l+L+a.length)%a.length)}const w=()=>{const L=n.hidden??{},U=(n.songs??[]).filter(F=>!L[jc(`sc:${F.id}`)]).map(F=>({key:`sc:${F.id}`,title:F.title,by:F.by,src:()=>zd(F.id,F.pieces,F.mime)}));return[...cx(n.songs??[]).filter(F=>!L[jc(F.key)]),...U]};function T(){const L=n.hidden??{},U=[...cx(n.songs??[]),...(n.songs??[]).map(K=>({key:`sc:${K.id}`,title:K.title,by:K.by,src:()=>zd(K.id,K.pieces,K.mime)}))],F=e.staff?U:U.filter(K=>!L[jc(K.key)]);a=w(),u.replaceChildren(...F.map(K=>{const M=!!L[jc(K.key)],re=a.findIndex(xe=>xe.key===K.key);return o("div",{class:"fin-song"+(re===l&&re>=0?" on":"")+(M?" hidden-song":"")},o("button",{class:"fin-play",type:"button",disabled:M,onclick:()=>void N(re)},"▶"),o("div",{class:"fin-song-main"},o("b",{},K.title),o("small",{},K.by)),e.staff?o("button",{class:"btn small",type:"button",onclick:()=>void gn(le(ce,`public/finale/hidden/${jc(K.key)}`),M?null:!0).catch(xe=>pe(xe.message,"err"))},M?"Show":"Hide"):null)}))}function S(){const L=(n.text??"").trim();c.replaceChildren(...L?L.split(/\n+/).map(F=>o("p",{},F)):[]);const U=n.board??[];d.replaceChildren(...U.length?Array.from({length:20},(F,K)=>U[K]??null).map((F,K)=>F?o("div",{class:"fin-row"},o("span",{class:"fin-rank"},String(K+1)),o("span",{class:"fin-name"},F.name),o("span",{class:"fin-blood"},o("img",{src:It,alt:""}),F.blood.toLocaleString("da-DK"))):o("div",{class:"fin-row empty"},o("span",{class:"fin-rank"},String(K+1)),o("span",{class:"fin-name"},"—"),o("span",{}))):[o("div",{class:"hint"},"—")]),T()}const P=Ze(le(ce,"public/finale"),L=>{n=L.val()??{},i||S()},()=>S());let A=null,D=null;if(e.staff){const L=o("textarea",{class:"fin-area",rows:"5",placeholder:"The text on the page (a blank line starts a new paragraph)"});L.value="";let U=!1;const F=Ze(le(ce,"public/finale/text"),K=>{U||(U=!0,L.value=typeof K.val()=="string"?String(K.val()):"")},()=>{});A=o("div",{class:"fin-editor"},o("div",{class:"hint"},"Only you see this box. The songs below can be hidden or shown (hidden songs are gone from the page and its player)."),L,o("div",{class:"fin-erow"},o("button",{class:"btn small primary",type:"button",onclick:()=>void gn(le(ce,"public/finale/text"),L.value.slice(0,2e3)).then(()=>pe("The text is saved."),K=>pe(K.message,"err"))},"Save the text"),o("button",{class:"btn small",type:"button",onclick:()=>void Se(e.staff,"eventFinaleRefresh").then(K=>pe(`Made again: ${K.board} on the leaderboard, ${K.songs} songs.`),K=>pe(K.message,"err"))},"Make the leaderboard and song list again"),o("button",{class:"btn small",type:"button",onclick:()=>{D||(D=GM(C,()=>{D=null}))}},"📦 T-shirt orders"))),A._off=F}const C=o("div",{class:"fin"},o("header",{class:"navbar fin-navbar"},o("div",{class:"nav-left"},e.onBack?o("button",{class:"btn small",type:"button",onclick:()=>e.onBack()},"‹ Back"):o("span",{})),o("div",{class:"nav-logo"},"Medlem"),o("span",{})),o("div",{class:"fin-scroll"},o("div",{class:"fin-inner"},c,A,o("div",{class:"fin-cols"},o("div",{class:"group-title"},"Mest blod"),d,o("div",{class:"group-title"},"Musik"),o("div",{class:"fin-player"},o("div",{class:"fin-bar"},v,b,x,p),m,u)))));return t.append(C),S(),()=>{var L;i=!0,P(),D==null||D.close(),(L=A==null?void 0:A._off)==null||L.call(A),s.pause(),s.removeAttribute("src"),C.remove()}}let qM=new Map;const ch=new Set;let ml=null;function VM(t){return ch.add(t),ml||(ml=Ze(le(ce,"wantedRooms"),e=>{const n=e.val()??{};qM=new Map(Object.entries(n).filter(([,i])=>typeof(i==null?void 0:i.uid)=="string"&&typeof i.until=="number").map(([i,s])=>[i,{uid:s.uid,until:s.until}])),ch.forEach(i=>i())},()=>{})),()=>{ch.delete(t),ch.size||(ml==null||ml(),ml=null)}}const wy=t=>{const e=qM.get(t);return!!e&&e.until>He()};let _y=0;const wF=()=>_y;function _F(t){return Ze(le(ce,`wantedUsers/${t}`),e=>{const n=e.val();_y=n&&typeof n.until=="number"?n.until:0},()=>{_y=0})}const xF=(t,e)=>Se(t,"bountyShow",{room:e}),dx=t=>Se(t,"bagmandHitTick"),SF=t=>new Promise(e=>window.setTimeout(e,t));async function TF(t){var s,a;const e=new URL(window.location.href),n=e.searchParams.get("pay");if(n&&(e.searchParams.delete("pay"),window.history.replaceState(null,"",e.pathname+e.search+e.hash)),n==="cancel"){pe(r?"Betalingen ble annulleret. Der ble ikke trukket noe.":"The payment was cancelled. Nothing was charged.");return}const i=n==="success"?20:1;for(let l=0;l<i;l++){try{const c=await VB(t);for(const d of c.items)pe(r?`Du fik cd'en ${((s=ct(d))==null?void 0:s.name)??"CD"}!`:`You got the ${((a=ct(d))==null?void 0:a.name)??"CD"} CD!`);for(const d of c.ducky){if(d.stuck){pe(r?`${d.stuck} Betalingen din er trygg: si fra til admin, så blir det ordnet.`:`${d.stuck} Your payment is safe: tell the admin and you get it sorted.`,"err");continue}d.product==="starter"?pe(r?"Startpakken er i dine lommer, og 50 blod.":"The starter package is in your pockets, and 50 blood."):d.product==="keys"?pe(`${wM.qty} box keys are in your pockets.`):d.product==="key1"?pe(`${_M.qty} box key is in your pocket.`):d.product==="vape"?pe(r?"Puff-baren er i din lomme.":"The puff-bar is in your pocket."):d.product==="color"&&d.color?(t.nameColor=d.color,window.dispatchEvent(new CustomEvent("name-color",{detail:d.color})),pe(r?"Dit navn har en farge nu.":"Your name has a colour now.")):d.product==="fx"?pe(r?"Chat-verktøyet er dit: tryk på ✨ ved siden av chatten.":"The chat tool is yours: tap the ✨ next to the chat bar."):d.product==="rename"&&d.name&&(pe(r?`Du hedder ${d.name} nu. Siden genindlæses.`:`You are ${d.name} now. The page reloads.`),window.setTimeout(()=>window.location.reload(),1600))}if(c.tshirt&&pe("Your t-shirt is pre-ordered. It will be posted to the address you gave."),c.items.length||c.ducky.length||c.tshirt){window.dispatchEvent(new Event("pocket-changed"));return}if(c.full){pe(r?"Lommene dine er fulle. Gjør plass, så kommer CD-en din neste gang du logger inn.":"Your pockets are full. Make room, and your CD arrives next time you log in.","err");return}}catch{}l<i-1&&await SF(2e3)}n==="success"&&pe(r?"Betalingen din er på vei. Den kommer så snart den er mottatt (Logg inn igjen hvis det tar lang tid).":"Your payment is on its way. It arrives as soon as it has been received (log in again if it takes long).")}function _getRaffleState(uid){
@@ -5938,23 +5997,39 @@ function NU(t){
         dr={x:ev.clientX,y:ev.clientY,l:w.offsetLeft,t:w.offsetTop};
         try{barEl.setPointerCapture(ev.pointerId);}catch(_e){}
       });
-      barEl.addEventListener("pointermove",ev=>{
-        if(!dr)return;
-        const nl=Math.max(-cfg.w+80,Math.min(window.innerWidth-80,dr.l+ev.clientX-dr.x));
-        const nt=Math.max(22,Math.min(window.innerHeight-40,dr.t+ev.clientY-dr.y));
+      const clampFw=()=>{
+        const fRect=__getGameFrameRect(w);
+        const pad=6;
+        w.style.maxWidth=Math.max(200,Math.floor(fRect.width-pad*2))+"px";
+        w.style.maxHeight=Math.max(140,Math.floor(fRect.height-pad*2))+"px";
+        const ww=w.offsetWidth||cfg.w;
+        const wh=w.offsetHeight||260;
+        const curL=parseFloat(w.style.left)||fRect.left+pad;
+        const curT=parseFloat(w.style.top)||fRect.top+pad;
+        const nl=Math.max(fRect.left+pad,Math.min(fRect.right-pad-ww,curL));
+        const nt=Math.max(fRect.top+pad,Math.min(fRect.bottom-pad-wh,curT));
         w.style.left=`${Math.round(nl)}px`;
         w.style.top=`${Math.round(nt)}px`;
+      };
+      w._clampFw=clampFw;
+      barEl.addEventListener("pointermove",ev=>{
+        if(!dr)return;
+        w.style.left=`${Math.round(dr.l+ev.clientX-dr.x)}px`;
+        w.style.top=`${Math.round(dr.t+ev.clientY-dr.y)}px`;
+        clampFw();
       });
-      const endDr=()=>{dr=null;};
+      const endDr=()=>{if(dr){clampFw();dr=null;}};
       barEl.addEventListener("pointerup",endDr);
       barEl.addEventListener("pointercancel",endDr);
+      const fRect0=__getGameFrameRect(w);
       const count=document.querySelectorAll(".macfw").length-1;
-      w.style.left=`${Math.round(Math.max(10,Math.min(window.innerWidth-cfg.w-10,(window.innerWidth-cfg.w)/2+count*26)))}px`;
-      w.style.top=`${Math.round(64+count*26)}px`;
+      w.style.left=`${Math.round(fRect0.left+(fRect0.width-cfg.w)/2+count*24)}px`;
+      w.style.top=`${Math.round(fRect0.top+20+count*24)}px`;
     }
     w.classList.remove("hidden");
     w.style.zIndex=String(++macZ);
     renderMacWin(id);
+    if(w._clampFw)requestAnimationFrame(w._clampFw);
   }
   function renderMacWin(id){
     const w=document.getElementById("mw_"+id);
