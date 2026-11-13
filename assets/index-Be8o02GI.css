@@ -4650,7 +4650,7 @@ body.dark-theme .cw-send:disabled {
 }
 #macBar {
   height: 22px;
-  background: linear-gradient(180deg, #3a3a3c 0%, #2c2c2e 100%);
+  background: linear-gradient(180deg, #323234 0%, #252527 100%) !important;
   border-bottom: 1px solid #141416;
   display: flex;
   align-items: center;
@@ -4767,3 +4767,128 @@ body.dark-theme .cw-send:disabled {
     font-size: 12px;
   }
 }
+
+/* iOS 7 Starry Lock Screen Login Layout */
+.lock-shell > .sb-status {
+  display: none !important;
+}
+.lock {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 24px 16px !important;
+  background: #0d0c14 url(/assets/stjerner.jpg) center center / cover no-repeat !important;
+  overflow-y: auto !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+}
+.lock-clock {
+  margin: 0 0 26px !important;
+  text-align: center !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35) !important;
+}
+.lock-clock .t {
+  font-size: 92px !important;
+  font-weight: 100 !important;
+  line-height: 1 !important;
+  letter-spacing: -1px !important;
+  color: #ffffff !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+}
+.lock-clock .d {
+  font-size: 19px !important;
+  font-weight: 400 !important;
+  margin-top: 8px !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35) !important;
+}
+.lock .auth {
+  width: min(360px, 100%) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+.lock .logo {
+  font-size: 32px !important;
+  font-weight: 400 !important;
+  color: #ffffff !important;
+  text-align: center !important;
+  margin: 0 0 6px !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35) !important;
+}
+.lock .auth .tagline {
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  color: rgba(255, 255, 255, 0.92) !important;
+  text-align: center !important;
+  margin: 0 0 22px !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35) !important;
+}
+.lock .group {
+  background: #ffffff !important;
+  border: none !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  margin: 0 0 12px !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25) !important;
+}
+.lock .group > .cellrow {
+  display: flex !important;
+  align-items: center !important;
+  min-height: 46px !important;
+  padding: 8px 14px !important;
+  border-top: 1px solid #e5e5ea !important;
+  background: #ffffff !important;
+  gap: 8px !important;
+}
+.lock .group > .cellrow:first-child {
+  border-top: none !important;
+}
+.lock .cellrow .lbl {
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  color: #000000 !important;
+  min-width: 112px !important;
+  flex: none !important;
+}
+.lock .cellrow input {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  font-size: 16px !important;
+  color: #000000 !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  padding: 2px 0 !important;
+}
+.lock .cellrow input::placeholder {
+  color: #c7c7cc !important;
+  font-weight: 400 !important;
+}
+.lock .auth-form .btn.primary {
+  width: 100% !important;
+  min-height: 46px !important;
+  border-radius: 10px !important;
+  border: none !important;
+  background: #007aff !important;
+  color: #ffffff !important;
+  font-size: 17px !important;
+  font-weight: 500 !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  margin-top: 2px !important;
+}
+.lock .auth-form .btn.primary:active {
+  background: #0062cc !important;
+}
+.lock .auth-form .link {
+  color: #4da3ff !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  text-align: center !important;
+  margin-top: 12px !important;
+  text-shadow: none !important;
+}
+
