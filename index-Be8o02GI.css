@@ -4891,4 +4891,552 @@ body.dark-theme .cw-send:disabled {
   margin-top: 12px !important;
   text-shadow: none !important;
 }
+html.lock-screen-active,
+body.lock-screen-active,
+html:has(.lock-shell),
+body:has(.lock-shell),
+html:has(.lock),
+body:has(.lock),
+.lock {
+  background: #0d0c14 var(--macbg, url(/assets/stjerner.jpg)) center center / cover no-repeat !important;
+}
+
+/* =========================================================
+   OS X Dark Popup Windows (Image 1 & Image 8 Style)
+   ========================================================= */
+.macfw,
+.cd-popup,
+.sixty-shop,
+.cd-popup.landlord,
+.dark-theme .cd-popup,
+.dark-theme .sixty-shop,
+.dark-theme .cd-popup.landlord,
+.drop-win,
+.rt-win,
+.door-popup,
+.dark-theme .door-popup,
+.stash-win,
+.jb-win,
+.wb-card,
+.nb-card,
+.trade-win,
+.case-card,
+.friends-panel,
+.dark-theme .friends-panel,
+.chat-window {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-radius: 6px !important;
+  border: none !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.16), 0 18px 50px rgba(0, 0, 0, 0.72) !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+}
+
+.cd-popup.sixty-shop {
+  width: min(360px, calc(100vw - 16px)) !important;
+  max-height: calc(100dvh - 64px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.cd-popup.landlord {
+  width: min(350px, calc(100vw - 16px)) !important;
+  max-height: calc(100dvh - 64px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Unified macOS Title Bar (.mwBar / .mac-win-bar) */
+.mwBar,
+.mac-win-bar,
+.cd-head,
+.cd-popup.landlord .cd-head,
+.dark-theme .cd-head,
+.dark-theme .cd-popup.landlord .cd-head,
+.drop-win .drop-title,
+.rt-win .drop-title,
+.door-head,
+.dark-theme .door-head,
+.stash-head,
+.jb-bar,
+.wb-head,
+.nb-head,
+.trade-head,
+.case-nav,
+.fp-head,
+.cw-head,
+.pw-head-bar {
+  flex: none !important;
+  height: 22px !important;
+  min-height: 22px !important;
+  max-height: 22px !important;
+  padding: 0 12px !important;
+  margin: 0 !important;
+  background: linear-gradient(180deg, #3a3a3c 0%, #2c2c2e 100%) !important;
+  border-bottom: 1px solid #141416 !important;
+  border-radius: 5px 5px 0 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  font-family: "Lucida Grande", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  color: #c7c7cc !important;
+  text-align: center !important;
+  text-shadow: none !important;
+  letter-spacing: 0 !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  cursor: default !important;
+  touch-action: none !important;
+}
+
+/* Title text inside macOS Title Bar */
+.mwBar strong,
+.mac-win-bar strong,
+.cd-head strong,
+.cd-popup.landlord .cd-head strong,
+.dark-theme .cd-head strong,
+.dark-theme .cd-popup.landlord .cd-head strong,
+.door-head strong,
+.stash-head strong,
+.jb-bar .jb-title,
+.wb-head .wb-wanted,
+.nb-head .nb-title-big,
+.trade-head strong,
+.case-nav .case-title,
+.fp-head strong,
+.cw-head .cw-title,
+.cw-head .cw-title strong,
+.pw-head-bar strong {
+  font-family: "Lucida Grande", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  color: #c7c7cc !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  text-shadow: none !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+}
+
+/* Traffic light dots (.tl) on the left of Title Bar */
+.mwBar .tl,
+.mac-win-bar .tl {
+  position: absolute !important;
+  left: 8px !important;
+  top: 5px !important;
+  display: flex !important;
+  gap: 8px !important;
+  z-index: 3 !important;
+}
+.mwBar .tl i,
+.mac-win-bar .tl i {
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50% !important;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.3) !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font: bold 9px/1 Arial, sans-serif !important;
+  font-style: normal !important;
+  color: transparent !important;
+}
+.mwBar .tl:hover i,
+.mac-win-bar .tl:hover i {
+  color: rgba(0, 0, 0, 0.55) !important;
+}
+.mwBar .tl .r,
+.mac-win-bar .tl .r {
+  background: #fc605c !important;
+}
+.mwBar .tl .y,
+.mac-win-bar .tl .y {
+  background: #fdbc40 !important;
+}
+.mwBar .tl .off,
+.mac-win-bar .tl .off {
+  background: #d0d0d0 !important;
+  cursor: default !important;
+  color: transparent !important;
+}
+
+/* Hide legacy right-side X close buttons in Title Bar */
+.cd-head > button,
+.cd-popup.landlord .cd-head .btn.small,
+.door-head > button,
+.stash-head > button,
+.jb-bar > .jb-barbtn,
+.wb-head > .wb-x,
+.nb-head > .nb-x,
+.trade-head > button,
+.case-nav > button,
+.fp-head > button:last-of-type,
+.cw-head .cw-x,
+.cw-head .cwh-side,
+.pw-head-bar > button:last-of-type,
+.pw-head-bar > .pw-spacer {
+  display: none !important;
+}
+
+/* Keep "Meg" button in Friends header compact on the right */
+.fp-head > button:first-of-type {
+  position: absolute !important;
+  right: 8px !important;
+  top: 2px !important;
+  height: 18px !important;
+  padding: 0 6px !important;
+  font-size: 11px !important;
+  background: transparent !important;
+  border: none !important;
+  color: #0a84ff !important;
+  box-shadow: none !important;
+}
+
+/* Popup Body Styling */
+.sixty-body,
+.cd-popup.landlord .landlord-body,
+.door-body,
+.mixer-body,
+.wk-body,
+.pet-body,
+.furni-buy-body,
+.jb-body,
+.nb-body,
+.wb-list {
+  background: #000000 !important;
+  color: #ffffff !important;
+  padding: 12px 14px 14px !important;
+  overflow-y: auto !important;
+  flex: 1 1 auto !important;
+}
+
+/* Item Rows inside Popups (Snøfreser, bayne, Vending machine, Platespiller, Janikalami) */
+.sixty-row,
+.cd-popup.landlord .ll-row,
+.dark-theme .cd-popup.landlord .ll-row,
+.door-row {
+  background: #1c1c1e !important;
+  border: none !important;
+  border-radius: 9px !important;
+  padding: 10px 12px !important;
+  margin-bottom: 6px !important;
+  box-shadow: none !important;
+}
+
+/* Item Titles: Clean white system font instead of yellow pixel font */
+.sixty-name,
+.cd-popup.landlord .ll-name,
+.dark-theme .cd-popup.landlord .ll-name,
+.raffle-pname,
+.dark-theme .raffle-pname,
+.door-row strong {
+  color: #ffffff !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  text-shadow: none !important;
+  letter-spacing: -0.1px !important;
+}
+
+/* Section Labels: Uppercase grey like Image 1 & Image 8 */
+.sixty-body > .hint.pad,
+.cd-popup.landlord .ll-label,
+.dark-theme .cd-popup.landlord .ll-label,
+.door-section,
+.dark-theme .door-section,
+.fp-label,
+.dark-theme .fp-label,
+.cdp-label,
+.jb-head,
+.trade-label {
+  color: #8e8e93 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-size: 12.5px !important;
+  font-weight: 400 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.2px !important;
+  padding: 2px 2px 4px !important;
+  margin: 8px 0 4px !important;
+  text-shadow: none !important;
+  background: transparent !important;
+}
+
+.cd-popup.landlord .ll-part,
+.dark-theme .cd-popup.landlord .ll-part {
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+}
+
+/* Subtitles / Hints inside Popups */
+.sixty-row .hint,
+.cd-popup .hint,
+.cd-popup.landlord .hint,
+.dark-theme .cd-popup.landlord .hint {
+  color: #8e8e93 !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+  font-weight: 400 !important;
+  text-shadow: none !important;
+}
+
+/* Buttons inside Popups */
+.sixty-row .btn.primary,
+.cd-popup .btn.primary,
+.cd-popup.landlord .btn.primary {
+  background: #007aff !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+.sixty-row .btn.danger,
+.cd-popup .btn.small:not(.primary) {
+  background: #1c1c1e !important;
+  border: 1px solid #3a3a3c !important;
+  color: #0a84ff !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Russisk roulette & Drop ting (.drop-win / .rt-win) */
+.drop-win,
+.rt-win {
+  width: min(340px, 92vw) !important;
+  background: #000000 !important;
+  color: #ffffff !important;
+  padding: 0 0 16px 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+.drop-win .drop-title,
+.rt-win .drop-title {
+  margin-bottom: 8px !important;
+}
+.rt-win .rt-ask,
+.drop-win .drop-item,
+.rt-win .hint,
+.drop-win .hint {
+  color: #ffffff !important;
+  padding: 0 16px !important;
+}
+.rt-win .hint,
+.drop-win .hint {
+  color: #8e8e93 !important;
+}
+.rt-stake,
+.rt-chips,
+.rt-win .drop-buttons,
+.drop-win .drop-buttons {
+  padding: 0 16px !important;
+}
+.rt-stake .btn.small {
+  background: #1c1c1e !important;
+  border: 1px solid #0a84ff !important;
+  color: #0a84ff !important;
+}
+.rt-num {
+  color: #ff453a !important;
+}
+.rt-chip {
+  background: #1c1c1e !important;
+  border: 1px solid #0a84ff !important;
+  color: #0a84ff !important;
+}
+.rt-chip.on {
+  background: #007aff !important;
+  border-color: #007aff !important;
+  color: #ffffff !important;
+}
+.rt-win .drop-buttons .drop-no,
+.drop-win .drop-buttons .drop-no {
+  background: #1c1c1e !important;
+  color: #0a84ff !important;
+  border: 1px solid #2c2c2e !important;
+}
+.rt-win .drop-buttons .drop-yes,
+.drop-win .drop-buttons .drop-yes {
+  background: #007aff !important;
+  color: #ffffff !important;
+}
+
+/* Floating macOS Windows: Bakgrunn (Image 1), Innstillinger & Medlem-hjelp (Image 8) */
+.macfw {
+  position: fixed !important;
+  z-index: 320;
+  display: flex !important;
+  flex-direction: column !important;
+  max-width: calc(100vw - 16px) !important;
+  max-height: calc(100dvh - 48px) !important;
+}
+.macfw.hidden {
+  display: none !important;
+}
+.macfw .mwBody {
+  overflow-y: auto !important;
+  min-height: 0 !important;
+  flex: 1 1 auto !important;
+  background: #000000 !important;
+}
+.fwPad {
+  padding: 14px 14px 16px !important;
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+.fwPad .msSec {
+  margin: 16px 4px 6px !important;
+  font-size: 13px !important;
+  color: #8e8e93 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.2px !important;
+}
+.fwPad .msSec:first-child {
+  margin-top: 2px !important;
+}
+.fwPad .msGrp {
+  border-radius: 10px !important;
+  background: #1c1c1e !important;
+  overflow: hidden !important;
+}
+.fwPad .msCell {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+  min-height: 44px !important;
+  box-sizing: border-box !important;
+  padding: 0 14px !important;
+  border: 0 !important;
+  background: none !important;
+  color: #ffffff !important;
+  font: inherit !important;
+  font-size: 16px !important;
+  text-align: left !important;
+  cursor: pointer !important;
+}
+.fwPad .msCell + .msCell {
+  box-shadow: inset 0 0.5px 0 #3a3a3c !important;
+}
+.fwPad .msCell .chev {
+  margin-left: auto !important;
+  color: #8e8e93 !important;
+  font-size: 20px !important;
+}
+.fwPad .msCell .tag {
+  margin-left: auto !important;
+  font-size: 14px !important;
+  color: #8e8e93 !important;
+}
+.fwPad .msCell.msRed {
+  color: #ff453a !important;
+  justify-content: center !important;
+}
+.msSw {
+  position: relative !important;
+  margin-left: auto !important;
+  width: 51px !important;
+  height: 31px !important;
+  flex: none !important;
+}
+.msSw input {
+  position: absolute !important;
+  opacity: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  cursor: pointer !important;
+  z-index: 1 !important;
+}
+.msSw i {
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: 16px !important;
+  background: #39393d !important;
+  transition: background 0.2s !important;
+}
+.msSw i::after {
+  content: "" !important;
+  position: absolute !important;
+  left: 2px !important;
+  top: 2px !important;
+  width: 27px !important;
+  height: 27px !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35) !important;
+  transition: transform 0.2s !important;
+}
+.msSw input:checked + i {
+  background: #4cd964 !important;
+}
+.msSw input:checked + i::after {
+  transform: translateX(20px) !important;
+}
+.bgGrid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 10px !important;
+}
+.bgGrid button {
+  aspect-ratio: 16 / 10 !important;
+  border: 0 !important;
+  border-radius: 7px !important;
+  background-size: cover !important;
+  background-position: center !important;
+  cursor: pointer !important;
+  box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.18) !important;
+  position: relative !important;
+  padding: 0 0 5px 0 !important;
+  color: #ffffff !important;
+  font: inherit !important;
+  font-size: 12px !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85) !important;
+}
+.bgGrid button.on {
+  box-shadow: 0 0 0 3px #007aff !important;
+}
+.bgGrid button.up {
+  background: #e5e5ea !important;
+  color: #007aff !important;
+  text-shadow: none !important;
+  align-items: center !important;
+  padding-bottom: 0 !important;
+  font-size: 14px !important;
+}
+.bgFoot {
+  font-size: 12px !important;
+  color: #8e8e93 !important;
+  margin: 10px 2px 0 !important;
+  line-height: 1.4 !important;
+}
+.fwPad.help p {
+  margin: 0 0 10px !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+  color: #ffffff !important;
+}
+.fwPad.help p:last-child {
+  margin-bottom: 0 !important;
+}
+.fwPad.help b {
+  font-weight: 700 !important;
+  color: #ffffff !important;
+}
+
 
