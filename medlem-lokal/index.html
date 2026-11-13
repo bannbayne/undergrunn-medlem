@@ -1355,7 +1355,7 @@ let shownBlood=-1;
 function bloodChanged(){persist();}
 function flashBar(){const b=$('#bloodBar');b.classList.remove('flash');void b.offsetWidth;b.classList.add('flash');}
 function hud(){renderQuest();if(player.blood!==shownBlood){shownBlood=player.blood;$('#bloodVal').textContent=player.blood;}$('#cnt').textContent=avs.length;}
-function persist(){if(!player.pw)return;const v={name:player.name,pw:player.pw,t:Date.now(),look:player.baseLook||player.look,blood:player.blood+(player.seat>=0&&RL.state==='waiting'&&RL.seats[player.seat]===player?RL.pot:0),stats,sound:soundOn,session:!loggedOut,quest,knife:hasKnife,mp3:hasMp3,hat:inv.hat,hatOn:inv.hatOn,eskimo:inv.eskimo,aladdin:inv.aladdin,ward:inv.ward||[],fig:inv.fig||[],loot:inv.loot||{},tut:inv.tut||0,job:inv.job||0,gun:inv.gunAt||0,vend:inv.vend||null,snow:inv.snow||null,venner:inv.venner||[],furn:inv.furn||{},stabs30:stabTimes,adminCode:player.adminCode||(save&&save.adminCode)||null,created:player.created||Date.now(),room:roomCfg||(save&&save.room)||null,floor:myFloor.map(i=>({id:i.id,t:i.t,x:i.x,y:i.y})),bag:swagBag?{x:swagBag.x,y:swagBag.y,readyAt:swagBag.readyAt}:(quest===3&&save&&save.bag)||null};save=v;store.set('medlem_v2',v);}
+function persist(){if(!player.pw)return;const v={name:player.name,pw:player.pw,t:Date.now(),look:player.baseLook||player.look,blood:player.blood+(player.seat>=0&&RL.state==='waiting'&&RL.seats[player.seat]===player?RL.pot:0),stats,sound:soundOn,session:!loggedOut,quest,knife:hasKnife,mp3:hasMp3,hat:inv.hat,hatOn:inv.hatOn,eskimo:inv.eskimo,aladdin:inv.aladdin,ward:inv.ward||[],fig:inv.fig||[],loot:inv.loot||{},tut:inv.tut||0,job:inv.job||0,gun:inv.gunAt||0,vend:inv.vend||null,snow:inv.snow||null,venner:inv.venner||[],vReq:inv.vReq||[],vSent:inv.vSent||[],status:inv.status||'',furn:inv.furn||{},stabs30:stabTimes,adminCode:player.adminCode||(save&&save.adminCode)||null,created:player.created||Date.now(),room:roomCfg||(save&&save.room)||null,floor:myFloor.map(i=>({id:i.id,t:i.t,x:i.x,y:i.y})),bag:swagBag?{x:swagBag.x,y:swagBag.y,readyAt:swagBag.readyAt}:(quest===3&&save&&save.bag)||null};save=v;store.set('medlem_v2',v);}
 
 /* ---------- loop ---------- */
 let last=performance.now(),started=false,saveT=0;
@@ -1569,14 +1569,14 @@ $('#rGo').onclick=async()=>{
   regBusy=false;btn.textContent=lbl;btn.disabled=false;
   if(isBanned(n))return err('rErr','Det brukernavnet er utestengt.');
   if(taken)return err('rErr',`«${n}» er allerede tatt av en annen spiller. Velg et annet navn.`);
-  player.name=n;player.pw=pwHash(n,p);player.created=Date.now();player.look={...editLook};player.baseLook=null;player.blood=25;stats={wins:0,losses:0,stabs:0,found:0,stolen:0};quest=0;hasKnife=false;hasMp3=0;inv.hat=0;inv.hatOn=false;inv.eskimo=0;inv.aladdin=0;inv.ward=[];inv.fig=[];inv.furn={};inv.loot={};inv.tut=0;inv.job=0;inv.gunAt=0;inv.vend=null;inv.snow=null;inv.venner=[];myFloor=[];stabTimes={};roomCfg=null;audio.pause();renderMp3Tab();bayne.saidPsst=false;
+  player.name=n;player.pw=pwHash(n,p);player.created=Date.now();player.look={...editLook};player.baseLook=null;player.blood=25;stats={wins:0,losses:0,stabs:0,found:0,stolen:0};quest=0;hasKnife=false;hasMp3=0;inv.hat=0;inv.hatOn=false;inv.eskimo=0;inv.aladdin=0;inv.ward=[];inv.fig=[];inv.furn={};inv.loot={};inv.tut=0;inv.job=0;inv.gunAt=0;inv.vend=null;inv.snow=null;inv.venner=[];inv.vReq=[];inv.vSent=[];inv.status='';myFloor=[];stabTimes={};roomCfg=null;audio.pause();renderMp3Tab();bayne.saidPsst=false;
   save={name:n,pw:player.pw,since:(()=>{const d=new Date();return String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getFullYear()).slice(2);})()};
   enterGame(true);
 };
 $('#lGo').onclick=()=>{
   const n=$('#lName').value.trim(),p=$('#lPw').value;
   if(!save||!save.pw||save.name.toLowerCase()!==n.toLowerCase()||save.pw!==pwHash(n,p)){$('#lPw').value='';return err('lErr','Feil brukernavn eller passord.');}
-  if(!started||player.name!==save.name){player.name=save.name;player.pw=save.pw;player.created=save.created||Date.now();player.look=save.look||makeLook(hash(save.name));player.baseLook=null;player.blood=save.blood??25;stats=Object.assign({wins:0,losses:0,stabs:0,found:0,stolen:0},save.stats||{});quest=save.quest||0;hasKnife=!!save.knife;hasMp3=+save.mp3||0;inv.hat=+save.hat||0;inv.hatOn=!!save.hatOn;inv.eskimo=+save.eskimo||0;inv.aladdin=+save.aladdin||0;inv.ward=Array.isArray(save.ward)?save.ward.filter(x=>typeof x==='string').slice(0,100):[];inv.fig=Array.isArray(save.fig)?save.fig.filter(x=>typeof x==='string'&&/^[a-z]{2}_\d+$/.test(x)).slice(0,800):[];inv.furn={};if(save.furn&&typeof save.furn==='object')for(const k of Object.keys(save.furn))if(RITEM[k]&&Number.isInteger(save.furn[k])&&save.furn[k]>0)inv.furn[k]=Math.min(99,save.furn[k]);inv.venner=Array.isArray(save.venner)?save.venner.filter(n=>typeof n==='string'&&n.length<=16).slice(0,100):[];inv.loot={};if(save.loot&&typeof save.loot==='object')for(const k of ['lighter','cigarette','weedseed','shroom','pistol','wateringcan','wateringcan_full','weed','purplepill','lean','spore'])if(Number.isInteger(save.loot[k])&&save.loot[k]>0)inv.loot[k]=Math.min(999,save.loot[k]);inv.tut=save.tut==='bayne'||save.tut==='eat'?save.tut:0;inv.job=save.job===1||save.job===2?save.job:0;inv.gunAt=Number.isFinite(save.gun)&&save.gun>0?Math.min(save.gun,Date.now()):0;{const v=save.vend;inv.vend=v&&typeof v==='object'&&typeof v.k==='string'&&v.k.length<16?{k:v.k,mixer:Number.isInteger(v.mixer)?Math.max(0,Math.min(99,v.mixer)):0,growkit:Number.isInteger(v.growkit)?Math.max(0,Math.min(99,v.growkit)):0}:null;}{const v=save.snow,n=x=>Number.isInteger(x)?Math.max(0,Math.min(99,x)):0;inv.snow=v&&typeof v==='object'&&typeof v.k==='string'&&v.k.length<16?{k:v.k,purplepill:n(v.purplepill),weedseed:n(v.weedseed),spore:n(v.spore)}:null;}myFloor=cleanFl(save.floor).map(i=>({...i,armed:true}));stabTimes=(save.stabs30&&typeof save.stabs30==='object')?save.stabs30:{};renderMp3Tab();}
+  if(!started||player.name!==save.name){player.name=save.name;player.pw=save.pw;player.created=save.created||Date.now();player.look=save.look||makeLook(hash(save.name));player.baseLook=null;player.blood=save.blood??25;stats=Object.assign({wins:0,losses:0,stabs:0,found:0,stolen:0},save.stats||{});quest=save.quest||0;hasKnife=!!save.knife;hasMp3=+save.mp3||0;inv.hat=+save.hat||0;inv.hatOn=!!save.hatOn;inv.eskimo=+save.eskimo||0;inv.aladdin=+save.aladdin||0;inv.ward=Array.isArray(save.ward)?save.ward.filter(x=>typeof x==='string').slice(0,100):[];inv.fig=Array.isArray(save.fig)?save.fig.filter(x=>typeof x==='string'&&/^[a-z]{2}_\d+$/.test(x)).slice(0,800):[];inv.furn={};if(save.furn&&typeof save.furn==='object')for(const k of Object.keys(save.furn))if(RITEM[k]&&Number.isInteger(save.furn[k])&&save.furn[k]>0)inv.furn[k]=Math.min(99,save.furn[k]);inv.venner=Array.isArray(save.venner)?save.venner.filter(n=>typeof n==='string'&&n.length<=16).slice(0,100):[];inv.vReq=Array.isArray(save.vReq)?save.vReq.filter(n=>typeof n==='string'&&n.length<=16).slice(0,50):[];inv.vSent=Array.isArray(save.vSent)?save.vSent.filter(n=>typeof n==='string'&&n.length<=16).slice(0,50):[];inv.status=typeof save.status==='string'?save.status.slice(0,80):'';inv.loot={};if(save.loot&&typeof save.loot==='object')for(const k of ['lighter','cigarette','weedseed','shroom','pistol','wateringcan','wateringcan_full','weed','purplepill','lean','spore'])if(Number.isInteger(save.loot[k])&&save.loot[k]>0)inv.loot[k]=Math.min(999,save.loot[k]);inv.tut=save.tut==='bayne'||save.tut==='eat'?save.tut:0;inv.job=save.job===1||save.job===2?save.job:0;inv.gunAt=Number.isFinite(save.gun)&&save.gun>0?Math.min(save.gun,Date.now()):0;{const v=save.vend;inv.vend=v&&typeof v==='object'&&typeof v.k==='string'&&v.k.length<16?{k:v.k,mixer:Number.isInteger(v.mixer)?Math.max(0,Math.min(99,v.mixer)):0,growkit:Number.isInteger(v.growkit)?Math.max(0,Math.min(99,v.growkit)):0}:null;}{const v=save.snow,n=x=>Number.isInteger(x)?Math.max(0,Math.min(99,x)):0;inv.snow=v&&typeof v==='object'&&typeof v.k==='string'&&v.k.length<16?{k:v.k,purplepill:n(v.purplepill),weedseed:n(v.weedseed),spore:n(v.spore)}:null;}myFloor=cleanFl(save.floor).map(i=>({...i,armed:true}));stabTimes=(save.stabs30&&typeof save.stabs30==='object')?save.stabs30:{};renderMp3Tab();}
   enterGame(false);
 };
 $('#rName').addEventListener('input',liveNameCheck);
@@ -2797,7 +2797,7 @@ function openApp(){
     else showReg(save&&save.pw?'login':'new');
   }
 }
-function autoLogin(){player.name=save.name;player.pw=save.pw;player.created=save.created||Date.now();player.look=save.look||makeLook(hash(save.name));player.baseLook=null;player.blood=save.blood??25;stats=Object.assign({wins:0,losses:0,stabs:0,found:0,stolen:0},save.stats||{});quest=save.quest||0;hasKnife=!!save.knife;hasMp3=+save.mp3||0;inv.hat=+save.hat||0;inv.hatOn=!!save.hatOn;inv.eskimo=+save.eskimo||0;inv.aladdin=+save.aladdin||0;inv.ward=Array.isArray(save.ward)?save.ward.filter(x=>typeof x==='string').slice(0,100):[];inv.fig=Array.isArray(save.fig)?save.fig.filter(x=>typeof x==='string'&&/^[a-z]{2}_\d+$/.test(x)).slice(0,800):[];inv.furn={};if(save.furn&&typeof save.furn==='object')for(const k of Object.keys(save.furn))if(RITEM[k]&&Number.isInteger(save.furn[k])&&save.furn[k]>0)inv.furn[k]=Math.min(99,save.furn[k]);inv.venner=Array.isArray(save.venner)?save.venner.filter(n=>typeof n==='string'&&n.length<=16).slice(0,100):[];inv.loot={};if(save.loot&&typeof save.loot==='object')for(const k of ['lighter','cigarette','weedseed','shroom','pistol','wateringcan','wateringcan_full','weed','purplepill','lean','spore'])if(Number.isInteger(save.loot[k])&&save.loot[k]>0)inv.loot[k]=Math.min(999,save.loot[k]);inv.tut=save.tut==='bayne'||save.tut==='eat'?save.tut:0;inv.job=save.job===1||save.job===2?save.job:0;inv.gunAt=Number.isFinite(save.gun)&&save.gun>0?Math.min(save.gun,Date.now()):0;{const v=save.vend;inv.vend=v&&typeof v==='object'&&typeof v.k==='string'&&v.k.length<16?{k:v.k,mixer:Number.isInteger(v.mixer)?Math.max(0,Math.min(99,v.mixer)):0,growkit:Number.isInteger(v.growkit)?Math.max(0,Math.min(99,v.growkit)):0}:null;}{const v=save.snow,n=x=>Number.isInteger(x)?Math.max(0,Math.min(99,x)):0;inv.snow=v&&typeof v==='object'&&typeof v.k==='string'&&v.k.length<16?{k:v.k,purplepill:n(v.purplepill),weedseed:n(v.weedseed),spore:n(v.spore)}:null;}myFloor=cleanFl(save.floor).map(i=>({...i,armed:true}));stabTimes=(save.stabs30&&typeof save.stabs30==='object')?save.stabs30:{};renderMp3Tab();enterGame(false);}
+function autoLogin(){player.name=save.name;player.pw=save.pw;player.created=save.created||Date.now();player.look=save.look||makeLook(hash(save.name));player.baseLook=null;player.blood=save.blood??25;stats=Object.assign({wins:0,losses:0,stabs:0,found:0,stolen:0},save.stats||{});quest=save.quest||0;hasKnife=!!save.knife;hasMp3=+save.mp3||0;inv.hat=+save.hat||0;inv.hatOn=!!save.hatOn;inv.eskimo=+save.eskimo||0;inv.aladdin=+save.aladdin||0;inv.ward=Array.isArray(save.ward)?save.ward.filter(x=>typeof x==='string').slice(0,100):[];inv.fig=Array.isArray(save.fig)?save.fig.filter(x=>typeof x==='string'&&/^[a-z]{2}_\d+$/.test(x)).slice(0,800):[];inv.furn={};if(save.furn&&typeof save.furn==='object')for(const k of Object.keys(save.furn))if(RITEM[k]&&Number.isInteger(save.furn[k])&&save.furn[k]>0)inv.furn[k]=Math.min(99,save.furn[k]);inv.venner=Array.isArray(save.venner)?save.venner.filter(n=>typeof n==='string'&&n.length<=16).slice(0,100):[];inv.vReq=Array.isArray(save.vReq)?save.vReq.filter(n=>typeof n==='string'&&n.length<=16).slice(0,50):[];inv.vSent=Array.isArray(save.vSent)?save.vSent.filter(n=>typeof n==='string'&&n.length<=16).slice(0,50):[];inv.status=typeof save.status==='string'?save.status.slice(0,80):'';inv.loot={};if(save.loot&&typeof save.loot==='object')for(const k of ['lighter','cigarette','weedseed','shroom','pistol','wateringcan','wateringcan_full','weed','purplepill','lean','spore'])if(Number.isInteger(save.loot[k])&&save.loot[k]>0)inv.loot[k]=Math.min(999,save.loot[k]);inv.tut=save.tut==='bayne'||save.tut==='eat'?save.tut:0;inv.job=save.job===1||save.job===2?save.job:0;inv.gunAt=Number.isFinite(save.gun)&&save.gun>0?Math.min(save.gun,Date.now()):0;{const v=save.vend;inv.vend=v&&typeof v==='object'&&typeof v.k==='string'&&v.k.length<16?{k:v.k,mixer:Number.isInteger(v.mixer)?Math.max(0,Math.min(99,v.mixer)):0,growkit:Number.isInteger(v.growkit)?Math.max(0,Math.min(99,v.growkit)):0}:null;}{const v=save.snow,n=x=>Number.isInteger(x)?Math.max(0,Math.min(99,x)):0;inv.snow=v&&typeof v==='object'&&typeof v.k==='string'&&v.k.length<16?{k:v.k,purplepill:n(v.purplepill),weedseed:n(v.weedseed),spore:n(v.spore)}:null;}myFloor=cleanFl(save.floor).map(i=>({...i,armed:true}));stabTimes=(save.stabs30&&typeof save.stabs30==='object')?save.stabs30:{};renderMp3Tab();enterGame(false);}
 
 
 /* --- AssistiveTouch --- */
@@ -6213,6 +6213,171 @@ window.__medlemKicked=()=>{
   go();
 };
 
+// ===== Profiler og venner: trykk på en spiller (uten noe i hånda) for å se profilen. Venneforespørsler går via serveren,
+// så de kommer frem selv om den andre ikke er inne. =====
+document.head.insertAdjacentHTML('beforeend',`<style>
+#modalBox.pfm{width:min(880px,calc(100% - 24px));max-height:calc(100% - 24px);padding:0;overflow:hidden;display:flex;flex-direction:column;text-align:left}
+.pfH{flex:none;position:relative;height:46px;display:flex;align-items:center;justify-content:center;border-bottom:.5px solid #c8c7cc;background:rgba(248,248,248,.96);font-size:17px;font-weight:600;gap:7px}
+.pfH .dot{width:9px;height:9px;border-radius:50%;background:#c7c7cc}.pfH .dot.on{background:#4cd964}
+.pfH button{position:absolute;right:8px;top:7px;height:32px;border:0;background:none;color:#007aff;font:inherit;font-size:17px;font-weight:600;padding:0 8px;cursor:pointer}
+.pfB{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:250px minmax(0,1fr) 170px;gap:14px;padding:14px;background:#efeff4}
+.pfSec{margin:4px 6px 6px;font-size:13px;color:#6d6d72;text-transform:uppercase}
+.pfSec+.pfGrp{margin-bottom:16px}
+.pfGrp{background:#fff;border-radius:10px;overflow:hidden}
+.pfCell{display:flex;align-items:center;gap:11px;width:100%;min-height:46px;padding:6px 12px;box-sizing:border-box;border:0;background:none;font:inherit;font-size:16px;color:#000;text-align:left;cursor:pointer}
+.pfCell+.pfCell{box-shadow:inset 0 .5px 0 #c8c7cc}
+.pfCell:disabled{opacity:.4;cursor:default}
+.pfCell.blue{color:#007aff}.pfCell.red{color:#ff3b30}
+.pfCell .chev{margin-left:auto;color:#c7c7cc;font-size:20px}
+.pfIc{width:29px;height:29px;border-radius:7px;display:grid;place-items:center;color:#fff;flex:none}
+.pfIc svg{width:18px;height:18px}
+.pfC{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-height:360px;border-radius:12px;background:linear-gradient(#fbe3ef,#f2cde0);padding:14px 14px 16px;position:relative}
+body.dark .pfC{background:linear-gradient(#3a2a33,#2b1f27)}
+.pfC img{width:180px;height:auto;image-rendering:pixelated;margin-bottom:8px}
+.pfSt{width:100%;max-width:330px;box-sizing:border-box;border:0;border-radius:18px;background:#fff;padding:10px 16px;font:inherit;font-size:15px;font-style:italic;color:#8e8e93;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.pfSt.has{font-style:normal;color:#000}
+input.pfSt{outline:none;color:#000;font-style:normal}
+.pfSince{position:absolute;left:14px;top:12px;font-size:12px;color:#8e8e93}
+.pfR .pfFr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pfR .pfFr>*{aspect-ratio:1;border-radius:10px;display:grid;place-items:center;overflow:hidden}
+.pfR .pfFr button{border:0;background:#fff;cursor:pointer;padding:0;box-shadow:0 1px 2px rgba(0,0,0,.1)}
+.pfR .pfFr button img{width:100%;image-rendering:pixelated}
+.pfR .pfFr span{border:1.5px dashed #c7c7cc}
+.pfR .pfN{margin:8px 6px 0;font-size:13px;color:#8e8e93}
+body.dark .pfH{background:rgba(30,30,32,.96);border-color:#38383a;color:#fff}body.dark .pfH button{color:#0a84ff}
+body.dark .pfB{background:#000}body.dark .pfGrp,body.dark .pfR .pfFr button{background:#1c1c1e}body.dark .pfCell{color:#fff}body.dark .pfCell.blue{color:#0a84ff}
+body.dark .pfCell+.pfCell{box-shadow:inset 0 .5px 0 #38383a}body.dark .pfSt{background:#2c2c2e;color:#8e8e93}body.dark .pfSt.has,body.dark input.pfSt{color:#fff}
+@media (max-width:720px){.pfB{grid-template-columns:1fr}.pfC{order:-1;min-height:300px}.pfR .pfFr{grid-template-columns:repeat(4,1fr)}}
+body:not(.macwide) #modalBox.pfm .pfB{grid-template-columns:1fr}body:not(.macwide) #modalBox.pfm .pfC{order:-1;min-height:280px}body:not(.macwide) #modalBox.pfm .pfR .pfFr{grid-template-columns:repeat(4,1fr)}
+</style>`);
+const PF_ICON={add:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  ok:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  walk:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="13.5" cy="4" r="2.2"/><path d="M10 8.5l3-1.3c.8-.3 1.6 0 2 .7l1.6 3 2.4 1.1-.7 1.6-3-1.3-1-1.8-1 4 2.6 2.6V22h-1.9v-4l-2.7-2.5-1 3.8L7.7 22H5.6l2.7-6.2L9.6 10l-1.6.7-1 2.8-1.8-.6 1.3-3.6z"/></svg>',
+  wave:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 3.5c.7 0 1.2.5 1.2 1.2V11h.6V3.3a1.2 1.2 0 012.4 0V11h.6V4.3a1.2 1.2 0 012.4 0V12h.6V7.4a1.2 1.2 0 012.4 0V14c0 4.4-2.9 7-6.4 7-2.6 0-4.3-1.2-5.6-3.4L4.5 13c-.5-.9.6-1.9 1.5-1.2l1.8 1.5V4.7c0-.7.5-1.2 1.2-1.2z"/></svg>',
+  look:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.8 3.6-6 7-6s6.2 2.2 7 6"/></svg>',
+  rm:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14"/></svg>'};
+const pfL=n=>String(n||'').toLowerCase();
+const pfList=k=>{if(!Array.isArray(inv[k]))inv[k]=[];return inv[k];};
+const pfHas=(k,n)=>pfList(k).some(x=>pfL(x)===pfL(n));
+const pfDel=(k,n)=>{inv[k]=pfList(k).filter(x=>pfL(x)!==pfL(n));};
+const pfAdd=(k,n)=>{if(!pfHas(k,n))pfList(k).push(n);};
+const pfServer=()=>typeof kontoOn!=='undefined'&&kontoOn&&typeof kontoOk!=='undefined'&&kontoOk;
+function vennState(n){return pfHas('venner',n)?'venn':pfHas('vReq',n)?'spurt':pfHas('vSent',n)?'sendt':'ingen';}
+async function vennMsg(til,type){if(!pfServer())return{st:0};return kontoPost({op:'venn',n:player.name,pw:player.pw,til,type});}
+async function vennSend(n){
+  const s=vennState(n);if(s==='venn')return;if(s==='spurt')return vennAccept(n);
+  if(!pfServer()){pfAdd('venner',n);persist();sys(`${n} er lagt til som venn.`,'good');return pfRefresh();}
+  pfAdd('vSent',n);persist();pfRefresh();
+  const r=await vennMsg(n,'req');
+  if(r.st===404){pfDel('vSent',n);persist();sys(`Fant ingen spiller som heter ${n}.`,'warn');}
+  else if(r.st===200)sys(`Venneforespørsel sendt til ${n}.`,'good');
+  pfRefresh();
+}
+function vennAccept(n){pfDel('vReq',n);pfDel('vSent',n);pfAdd('venner',n);persist();vennMsg(n,'ok');sys(`Du og ${n} er nå venner.`,'good');pfRefresh();}
+function vennDecline(n){pfDel('vReq',n);persist();vennMsg(n,'nei');pfRefresh();}
+function vennRemove(n){pfDel('venner',n);pfDel('vSent',n);persist();vennMsg(n,'fjern');sys(`${n} er fjernet fra vennene dine.`);pfRefresh();}
+// innboksen på serveren: forespørsler og svar fra andre
+let pfInboxBusy=false;
+async function pfInbox(){
+  if(pfInboxBusy||!started||loggedOut||!pfServer())return;pfInboxBusy=true;
+  try{const r=await kontoPost({op:'innboks',n:player.name,pw:player.pw});
+    if(r.st!==200||!r.j||!Array.isArray(r.j.inbox)||!r.j.inbox.length)return;
+    for(const m of r.j.inbox){const n=typeof m.fra==='string'?m.fra.slice(0,16):'';if(!n)continue;
+      if(m.t==='req'){if(pfHas('venner',n)||pfHas('vSent',n)){pfDel('vSent',n);pfAdd('venner',n);vennMsg(n,'ok');sys(`Du og ${n} er nå venner.`,'good');}
+        else if(!pfHas('vReq',n)){pfAdd('vReq',n);sys(`${n} vil bli venn med deg. Åpne profilen eller Venner for å svare.`,'good');}}
+      else if(m.t==='ok'){pfDel('vSent',n);pfDel('vReq',n);if(!pfHas('venner',n)){pfAdd('venner',n);sys(`${n} godtok venneforespørselen din.`,'good');}}
+      else if(m.t==='nei')pfDel('vSent',n);
+      else if(m.t==='fjern'){pfDel('venner',n);pfDel('vSent',n);}}
+    persist();pfRefresh();
+  }finally{pfInboxBusy=false;}
+}
+setInterval(pfInbox,6000);
+// stor figur til profilen
+function pfFig(look,face){
+  const c=document.createElement('canvas');c.width=150;c.height=250;const g=c.getContext('2d');
+  const old=ctx;ctx=g;ctx.setTransform(2.2,0,0,2.2,75,234);
+  try{drawAvatar({look,x:-.5,y:-.5,face:face==null?2:face,path:[],walkT:0,state:'stand',leaving:false});}catch(e){}
+  ctx=old;return c.toDataURL();
+}
+function pfHead(look){try{return avatarPic(look);}catch(e){return '';}}
+function pfNeed(look){try{return hbNeed(hbParts(look||{}));}catch(e){return Promise.resolve();}}
+const PF={name:null,data:null,edit:false};
+function pfAreaTxt(ar){return ar==='main'?'i kjelleren':ar==='shop'?'i butikken':ar==='own'?'på rommet sitt':'inne';}
+function pfOpen(name,av){
+  name=String(name||'');if(!name)return;hideCtx();
+  const me=pfL(name)===pfL(player.name);
+  const a=av||avs.find(x=>pfL(x.name)===pfL(name));
+  PF.name=name;PF.edit=false;
+  PF.data={n:me?player.name:(a?a.name:name),look:me?player.look:(a?a.look:null),status:me?(inv.status||''):(a&&a.pStatus)||'',online:me||!!a||onlineNames().some(x=>pfL(x)===pfL(name)),ar:me?area:a?area:null,venner:null,me};
+  pfDraw();
+  // hent resten (status, venner) fra serveren
+  if(typeof kontoPost==='function')kontoPost({op:'profil',n:name}).then(r=>{
+    if(PF.name!==name||!r||r.st!==200||!r.j)return;const j=r.j,d=PF.data;
+    d.n=j.n||d.n;if(!d.look&&j.look)d.look=j.look;if(!me)d.status=j.status||'';d.venner=j.venner||[];d.nv=j.nv||0;d.c=j.c;
+    if(!me&&!a){d.online=!!j.online;d.ar=j.ar;}
+    const looks=[d.look,...(d.venner||[]).map(v=>v.look)].filter(Boolean);
+    Promise.all(looks.map(pfNeed)).then(()=>{if(PF.name===name)pfDraw();});pfDraw();
+  });
+  if(PF.data.look)pfNeed(PF.data.look).then(()=>{if(PF.name===name)pfDraw();});
+}
+function pfDraw(){
+  const d=PF.data;if(!d)return;const me=d.me,st=me?'meg':vennState(d.n);
+  const ar=d.online?(me||avs.some(x=>pfL(x.name)===pfL(d.n))?'Her i rommet':'Online '+pfAreaTxt(d.ar)):'Ikke inne nå';
+  const here=avs.find(x=>!x.player&&pfL(x.name)===pfL(d.n));
+  let left='';
+  if(me)left+=`<div class="pfSec">Dette er deg</div><div class="pfGrp"><button class="pfCell" data-a="look"><span class="pfIc" style="background:#5856d6">${PF_ICON.look}</span>Endre utseende<span class="chev">›</span></button><button class="pfCell" data-a="status"><span class="pfIc" style="background:#ff9500">✎</span>Endre status<span class="chev">›</span></button></div>`;
+  else{
+    const head={ingen:'Dere er ikke venner',sendt:'Venneforespørsel sendt',spurt:`${esc(d.n)} vil bli venn med deg`,venn:'Dere er venner'}[st];
+    let cells='';
+    if(st==='ingen')cells=`<button class="pfCell blue" data-a="add"><span class="pfIc" style="background:#4cd964">${PF_ICON.add}</span>Legg til venn<span class="chev">›</span></button>`;
+    else if(st==='sendt')cells=`<button class="pfCell" disabled><span class="pfIc" style="background:#8e8e93">${PF_ICON.ok}</span>Venter på svar</button>`;
+    else if(st==='spurt')cells=`<button class="pfCell blue" data-a="accept"><span class="pfIc" style="background:#4cd964">${PF_ICON.ok}</span>Godta<span class="chev">›</span></button><button class="pfCell red" data-a="decline"><span class="pfIc" style="background:#ff3b30">${PF_ICON.rm}</span>Avslå</button>`;
+    else cells=`<button class="pfCell red" data-a="remove"><span class="pfIc" style="background:#ff3b30">${PF_ICON.rm}</span>Fjern venn</button>`;
+    left+=`<div class="pfSec">${head}</div><div class="pfGrp">${cells}</div>`;
+    left+=`<div class="pfSec">Handlinger</div><div class="pfGrp"><button class="pfCell" data-a="walk"${here?'':' disabled'}><span class="pfIc" style="background:#ff9500">${PF_ICON.walk}</span>Gå bort til<span class="chev">›</span></button><button class="pfCell" data-a="wave"${here?'':' disabled'}><span class="pfIc" style="background:#34aadc">${PF_ICON.wave}</span>Vink til<span class="chev">›</span></button></div>`;
+  }
+  const fig=d.look?pfFig(d.look):'';
+  const status=me&&PF.edit?`<input class="pfSt" id="pfStIn" maxlength="80" placeholder="Skriv en status …" value="${esc(inv.status||'')}">`
+    :`<div class="pfSt${d.status?' has':''}"${me?' data-a="status" style="cursor:pointer"':''}>${d.status?esc(d.status):me?'Trykk for å skrive en status':'Ingen status ennå.'}</div>`;
+  const fr=d.venner||[];let slots='';for(let i=0;i<4;i++){const v=fr[i];slots+=v?`<button data-fr="${esc(v.n)}" title="${esc(v.n)}">${v.look?`<img src="${pfHead(v.look)}" alt="">`:esc(v.n.slice(0,2))}</button>`:'<span></span>';}
+  const since=d.c?`Medlem siden ${new Date(d.c).toLocaleDateString('nb-NO',{day:'numeric',month:'short',year:'numeric'})}`:'';
+  const html=`<div class="pfH">${esc(d.n)}<i class="dot${d.online?' on':''}" title="${ar}"></i><button id="pfDone">Ferdig</button></div>
+    <div class="pfB"><div class="pfL">${left}<div class="pfSec" style="margin-top:2px;text-transform:none">${ar}</div></div>
+    <div class="pfC">${since?`<span class="pfSince">${since}</span>`:''}${fig?`<img src="${fig}" alt="">`:''}${status}</div>
+    <div class="pfR"><div class="pfSec">Nære venner</div><div class="pfFr">${slots}</div>${d.nv>4?`<div class="pfN">+${d.nv-4} til</div>`:''}</div></div>`;
+  const open=!$('#modal').classList.contains('hidden')&&$('#modalBox').classList.contains('pfm');
+  if(open)$('#modalBox').innerHTML=html;else{modal(html);$('#modalBox').classList.add('pfm');}
+  const B=$('#modalBox');
+  $('#pfDone').onclick=()=>{sfx.click();closeModal();};
+  B.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{const k=b.dataset.a;sfx.click();
+    if(k==='add')vennSend(d.n);else if(k==='accept')vennAccept(d.n);else if(k==='decline')vennDecline(d.n);else if(k==='remove')vennRemove(d.n);
+    else if(k==='look'){closeModal();showReg('edit');}
+    else if(k==='status'){PF.edit=true;pfDraw();const i=$('#pfStIn');if(i){i.focus();i.onkeydown=e=>{if(e.key==='Enter')i.blur();if(e.key==='Escape'){PF.edit=false;pfDraw();}};i.onblur=()=>{inv.status=i.value.trim().slice(0,80);PF.data.status=inv.status;PF.edit=false;persist();pfDraw();};}}
+    else if(k==='walk'){const t=avs.find(x=>!x.player&&pfL(x.name)===pfL(d.n));if(t){closeModal();pfWalkTo(t);}}
+    else if(k==='wave'){if(player.seat<0&&player.state!=='down'){player.state='wave';player.actT=2;const t=avs.find(x=>!x.player&&pfL(x.name)===pfL(d.n));if(t)player.face=player.face;}closeModal();}
+  });
+  B.querySelectorAll('[data-fr]').forEach(b=>b.onclick=()=>{sfx.click();pfOpen(b.dataset.fr);});
+}
+function pfWalkTo(t){
+  if(player.state==='down')return;if(player.seat>=0){sys('Reis deg fra bordet først.','warn');return;}
+  const tx=Math.round(t.x),ty=Math.round(t.y);
+  for(const [dx,dy] of [[1,0],[0,1],[-1,0],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]]){const x=tx+dx,y=ty+dy;if(inB(x,y)&&free(x,y)&&player.walkTo(x,y))return;}
+  sys(`Kommer ikke bort til ${t.name}.`,'warn');
+}
+function pfRefresh(){if(PF.data&&!$('#modal').classList.contains('hidden')&&$('#modalBox').classList.contains('pfm'))pfDraw();if(typeof MS!=='undefined'){MS.sig='';MS.frSig='';}}
+const _closeModalPF=closeModal;
+closeModal=function(){const b=$('#modalBox');if(b)b.classList.remove('pfm');PF.name=null;return _closeModalPF.apply(this,arguments);};
+const _modalPF=modal;
+modal=function(){const b=$('#modalBox');if(b)b.classList.remove('pfm');return _modalPF.apply(this,arguments);};
+// trykk på en spiller: profilen (med kniv eller noe annet i hånda brukes tingen som før)
+const _showCtxPF=showCtx;
+showCtx=function(a,sx,sy){
+  if(a&&a.role==='remote'&&!held){pfOpen(a.name,a);return;}
+  const r=_showCtxPF.apply(this,arguments);
+  if(a&&a.player){const c=$('#ctx');if(c&&!c.classList.contains('hidden')&&!c.querySelector('[data-a="prof"]')){c.insertAdjacentHTML('beforeend','<button data-a="prof">Min profil</button>');c.querySelector('[data-a="prof"]').onclick=e=>{e.stopPropagation();hideCtx();pfOpen(player.name);};}}
+  return r;
+};
+
 // ===== zoom i spillet: knip med to fingre (eller musehjulet på PC) zoomer kameraet i spillet – ikke hele siden =====
 // nettleseren skal ikke zoome siden (iOS Safari bryr seg ikke om user-scalable=no)
 for(const t of ['gesturestart','gesturechange','gestureend'])document.addEventListener(t,e=>e.preventDefault(),{passive:false});
@@ -6298,7 +6463,7 @@ enterGame=function(){const r=_enterGameGL.apply(this,arguments);if(!glDone)glSho
 // med menylinje øverst og Dock nederst. Innloggingen dekker hele skjermen, og Veske åpnes i et eget vindu på siden.
 // På telefonen er alt som før. Bytter av seg selv hvis nettleservinduet blir for lite. =====
 document.head.insertAdjacentHTML('beforeend',`<style>
-body.mac{display:block;background:#15121f url(stjerner.jpg) center/cover no-repeat}
+body.mac{display:block;background:#15121f var(--macbg,url(stjerner.jpg)) center/cover no-repeat}
 body.mac #phone{width:100%!important;max-width:none!important;height:100%!important;border-radius:0!important;box-shadow:none!important}
 body.mac #sb,body.mac #atb,body.mac #atm{display:none!important}
 body.mac #roomWrap .badge{top:10px}
@@ -6306,8 +6471,10 @@ body.mac .quest{top:46px!important}
 body.mac .hint{top:80px}
 body.mac #modBtn{top:46px!important}
 #macTop,#macWin,#macDock,#macBag{font-family:"Lucida Grande","Helvetica Neue",Helvetica,Arial,sans-serif}
-#macTop{position:fixed;left:0;right:0;top:0;height:22px;z-index:5;display:flex;align-items:center;gap:20px;padding:0 12px;background:rgba(245,245,245,.84);-webkit-backdrop-filter:blur(20px) saturate(1.6);backdrop-filter:blur(20px) saturate(1.6);box-shadow:0 1px 0 rgba(0,0,0,.2);font-size:14px;color:#000;cursor:default}
-#macTop b{font-weight:bold}
+#macTop .mi{padding:0 9px;height:22px;display:flex;align-items:center;border-radius:0}#macTop .mi.open{background:#3d7ff6;color:#fff}
+#macTop .ic{display:flex;align-items:center;align-self:stretch;height:auto;padding:0 4px;cursor:default}#macTop .mr{align-self:stretch}#macTop .ic svg{position:static;inset:auto;transform:none}#macTop .ic.open{background:#3d7ff6;color:#fff}#macTop .ic.open svg *{stroke:#fff;fill:#fff}
+#macTop{position:fixed;left:0;right:0;top:0;height:22px;z-index:9001;display:flex;align-items:center;gap:2px;padding:0 12px;background:rgba(245,245,245,.84);-webkit-backdrop-filter:blur(20px) saturate(1.6);backdrop-filter:blur(20px) saturate(1.6);box-shadow:0 1px 0 rgba(0,0,0,.2);font-size:14px;color:#000;cursor:default}
+#macTop b{font-weight:bold;padding:0 9px 0 4px}
 #macTop .mr{margin-left:auto;display:flex;align-items:center;gap:15px;font-size:13.5px}
 #macTop svg{display:block;width:16px;height:16px}
 #macWin{position:fixed;z-index:3;border-radius:5px 5px 0 0;box-shadow:0 0 0 1px rgba(0,0,0,.28),0 22px 70px rgba(0,0,0,.55);background:#000}
@@ -6320,7 +6487,7 @@ body.macmax #macWin,body.macmax #macBar{border-radius:0}
 .tl .r{background:#fc605c}.tl .y{background:#fdbc40}.tl .g{background:#34c84a}
 .tl .off{background:#d0d0d0}
 #macBody{position:relative;overflow:hidden;background:#000;isolation:isolate}
-#macDock{position:fixed;left:50%;bottom:0;transform:translateX(-50%);z-index:4;display:flex;align-items:flex-end;gap:8px;padding:0 18px 9px;height:86px}
+#macDock{position:fixed;left:50%;bottom:0;transform:translateX(-50%);z-index:9000;display:flex;align-items:flex-end;gap:8px;padding:0 18px 9px;height:86px}
 #macDock::before{content:'';position:absolute;left:0;right:0;bottom:0;height:44px;background:linear-gradient(rgba(255,255,255,.62),rgba(214,222,228,.42));border:1px solid rgba(255,255,255,.7);border-bottom:0;border-radius:3px 3px 0 0;transform:perspective(240px) rotateX(46deg);transform-origin:bottom;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 -1px 8px rgba(0,0,0,.18);z-index:-1}
 .dk{position:relative;width:58px;height:58px;cursor:pointer;transition:transform .15s ease-out}
 .dk:hover{transform:translateY(-7px)}
@@ -6330,6 +6497,52 @@ body.macmax #macWin,body.macmax #macBar{border-radius:0}
 .dk.on::after{content:'';position:absolute;left:50%;bottom:-8px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#d9f7ff;box-shadow:0 0 6px 2px rgba(150,230,255,.95)}
 .dk.bounce{animation:dkB .55s ease-in-out 2}
 @keyframes dkB{50%{transform:translateY(-20px)}}
+
+/* appikonet på skrivebordet når spillvinduet er lukket */
+#macApp{position:fixed;left:50%;top:56%;transform:translate(-50%,-50%);z-index:2;display:none;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px 10px;border-radius:12px;font-family:"Lucida Grande","Helvetica Neue",Helvetica,Arial,sans-serif}
+#macApp svg{width:84px;height:84px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.45))}
+#macApp span{color:#fff;font-size:14px;text-shadow:0 1px 3px rgba(0,0,0,.9);padding:1px 7px;border-radius:9px}
+#macApp:hover span,#macApp:focus span{background:rgba(0,0,0,.35)}
+#macApp.on{display:flex;animation:mwIn .25s ease-out}
+body.maclg #macApp{display:none!important}
+/* ingen Dock: bare spillet, over hele skjermen */
+#macDock{display:none!important}
+#macTop b{cursor:default}
+/* menyer (Rediger, Vindu, Hjelp), lyd og søk */
+.mmenu{position:fixed;z-index:9002;min-width:210px;padding:4px 0;background:rgba(246,246,246,.97);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-radius:0 0 5px 5px;box-shadow:0 0 0 .5px rgba(0,0,0,.25),0 10px 30px rgba(0,0,0,.3);font-family:"Lucida Grande","Helvetica Neue",Helvetica,Arial,sans-serif;font-size:14px;color:#000}
+.mmenu button{display:flex;align-items:center;width:100%;border:0;background:none;font:inherit;text-align:left;padding:3px 20px 3px 22px;position:relative;cursor:default;color:inherit}
+.mmenu button:hover:not(:disabled){background:#3d7ff6;color:#fff}
+.mmenu button:disabled{color:#aaa}
+.mmenu button .ck{position:absolute;left:7px}
+.mmenu button .k{margin-left:auto;padding-left:24px;opacity:.6}
+.mmenu hr{border:0;border-top:1px solid #dcdcdc;margin:4px 0}
+.mmenu .mlbl{padding:4px 14px 2px;font-size:12px;color:#888}
+#macVol{width:250px;padding:10px 14px 12px}
+#macVol .row{display:flex;align-items:center;gap:10px;margin:6px 0}
+#macVol input[type=range]{flex:1;accent-color:#3d7ff6}
+#macSpot{width:340px;padding:0;border-radius:0 0 7px 7px;overflow:hidden}
+#macSpot input{display:block;width:100%;box-sizing:border-box;border:0;border-bottom:1px solid #dcdcdc;padding:10px 14px;font:inherit;font-size:17px;background:#fff;outline:none}
+#macSpot .res{max-height:360px;overflow-y:auto}
+#macSpot .r{display:flex;align-items:center;gap:9px;padding:7px 14px;cursor:default}
+#macSpot .r:hover,#macSpot .r.sel{background:#3d7ff6;color:#fff}
+#macSpot .r .dot{width:8px;height:8px;border-radius:50%;background:#c7c7cc;flex:none}#macSpot .r .dot.on{background:#4cd964}
+#macSpot .r small{margin-left:auto;opacity:.7;font-size:12px}
+#macSpot .r button{border:1px solid currentColor;background:none;color:inherit;border-radius:5px;font:inherit;font-size:12px;padding:1px 8px}
+#macSpot .e{padding:12px 14px;color:#888;font-size:13px}
+/* egne vinduer: Innstillinger, Musikk, Bakgrunn, Hjelp */
+.macfw{position:fixed;z-index:10;display:flex;flex-direction:column;border-radius:5px;overflow:hidden;background:rgba(246,246,246,.98);box-shadow:0 0 0 1px rgba(0,0,0,.25),0 18px 50px rgba(0,0,0,.5);color:#000;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif}
+.macfw.hidden{display:none}.macfw.in{animation:mwIn .22s cubic-bezier(.2,.8,.2,1)}
+.macfw .mwBody{overflow-y:auto;min-height:0;flex:1}
+.macfw .modal{width:auto;max-height:none;border-radius:0;background:none;animation:none;box-shadow:none;overflow:visible}
+body.dark .macfw{background:rgba(30,30,32,.98);color:#fff}
+.fwPad{padding:14px 14px 16px;background:#efeff4}body.dark .fwPad{background:#000}
+.fwPad .msGrp{background:#fff}body.dark .fwPad .msGrp{background:#1c1c1e}
+.fwPad .msSec:first-child{margin-top:2px}
+.bgGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bgGrid button{aspect-ratio:16/10;border:0;border-radius:7px;background-size:cover;background-position:center;cursor:pointer;box-shadow:0 0 0 .5px rgba(0,0,0,.2);position:relative;padding:0;color:#fff;font:inherit;font-size:12px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.bgGrid button.on{box-shadow:0 0 0 3px #007aff}
+.bgGrid button.up{background:#e5e5ea;color:#007aff;text-shadow:none;align-items:center;font-size:14px}
+.help p{margin:0 0 10px;font-size:14px;line-height:1.45}.help b{font-weight:600}
 /* Veske i et eget vindu på siden */
 #macBag{position:fixed;z-index:3;width:330px;display:flex;flex-direction:column;border-radius:5px;overflow:hidden;background:rgba(246,246,246,.98);box-shadow:0 0 0 1px rgba(0,0,0,.25),0 18px 50px rgba(0,0,0,.5);color:#000}
 #macBag.hidden{display:none}
@@ -6344,7 +6557,7 @@ body.macmax #macWin,body.macmax #macBar{border-radius:0}
 body.dark #macBag{background:rgba(30,30,32,.98);color:#fff}
 /* kontosiden («Lag en» og «Endre utseende») som et kort midt på skjermen */
 #macRegBg{position:absolute;inset:0;z-index:45;display:none;background:rgba(0,0,0,.45)}
-#macRegBg::before{content:'';position:absolute;inset:-30px;display:none;background:#000 url(stjerner.jpg) center/cover;filter:blur(14px) brightness(.7)}
+#macRegBg::before{content:'';position:absolute;inset:-30px;display:none;background:#000 var(--macbg,url(stjerner.jpg)) center/cover;filter:blur(14px) brightness(.7)}
 body.mac.macreg #macRegBg{display:block}
 body.mac.maclg #macRegBg{background:#000}
 body.mac.maclg #macRegBg::before{display:block}
@@ -6354,7 +6567,7 @@ body.mac #reg .nav{height:44px;padding-top:0}
 body.maclg #macTop,body.maclg #macDock,body.maclg #macBar,body.maclg #macBag{display:none!important}
 body.maclg #macWin{border-radius:0;box-shadow:none;background:none}
 body.maclg #macBody,body.maclg #phone{background:none!important}
-body.mac #lg{background:#000 url(stjerner.jpg) center/cover}
+body.mac #lg{background:#000 var(--macbg,url(stjerner.jpg)) center/cover}
 body.mac #lg .wall{display:none}
 body.mac #lg .lgsh{background:radial-gradient(ellipse at 50% 45%,rgba(0,0,0,.28),rgba(0,0,0,.05) 70%)}
 body.mac .lgc{justify-content:center;padding:30px 0}
@@ -6489,19 +6702,24 @@ const MAC_ICO={
 };
 const MAC_DAY=['søn.','man.','tir.','ons.','tor.','fre.','lør.'];
 const macQ=matchMedia('(hover:hover) and (pointer:fine)');
-const MAC_TOP=22,MAC_BAR=22,MAC_DOCKH=72,MAC_WIDE=860;// menylinjen, tittellinjen, plassen Dock tar nederst, og bredden der sidepanelet vises
+const MAC_TOP=22,MAC_BAR=22,MAC_DOCKH=0,MAC_WIDE=860;// menylinjen, tittellinjen, plassen Dock tar nederst, og bredden der sidepanelet vises
 let macOn=false,macMax=true,macLg=false,macRg=false,macWide=false,macState='open',macBagPos=null,macBagSig='',macBagConfirm=false,macRzT=0;
 let macFrame=null;try{const f=JSON.parse(localStorage.getItem('medlem_macframe')||'null');if(f&&f.w>0&&f.h>0)macFrame=f;}catch(e){}
 const macWant=()=>macQ.matches&&innerWidth>=820&&innerHeight>=620;
 const macInGame=()=>started&&!regOpen&&!lgOn&&scr==='app';
 function macBuild(){
-  document.body.insertAdjacentHTML('beforeend',`<div id="macTop"><b>Medlem</b><span>Arkiv</span><span>Rediger</span><span>Vis</span><span>Vindu</span><span>Hjelp</span>
-      <div class="mr"><span style="display:flex;align-items:center;gap:5px">84 % ${MAC_ICO.bat}</span>${MAC_ICO.wifi}${MAC_ICO.vol}<span id="macClock"></span>${MAC_ICO.search}${MAC_ICO.list}</div></div>
-    <div id="macWin"><div id="macBar"><div class="tl"><i class="r" data-a="close" title="Lukk">×</i><i class="y" data-a="min" title="Legg i Dock">–</i><i class="g" data-a="max">+</i></div>Medlem</div><div id="macBody"></div>${['n','s','e','w','ne','nw','se','sw'].map(d=>`<div class="rz ${d}" data-d="${d}"></div>`).join('')}</div>
-    <div id="macDock">${MAC_DOCK.map(d=>`<div class="dk${d.k==='medlem'?' on':''}" data-k="${d.k}"${d.k==='mod'?' style="display:none"':''}><svg viewBox="0 0 64 64">${d.svg}</svg><span class="lb">${d.l}</span></div>`).join('')}</div>`);
+  document.body.insertAdjacentHTML('beforeend',`<div id="macTop"><b>Medlem</b><span class="mi" data-m="edit">Rediger</span><span class="mi" data-m="win">Vindu</span><span class="mi" data-m="help">Hjelp</span>
+      <div class="mr"><span style="display:flex;align-items:center;gap:5px">84 % ${MAC_ICO.bat}</span>${MAC_ICO.wifi}<span class="ic" id="macVolI" title="Lyd">${MAC_ICO.vol}</span><span id="macClock"></span><span class="ic" id="macSrch" title="Søk etter spillere">${MAC_ICO.search}</span>${MAC_ICO.list}</div></div>
+    <div id="macWin"><div id="macBar"><div class="tl"><i class="r" data-a="close" title="Lukk">×</i><i class="y" data-a="min" title="Legg bort">–</i><i class="g" data-a="max">+</i></div>Medlem</div><div id="macBody"></div>${['n','s','e','w','ne','nw','se','sw'].map(d=>`<div class="rz ${d}" data-d="${d}"></div>`).join('')}</div>
+    <div id="macDock">${MAC_DOCK.map(d=>`<div class="dk${d.k==='medlem'?' on':''}" data-k="${d.k}"${d.k==='mod'||d.k==='mp3'?' style="display:none"':''}><svg viewBox="0 0 64 64">${d.svg}</svg><span class="lb">${d.l}</span></div>`).join('')}</div>`);
   $('#macBody').appendChild($('#phone'));
   if(!$('#macRegBg'))regEl.insertAdjacentHTML('beforebegin','<div id="macRegBg"></div>');
-  macGameUI();
+  macGameUI();macMenus();macBgApply();
+  // uten Dock: trykk på «Medlem» i menylinjen eller på skrivebordet for å få spillet tilbake
+  $('#macTop b').onclick=()=>{macOpen();if(!macMax)macSetMax(true);};
+  document.body.insertAdjacentHTML('beforeend',`<div id="macApp" title="Åpne Medlem"><svg viewBox="0 0 64 64">${MAC_DOCK.find(d=>d.k==='medlem').svg.replace(/id="([^"]+)"/g,'id="$1A"').replace(/url\(#([^)]+)\)/g,'url(#$1A)')}</svg><span>Medlem</span></div>`);
+  $('#macApp').onclick=e=>{e.stopPropagation();macOpen();if(!macMax)macSetMax(true);};
+  document.addEventListener('click',e=>{if(macOn&&macState!=='open'&&(e.target===document.body||e.target===document.documentElement))macOpen();});
   // flytte vinduet etter tittellinjen; et vindu som fyller skjermen blir vanlig størrelse når det dras
   let dr=null;const bar=$('#macBar');
   bar.addEventListener('pointerdown',e=>{if(e.target.closest('.tl')||e.button)return;const w=$('#macWin');dr={x:e.clientX,y:e.clientY,l:w.offsetLeft,t:w.offsetTop,max:macMax,moved:false};try{bar.setPointerCapture(e.pointerId);}catch(_){}});
@@ -6534,7 +6752,8 @@ function macBuild(){
 }
 function macTear(){
   macBagClose(true);macFrClose();const ph=$('#phone');document.body.insertBefore(ph,document.body.firstChild);
-  for(const id of ['macTop','macWin','macDock','macBag','macRegBg']){const e=$('#'+id);if(e)e.remove();}
+  macMenuClose();document.querySelectorAll('.macfw').forEach(e=>e.remove());
+  for(const id of ['macTop','macWin','macDock','macBag','macRegBg','macApp']){const e=$('#'+id);if(e)e.remove();}
   document.body.classList.remove('maclg','macreg','macmax','macwide','macrz');macLg=macRg=macWide=false;
 }
 function macTitles(){const g=$('#macBar .g');if(g)g.title=macMax?'Vanlig størrelse':'Fyll skjermen';}
@@ -6562,7 +6781,7 @@ function macFit(){
 }
 // rød: lukker vinduet, gul: legger det i Dock, grønn: fyller skjermen / vanlig størrelse. Trykk på Medlem i Dock for å åpne igjen.
 function macAnim(w,frames,ms,ease,done){if(!w.animate){done&&done();return;}const a=w.animate(frames,{duration:ms,easing:ease});a.onfinish=a.oncancel=()=>{done&&done();};}
-function macDockPoint(){const d=$('#macDock .dk[data-k="medlem"]');if(!d)return{x:innerWidth/2,y:innerHeight};const r=d.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2,s:r.width};}
+function macDockPoint(){const d=$('#macDock .dk[data-k="medlem"]');const r=d?d.getBoundingClientRect():null;if(!r||!r.width)return{x:innerWidth/2,y:innerHeight,s:58};return{x:r.left+r.width/2,y:r.top+r.height/2,s:r.width};}
 function macClose(){
   const w=$('#macWin');if(!w||macState!=='open')return;macState='closed';sfx.click();macFrClose();
   macAnim(w,[{opacity:1,transform:'none'},{opacity:0,transform:'scale(.9)'}],200,'ease-in',()=>{if(macState==='closed')w.classList.add('closed');});
@@ -6584,14 +6803,14 @@ function macMin(on){if(on)macMinimize();else macOpen();}
 function macBounce(d){d.classList.remove('bounce');void d.offsetWidth;d.classList.add('bounce');}
 function macDock(d){
   const k=d.dataset.k;
-  if(k==='medlem'){if(macState!=='open')macOpen();else macBounce(d);return;}
+  if(k==='medlem'){macOpen();if(!macMax)macSetMax(true);macFull(true);macBounce(d);return;}
   const inGame=macInGame();
   if(macState!=='open')macOpen();
   if(inGame&&k==='bag'){openBag();return;}
   if(inGame&&k==='act'){if(macWide){MS.tab='me';macSideRender(true);return;}closeModal();$('#btnAct').click();return;}
-  if(inGame&&k==='set'){closeModal();$('#btnGear').click();return;}
+  if(inGame&&k==='set'){macWinOpen('set');return;}
   if(inGame&&k==='mod'&&isMod()){closeModal();modPanel();return;}
-  if(inGame&&k==='mp3'){if(hasMp3){closeModal();openMp3();}else sys('Du har ingen Mp3-spiller ennå. Kjøp en i butikken.','warn');return;}
+  if(inGame&&k==='mp3'){if(hasMp3)macWinOpen('mp3');else sys('Du har ingen Mp3-spiller ennå. Kjøp en i butikken.','warn');return;}
   macBounce(d);
 }
 function macClock(){const c=$('#macClock');if(!c)return;const d=new Date();c.textContent=`${MAC_DAY[d.getDay()]} ${pad(d.getHours())}:${pad(d.getMinutes())}`;}
@@ -6603,10 +6822,17 @@ function macSync(force){
   if(lg!==macLg||rg!==macRg||force){
     const was=macLg;macLg=lg;macRg=rg;document.body.classList.toggle('maclg',lg);document.body.classList.toggle('macreg',rg);
     if(lg){macBagClose(true);macFrClose();if(macState!=='open')macOpen();}
+    else if(was){// rett inn i spillet etter innlogging: vinduet åpent og over hele skjermen
+      const w=$('#macWin');macState='open';if(w)w.classList.remove('min','closed');w&&w.getAnimations&&w.getAnimations().forEach(a=>a.cancel());macMax=true;document.body.classList.add('macmax');macTitles();}
     macFit();
     if(lg&&!was&&lgOn)setTimeout(()=>{const n=$('#lgName'),p=$('#lgPw');if(!macLg||!lgOn)return;try{(n&&!n.value?n:p).focus({preventScroll:true});}catch(e){}},60);
   }
   const m=$('#macDock .dk[data-k="mod"]');if(m){const on=isMod()&&started&&!loggedOut;if((m.style.display!=='none')!==on)m.style.display=on?'':'none';}
+  const mp=$('#macDock .dk[data-k="mp3"]');if(mp){const on=!!hasMp3&&started&&!loggedOut;if((mp.style.display!=='none')!==on)mp.style.display=on?'':'none';if(!on)macWinClose('mp3');}
+  const mpo=$('#mw_mp3');if(mp)mp.classList.toggle('on',!!(mpo&&!mpo.classList.contains('hidden')));
+  if(!macInGame()&&!macLg){}else if(macLg)document.querySelectorAll('.macfw:not(.hidden)').forEach(w=>w.classList.add('hidden'));
+  macVolIcon();
+  const app=$('#macApp');if(app)app.classList.toggle('on',macState!=='open'&&!macLg);
   const bag=$('#macBag'),open=!!(bag&&!bag.classList.contains('hidden'));
   const bd=$('#macDock .dk[data-k="bag"]');if(bd)bd.classList.toggle('on',open||(macWide&&MS.tab==='bag'&&macInGame()));
   if(open){if(!macInGame()||macWide)macBagClose(true);else if(macSigNow()!==macBagSig)macBagRender(false);}
@@ -6647,7 +6873,8 @@ function macCapture(host,fn){
 }
 const macVenner=()=>{if(!Array.isArray(inv.venner))inv.venner=[];return inv.venner;};
 const macIsVenn=n=>macVenner().some(v=>v.toLowerCase()===String(n).toLowerCase());
-function macToggleVenn(n){const v=macVenner(),i=v.findIndex(x=>x.toLowerCase()===n.toLowerCase());if(i>=0){v.splice(i,1);sys(`${n} er fjernet fra vennene dine.`);}else{if(v.length>=100)return;v.push(n);sys(`${n} er lagt til som venn.`,'good');}persist();MS.sig='';MS.frSig='';macGameSync();}
+function macToggleVenn(n){const st=vennState(n);if(st==='venn')vennRemove(n);else vennSend(n);}
+function macToggleVennOld(n){const v=macVenner(),i=v.findIndex(x=>x.toLowerCase()===n.toLowerCase());if(i>=0){v.splice(i,1);sys(`${n} er fjernet fra vennene dine.`);}else{if(v.length>=100)return;v.push(n);sys(`${n} er lagt til som venn.`,'good');}persist();MS.sig='';MS.frSig='';macGameSync();}
 function macOnline(){// alle som er inne nå (også i andre rom)
   const out=[];try{if(room)for(const p of room.peers()){if(p.sameTab||p.isMe)continue;const pr=p.presence||{};if(typeof pr.n!=='string'||!pr.n)continue;const n=cleanName(pr.n);if(!n||out.some(o=>o.n.toLowerCase()===n.toLowerCase()))continue;out.push({n,ar:pr.on===false?null:pr.ar});}}catch(e){}
   return out;
@@ -6655,7 +6882,7 @@ function macOnline(){// alle som er inne nå (også i andre rom)
 function macSideSig(){
   try{if(MS.tab==='bag')return 'b'+macSigNow();
     if(MS.tab==='me')return 'm'+JSON.stringify([player.name,player.blood,player.look,darkTheme,soundOn,isMod()]);
-    return 'r'+JSON.stringify([area,avs.map(a=>[a.name,a.role||'',!!a.player]),macOnline(),macVenner(),typeof FM!=='undefined'&&FM.on]);}catch(e){return '';}
+    return 'r'+JSON.stringify([area,avs.map(a=>[a.name,a.role||'',!!a.player]),macOnline(),macVenner(),inv.vReq,inv.vSent,typeof FM!=='undefined'&&FM.on]);}catch(e){return '';}
 }
 function macSideRender(force){
   const s=$('#macSide');if(!s||!macWide)return;
@@ -6683,14 +6910,16 @@ function msBag(){
 function msBagDraw(){
   const body=$('#msBody'),foot=$('#msFoot'),it=MS.items;
   if(!it.some(x=>x.key===MS.sel))MS.sel=it[0]?it[0].key:null;
-  const cur=it.find(x=>x.key===MS.sel),total=Math.max(28,Math.ceil(it.length/4)*4);
+  const cur=it.find(x=>x.key===MS.sel),total=Math.max(24,Math.ceil(it.length/4)*4);
   let g='';for(let i=0;i<total;i++){const x=it[i];g+=x?`<div class="msSlot${x.key===MS.sel?' sel':''}${x.glow?' glow':''}" data-i="${i}" title="${esc(x.name)}">${x.icon}${x.n>1?`<i>${x.n}</i>`:''}</div>`:'<div class="msSlot"></div>';}
   let det='';
   if(cur){const acts=cur.pri.map((p,j)=>`<button class="msAct" data-p="${j}">${esc(p.textContent.trim())}</button>`).join('')+(!cur.pri.length&&cur.tap?'<button class="msAct" data-p="row">Bruk</button>':'');
     det=`<div class="msDet"><b>${esc(cur.name)}${cur.n>1?' ×'+cur.n:''}</b>${cur.desc?`<p>${esc(cur.desc)}</p>`:''}${acts?`<div class="msActs">${acts}</div>`:''}</div>`;}
   else det='<div class="msEmpty">Vesken er tom. Ting du finner og kjøper havner her.</div>';
   body.innerHTML=`<div class="msGrid">${g}</div>`;const db=$('#msDetBox');db.innerHTML=det;
-  body.querySelectorAll('.msSlot[data-i]').forEach(el=>el.onclick=()=>{MS.sel=it[+el.dataset.i].key;sfx.click();msBagDraw();});
+  // trykk på noe man kan holde (kniven, pistolen, frø …): holdes med en gang, som på telefonen
+  body.querySelectorAll('.msSlot[data-i]').forEach(el=>el.onclick=()=>{const x=it[+el.dataset.i];MS.sel=x.key;sfx.click();
+    if(x.tap){x.row.click();setTimeout(()=>{MS.sig='';macGameSync();},60);}else msBagDraw();});
   const after=()=>setTimeout(()=>{MS.sig='';macGameSync();},60);
   db.querySelectorAll('.msAct').forEach(b=>b.onclick=()=>{if(!cur)return;if(b.dataset.p==='row')cur.row.click();else{const o=cur.pri[+b.dataset.p];if(o)o.click();}after();});
   foot.innerHTML=`<button class="msDrop"${cur&&cur.drop?'':' disabled'}>Kast</button>`;
@@ -6719,23 +6948,27 @@ function msRoom(){
   const here=avs.map(a=>({n:a.name,me:!!a.player,pl:a.role==='remote',npc:!a.player&&a.role!=='remote'}));
   here.sort((a,b)=>(b.me-a.me)||(b.pl-a.pl)||a.n.localeCompare(b.n));
   const hereN=new Set(here.map(h=>h.n.toLowerCase())),others=macOnline().filter(o=>!hereN.has(o.n.toLowerCase())&&o.n.toLowerCase()!==String(player.name).toLowerCase());
-  const fr=n=>`<button class="msFr${macIsVenn(n)?' on':''}" data-n="${esc(n)}">${macIsVenn(n)?'Venn ✓':'+ Venn'}</button>`;
+  const fr=n=>{const st=vennState(n);return `<button class="msFr${st==='venn'?' on':''}" data-n="${esc(n)}"${st==='sendt'?' disabled':''}>${st==='venn'?'Venn ✓':st==='sendt'?'Sendt':st==='spurt'?'Godta':'+ Venn'}</button>`;};
   let h=`<div class="msSec">I rommet (${here.length})</div><div class="msGrp">${here.map(x=>`<div class="msCell"><span class="nm">${esc(x.n)}</span>${x.me?'<span class="tag">Du</span>':x.pl?fr(x.n):'<span class="tag">NPC</span>'}</div>`).join('')}</div>`;
   h+=`<div class="msSec">Online andre steder (${others.length})</div>`+(others.length?`<div class="msGrp">${others.map(o=>`<div class="msCell"><span class="dot on"></span><span class="nm">${esc(o.n)}</span><span class="tag">${o.ar?MS_AREA[o.ar]||'':'Online'}</span>${fr(o.n)}</div>`).join('')}</div>`:'<div class="msEmpty" style="margin-top:4px">Ingen andre er online akkurat nå.</div>');
   if(area==='own')h+=`<div class="msGrp" style="margin-top:18px"><button class="msCell" data-k="furn">Innred rom<span class="chev">›</span></button></div>`;
   const B=$('#msBody');B.innerHTML=h;
-  B.querySelectorAll('.msFr').forEach(b=>b.onclick=()=>{sfx.click();macToggleVenn(b.dataset.n);});
+  B.querySelectorAll('.msFr').forEach(b=>b.onclick=e=>{e.stopPropagation();sfx.click();macToggleVenn(b.dataset.n);});
+  B.querySelectorAll('.msCell .nm').forEach(el=>{el.style.cursor='pointer';el.onclick=()=>{sfx.click();pfOpen(el.textContent);};});
   const f=B.querySelector('[data-k="furn"]');if(f)f.onclick=()=>{sfx.click();fmEnter();};
 }
 function macFrOpen(){const f=$('#macFr');if(!f)return;MS.frSig='';f.classList.remove('hidden');macFrDraw();}
 function macFrClose(){const f=$('#macFr');if(f)f.classList.add('hidden');}
 function macFrDraw(){
   const f=$('#macFr');if(!f||f.classList.contains('hidden'))return;
-  const on=macOnline(),v=macVenner(),sig=JSON.stringify([on,v]);if(sig===MS.frSig)return;MS.frSig=sig;
+  const on=macOnline(),v=macVenner(),rq=pfList('vReq'),sig=JSON.stringify([on,v,rq]);if(sig===MS.frSig)return;MS.frSig=sig;
   const rows=v.map(n=>{const o=on.find(x=>x.n.toLowerCase()===n.toLowerCase());return{n,o};}).sort((a,b)=>(!!b.o-!!a.o)||a.n.localeCompare(b.n));
-  f.innerHTML=`<div class="frH">Venner</div>`+(rows.length?`<div class="msGrp">${rows.map(r=>`<div class="msCell"><span class="dot${r.o?' on':''}"></span><span class="nm">${esc(r.n)}<br><span style="font-size:12px;color:#8e8e93">${r.o?(r.o.ar?'I '+(MS_AREA[r.o.ar]||'spillet').toLowerCase():'Online'):'Offline'}</span></span><button class="rm" data-n="${esc(r.n)}">Fjern</button></div>`).join('')}</div>`
+  f.innerHTML=`<div class="frH">Venner</div>`+(rq.length?`<div class="msGrp">${rq.map(n=>`<div class="msCell"><span class="nm" data-p="${esc(n)}">${esc(n)}<br><span style="font-size:12px;color:#8e8e93">Vil bli venn med deg</span></span><button class="msFr on" data-ok="${esc(n)}">Godta</button><button class="rm" data-no="${esc(n)}">Avslå</button></div>`).join('')}</div>`:'')+(rows.length?`<div class="msGrp">${rows.map(r=>`<div class="msCell"><span class="dot${r.o?' on':''}"></span><span class="nm">${esc(r.n)}<br><span style="font-size:12px;color:#8e8e93">${r.o?(r.o.ar?'I '+(MS_AREA[r.o.ar]||'spillet').toLowerCase():'Online'):'Offline'}</span></span><button class="rm" data-n="${esc(r.n)}">Fjern</button></div>`).join('')}</div>`
     :'<div class="frE">Ingen venner ennå.<br>Legg til venner fra <b>Rom</b>-fanen i sidepanelet.</div>');
-  f.querySelectorAll('.rm').forEach(b=>b.onclick=e=>{e.stopPropagation();sfx.click();macToggleVenn(b.dataset.n);macFrDraw();});
+  f.querySelectorAll('.rm[data-n]').forEach(b=>b.onclick=e=>{e.stopPropagation();sfx.click();vennRemove(b.dataset.n);macFrDraw();});
+  f.querySelectorAll('[data-ok]').forEach(b=>b.onclick=e=>{e.stopPropagation();sfx.click();vennAccept(b.dataset.ok);macFrDraw();});
+  f.querySelectorAll('[data-no]').forEach(b=>b.onclick=e=>{e.stopPropagation();sfx.click();vennDecline(b.dataset.no);macFrDraw();});
+  f.querySelectorAll('.msCell .nm').forEach(el=>{el.style.cursor='pointer';el.onclick=e=>{e.stopPropagation();macFrClose();pfOpen(el.dataset.p||el.firstChild.textContent);};});
 }
 function macGameSync(){
   if(!$('#macSide'))return;
@@ -6744,7 +6977,7 @@ function macGameSync(){
   if(ws!==MS.whoSig){MS.whoSig=ws;const el=$('#macWho');const L=[...avs].sort((a,b)=>(!!b.player-!!a.player)||((b.role==='remote')-(a.role==='remote')));
     el.innerHTML=`<b>I rommet (${avs.length})</b>`+L.slice(0,8).map(a=>`<span class="${a.player?'me':a.role==='remote'?'':'npc'}">${esc(a.name)}</span>`).join('')+(L.length>8?`<span class="more">+${L.length-8} til</span>`:'');}
   const fb=$('#macFurn');if(fb)fb.classList.toggle('on',area==='own'&&!(typeof FM!=='undefined'&&FM.on));
-  const on=macOnline(),v=macVenner(),n=v.filter(x=>on.some(o=>o.n.toLowerCase()===x.toLowerCase())).length,t=`${n}/${v.length}`;
+  const on=macOnline(),v=macVenner(),n=v.filter(x=>on.some(o=>o.n.toLowerCase()===x.toLowerCase())).length,rqn=pfList('vReq').length,t=`${n}/${v.length}`+(rqn?` · ${rqn} ny`:'');
   if(t!==MS.venSig){MS.venSig=t;const e=$('#macVenN');if(e)e.textContent=t;}
   macFrDraw();
 }
@@ -6798,6 +7031,159 @@ const _showRegMac=showReg;showReg=function(){const r=_showRegMac.apply(this,argu
 const _hideRegMac=hideReg;hideReg=function(){const r=_hideRegMac.apply(this,arguments);macSync();return r;};
 const _lgShowMac=lgShow;lgShow=function(){const r=_lgShowMac.apply(this,arguments);macSync();return r;};
 const _lgHideMac=lgHide;lgHide=function(){const r=_lgHideMac.apply(this,arguments);macSync();return r;};
+// ===== menylinjen: Rediger (bakgrunn), Vindu (alle vinduer), Hjelp, lyd og søk =====
+function macFull(on){try{const d=document;if(on&&!d.fullscreenElement&&d.documentElement.requestFullscreen)d.documentElement.requestFullscreen().catch(()=>{});else if(!on&&d.fullscreenElement)d.exitFullscreen();}catch(e){}}
+let macMenuOpen=null;
+function macMenuClose(){document.querySelectorAll('.mmenu').forEach(m=>m.remove());document.querySelectorAll('#macTop .open').forEach(e=>e.classList.remove('open'));macMenuOpen=null;}
+function macMenuAt(anchor,html,cls,right){
+  macMenuClose();const r=anchor.getBoundingClientRect();anchor.classList.add('open');
+  document.body.insertAdjacentHTML('beforeend',`<div class="mmenu ${cls||''}">${html}</div>`);const m=document.body.lastElementChild;
+  if(right)m.style.right=Math.max(4,innerWidth-r.right)+'px';else m.style.left=r.left+'px';m.style.top='22px';
+  macMenuOpen=anchor;m.addEventListener('pointerdown',e=>e.stopPropagation());return m;
+}
+function macMenus(){
+  const top=$('#macTop');
+  const item=(lbl,act,o={})=>`<button data-act="${act}"${o.dis?' disabled':''}>${o.ck?'<span class="ck">✓</span>':''}${lbl}${o.k?`<span class="k">${o.k}</span>`:''}</button>`;
+  const build={
+    edit:()=>item('Endre bakgrunn …','bg')+'<hr>'+item('Endre utseende …','look',{dis:!macInGame()})+item('Endre status …','status',{dis:!macInGame()}),
+    win:()=>{const open=id=>{const w=$('#mw_'+id);return !!(w&&!w.classList.contains('hidden'));};
+      return item('Medlem','game',{ck:macState==='open'})+item('Veske','bag',{dis:!macInGame()})+item('Innstillinger','set',{ck:open('set'),dis:!macInGame()})+(hasMp3&&started&&!loggedOut?item('Musikk','mp3',{ck:open('mp3')}):'')
+        +(isMod()&&started&&!loggedOut?item('Moderator','mod',{dis:!macInGame()}):'')+item('Bakgrunn','bg',{ck:open('bg')})+item('Hjelp','help',{ck:open('help')})
+        +'<hr>'+item('Minimer','min',{dis:macState!=='open'||macLg,k:'gul'})+item(macMax?'Vanlig størrelse':'Fyll skjermen','max',{dis:macLg,k:'grønn'})+item(document.fullscreenElement?'Avslutt fullskjerm':'Fullskjerm','full');},
+    help:()=>item('Medlem-hjelp','help')+item('Søk etter spillere','search')};
+  top.querySelectorAll('.mi').forEach(mi=>{
+    const show=()=>{const m=macMenuAt(mi,build[mi.dataset.m]());m.querySelectorAll('button[data-act]').forEach(b=>b.onclick=()=>{macMenuClose();macMenuAct(b.dataset.act);});};
+    mi.addEventListener('pointerdown',e=>{e.stopPropagation();if(macMenuOpen===mi)macMenuClose();else show();});
+    mi.addEventListener('pointerenter',()=>{if(macMenuOpen&&macMenuOpen!==mi&&macMenuOpen.classList.contains('mi'))show();});
+  });
+  $('#macVolI').addEventListener('pointerdown',e=>{e.stopPropagation();if(macMenuOpen===$('#macVolI'))return macMenuClose();macVolMenu();});
+  $('#macSrch').addEventListener('pointerdown',e=>{e.stopPropagation();if(macMenuOpen===$('#macSrch'))return macMenuClose();macSpot();});
+  document.addEventListener('pointerdown',()=>{if(macMenuOpen)macMenuClose();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&macMenuOpen)macMenuClose();});
+}
+function macMenuAct(a){
+  if(a==='bg'||a==='help'||a==='set'||a==='mp3')return macWinOpen(a);
+  if(a==='game'){macOpen();return;}
+  if(a==='bag'){openBag();return;}
+  if(a==='mod'){closeModal();modPanel();return;}
+  if(a==='look'){showReg('edit');return;}
+  if(a==='status'){pfOpen(player.name);setTimeout(()=>{const b=$('#modalBox [data-a="status"]');if(b)b.click();},50);return;}
+  if(a==='min'){macMinimize();return;}
+  if(a==='max'){macSetMax(!macMax);return;}
+  if(a==='full'){macFull(!document.fullscreenElement);return;}
+  if(a==='search'){macSpot();return;}
+}
+// lyd: av/på for alt, og volum på musikken
+function macVolIcon(){const i=$('#macVolI');if(!i)return;const on=soundOn&&!(typeof audio!=='undefined'&&(audio.muted||audio.volume===0));const k=on?'1':'0';if(i.dataset.on===k)return;i.dataset.on=k;
+  i.innerHTML=on?MAC_ICO.vol:'<svg viewBox="0 0 16 16"><path d="M2 6h3l4-3v10l-4-3H2z" fill="#000"/><path d="M11 6l4 4M15 6l-4 4" stroke="#000" stroke-width="1.4" stroke-linecap="round"/></svg>';}
+function macSetSound(on){soundOn=!!on;try{if(typeof audio!=='undefined')audio.muted=!soundOn;}catch(e){}if(soundOn)try{ac();sfx.click();}catch(e){}persist();macVolIcon();MS.sig='';}
+function macVolMenu(){
+  const vol=typeof audio!=='undefined'?Math.round(audio.volume*100):100;
+  const m=macMenuAt($('#macVolI'),`<div class="mlbl">Lyd</div><div class="row"><span>Lyd på</span><label class="msSw" style="margin-left:auto"><input type="checkbox" id="mvOn"${soundOn?' checked':''}><i></i></label></div><div class="mlbl">Musikk</div><div class="row"><span>🔈</span><input type="range" id="mvVol" min="0" max="100" value="${vol}"><span>🔊</span></div>`,'',true);
+  m.id='macVol';
+  m.querySelector('#mvOn').onchange=e=>macSetSound(e.target.checked);
+  m.querySelector('#mvVol').oninput=e=>{try{audio.volume=e.target.value/100;if(+e.target.value>0&&!soundOn)macSetSound(true);try{localStorage.setItem('medlem_vol',e.target.value);}catch(_){}}catch(_){}macVolIcon();};
+}
+try{const v=localStorage.getItem('medlem_vol');if(v!==null&&typeof audio!=='undefined')audio.volume=clamp(+v/100,0,1);if(typeof audio!=='undefined')audio.muted=!soundOn;}catch(e){}
+// søk: finn spillere, se profilen og send venneforespørsel
+function macSpot(){
+  const m=macMenuAt($('#macSrch'),`<input id="spQ" placeholder="Søk etter spillere" autocomplete="off" spellcheck="false"><div class="res" id="spR"></div>`,'',true);m.id='macSpot';
+  const q=m.querySelector('#spQ'),R=m.querySelector('#spR');let t=0,seq=0;
+  const draw=list=>{
+    const rq=pfList('vReq');
+    let h='';
+    if(!q.value.trim()&&rq.length)h+=`<div class="mlbl">Venneforespørsler</div>`+rq.map(n=>`<div class="r" data-n="${esc(n)}"><span class="dot"></span>${esc(n)}<small>vil bli venn</small></div>`).join('');
+    if(list.length)h+=(q.value.trim()?'':`<div class="mlbl">Online nå</div>`)+list.map(x=>{const st=pfL(x.n)===pfL(player.name)?'meg':vennState(x.n);
+      return `<div class="r" data-n="${esc(x.n)}"><span class="dot${x.online?' on':''}"></span>${esc(x.n)}<small>${st==='meg'?'deg':st==='venn'?'venn':x.online?(x.ar?pfAreaTxt(x.ar):'online'):''}</small>${st==='ingen'?`<button data-add="${esc(x.n)}">+ Venn</button>`:st==='spurt'?`<button data-add="${esc(x.n)}">Godta</button>`:st==='sendt'?'<small>sendt</small>':''}</div>`;}).join('');
+    if(!h)h=`<div class="e">${q.value.trim()?'Fant ingen med det navnet.':'Skriv et navn for å finne spillere.'}</div>`;
+    R.innerHTML=h;
+    R.querySelectorAll('.r').forEach(r=>r.onclick=()=>{macMenuClose();pfOpen(r.dataset.n);});
+    R.querySelectorAll('[data-add]').forEach(b=>b.onclick=e=>{e.stopPropagation();vennSend(b.dataset.add);setTimeout(run,300);});
+  };
+  const run=async()=>{const v=q.value.trim(),my=++seq;
+    const on=macOnline().map(o=>({n:o.n,online:true,ar:o.ar}));
+    if(!v){draw(on);return;}
+    let list=on.filter(o=>pfL(o.n).includes(pfL(v)));
+    if(typeof kontoPost==='function'){const r=await kontoPost({op:'sok',q:v});if(my!==seq)return;if(r.st===200&&r.j&&Array.isArray(r.j.res)){for(const x of r.j.res)if(!list.some(o=>pfL(o.n)===pfL(x.n)))list.push(x);}}
+    draw(list);};
+  q.oninput=()=>{clearTimeout(t);t=setTimeout(run,180);};
+  q.onkeydown=e=>{if(e.key==='Enter'){const f=R.querySelector('.r');if(f)f.click();}if(e.key==='Escape')macMenuClose();};
+  run();setTimeout(()=>q.focus(),0);
+}
+// ===== egne vinduer =====
+let macZ=10;
+const MW={set:{t:'Innstillinger',w:330},mp3:{t:'Musikk',w:320},bg:{t:'Bakgrunn',w:420},help:{t:'Medlem-hjelp',w:400}};
+function macWinFront(w){w.style.zIndex=++macZ;}
+function macWinClose(id){const w=$('#mw_'+id);if(w&&!w.classList.contains('hidden')){w.classList.add('hidden');if(id==='mp3'&&typeof mpUi!=='undefined'){}}}
+function macWinOpen(id){
+  if(!macOn)return;if(macLg)return;
+  if((id==='set'||id==='mp3')&&!macInGame())return;
+  let w=$('#mw_'+id);const cfg=MW[id];
+  if(!w){
+    document.body.insertAdjacentHTML('beforeend',`<div class="macfw hidden" id="mw_${id}" style="width:${cfg.w}px"><div class="mwBar"><div class="tl"><i class="r" title="Lukk">×</i><i class="y" title="Legg bort">–</i><i class="off"></i></div>${cfg.t}</div><div class="mwBody"></div></div>`);
+    w=$('#mw_'+id);const bar=w.querySelector('.mwBar');let dr=null;
+    w.querySelector('.tl .r').onclick=e=>{e.stopPropagation();sfx.click();macWinClose(id);};
+    w.querySelector('.tl .y').onclick=e=>{e.stopPropagation();macWinClose(id);};
+    w.addEventListener('pointerdown',e=>{e.stopPropagation();macWinFront(w);},true);
+    bar.addEventListener('pointerdown',e=>{if(e.target.closest('.tl'))return;dr={x:e.clientX,y:e.clientY,l:w.offsetLeft,t:w.offsetTop};try{bar.setPointerCapture(e.pointerId);}catch(_){}});
+    bar.addEventListener('pointermove',e=>{if(!dr)return;w.style.left=clamp(dr.l+e.clientX-dr.x,-cfg.w+80,innerWidth-80)+'px';w.style.top=clamp(dr.t+e.clientY-dr.y,MAC_TOP,innerHeight-40)+'px';});
+    const end=()=>{dr=null;};bar.addEventListener('pointerup',end);bar.addEventListener('pointercancel',end);
+    ['pointerup','click','wheel'].forEach(t=>w.addEventListener(t,e=>e.stopPropagation()));
+    const n=document.querySelectorAll('.macfw').length-1;
+    w.style.left=Math.round(clamp((innerWidth-cfg.w)/2+n*26,10,innerWidth-cfg.w-10))+'px';w.style.top=Math.round(MAC_TOP+60+n*26)+'px';
+  }
+  const was=!w.classList.contains('hidden');w.classList.remove('hidden');macWinFront(w);
+  macWinRender(id);
+  if(!was){w.classList.remove('in');void w.offsetWidth;w.classList.add('in');}
+  w.querySelector('.mwBody').style.maxHeight=Math.max(200,innerHeight-w.offsetTop-30-MAC_DOCKH)+'px';
+}
+function macWinRender(id){
+  const w=$('#mw_'+id);if(!w)return;const B=w.querySelector('.mwBody');
+  if(id==='mp3'){const tB=macCapture(B,()=>_openMp3Mac());const mc=tB.querySelector('#mc');if(mc){const ab=mc.parentElement;mc.remove();if(ab&&!ab.children.length)ab.remove();}return;}
+  if(id==='set'){
+    const vol=typeof audio!=='undefined'?Math.round(audio.volume*100):100;
+    B.innerHTML=`<div class="fwPad"><div class="msSec">Konto</div><div class="msGrp"><div class="msCell">Logget inn som<span class="tag">${esc(player.name)}</span></div><button class="msCell" data-k="prof">Min profil<span class="chev">›</span></button><button class="msCell" data-k="look">Endre utseende<span class="chev">›</span></button></div>
+      <div class="msSec">Utseende</div><div class="msGrp"><label class="msCell">Mørkt tema<span class="msSw"><input type="checkbox" data-k="dark"${darkTheme?' checked':''}><i></i></span></label><button class="msCell" data-k="bg">Skrivebordsbakgrunn<span class="chev">›</span></button></div>
+      <div class="msSec">Lyd</div><div class="msGrp"><label class="msCell">Lyd<span class="msSw"><input type="checkbox" data-k="snd"${soundOn?' checked':''}><i></i></span></label><div class="msCell">Musikk<input type="range" data-k="vol" min="0" max="100" value="${vol}" style="margin-left:auto;width:150px;accent-color:#007aff"></div></div>
+      <div class="msGrp" style="margin-top:18px"><button class="msCell msRed" data-k="out">Logg ut</button></div></div>`;
+    B.querySelector('[data-k="prof"]').onclick=()=>pfOpen(player.name);
+    B.querySelector('[data-k="look"]').onclick=()=>{macWinClose('set');showReg('edit');};
+    B.querySelector('[data-k="bg"]').onclick=()=>macWinOpen('bg');
+    B.querySelector('[data-k="dark"]').onchange=e=>{setTheme(e.target.checked);MS.sig='';};
+    B.querySelector('[data-k="snd"]').onchange=e=>macSetSound(e.target.checked);
+    B.querySelector('[data-k="vol"]').oninput=e=>{try{audio.volume=e.target.value/100;localStorage.setItem('medlem_vol',e.target.value);}catch(_){}macVolIcon();};
+    B.querySelector('[data-k="out"]').onclick=()=>{macWinClose('set');logout();};
+    return;
+  }
+  if(id==='bg'){
+    const cur=macBgGet();
+    B.innerHTML=`<div class="fwPad"><div class="msSec">Velg skrivebordsbakgrunn</div><div class="bgGrid">${MAC_BGS.map(b=>`<button data-b="${b.id}" class="${cur===b.id?'on':''}" style="background-image:${b.css}">${b.n}</button>`).join('')}
+      <button data-b="custom" class="${cur==='custom'?'on':''}${macBgImg()?'':' up'}" style="${macBgImg()?`background-image:url(${macBgImg()})`:''}">${macBgImg()?'Eget bilde':'Velg bilde …'}</button></div>
+      <input type="file" accept="image/*" id="bgFile" hidden><p style="font-size:12px;color:#8e8e93;margin:10px 2px 0">Bakgrunnen gjelder bare på denne datamaskinen. Trykk på «Eget bilde» igjen for å bytte bilde.</p></div>`;
+    B.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{const k=b.dataset.b;if(k==='custom'&&(!macBgImg()||cur==='custom')){B.querySelector('#bgFile').click();return;}macBgSet(k);macWinRender('bg');});
+    B.querySelector('#bgFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const img=new Image();img.onload=()=>{const s=Math.min(1,1920/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      try{localStorage.setItem('medlem_bgimg',c.toDataURL('image/jpeg',.85));macBgSet('custom');}catch(_){sys('Bildet er for stort. Prøv et mindre bilde.','warn');}URL.revokeObjectURL(img.src);macWinRender('bg');};img.src=URL.createObjectURL(f);};
+    return;
+  }
+  if(id==='help'){
+    B.innerHTML=`<div class="fwPad help"><p><b>Gå:</b> trykk på gulvet. <b>Snakk:</b> skriv nederst og trykk Send.</p><p><b>Spillere:</b> trykk på noen for å se profilen deres og legge dem til som venn. Holder du kniven eller noe annet, brukes tingen i stedet.</p>
+      <p><b>Sidepanelet:</b> Veske (tingene dine), Meg (handlinger og innstillinger) og Rom (hvem som er her og online).</p><p><b>Søk</b> (forstørrelsesglasset øverst til høyre): finn spillere, se profiler og send venneforespørsler.</p>
+      <p><b>Vinduet:</b> rød lukker, gul legger det bort, grønn fyller skjermen. Dra i kantene for å endre størrelse. Lukket vindu? Trykk på «Medlem» øverst til venstre.</p><p><b>Vindu-menyen</b> viser alle vinduene (Innstillinger, Musikk og flere).</p></div>`;
+  }
+}
+const _openMp3Mac=openMp3;
+openMp3=function(){if(macOn&&!macLg&&macInGame()&&hasMp3){macWinOpen('mp3');return;}return _openMp3Mac.apply(this,arguments);};
+const _gearMac=$('#btnGear').onclick;
+$('#btnGear').onclick=function(){if(macOn&&!macLg&&macInGame()){macWinOpen('set');return;}return _gearMac.apply(this,arguments);};
+// skrivebordsbakgrunn
+const MAC_BGS=[{id:'stjerner',n:'Stjernehimmel',css:'url(stjerner.jpg)'},{id:'hav',n:'Hav',css:'linear-gradient(165deg,#0b3d6e 0%,#1f78b4 45%,#8fd0ea 100%)'},
+  {id:'solnedgang',n:'Solnedgang',css:'linear-gradient(170deg,#2b1055 0%,#7597de 45%,#f7a072 85%)'},{id:'skog',n:'Skog',css:'linear-gradient(160deg,#0f2f1f 0%,#2e7d4f 55%,#a8d5a2 100%)'},
+  {id:'grafitt',n:'Grafitt',css:'radial-gradient(circle at 30% 20%,#55555c,#1c1c1f 70%)'},{id:'rosa',n:'Rosa',css:'linear-gradient(150deg,#f6c8e6,#fbe4d2)'},
+  {id:'blod',n:'Blod',css:'radial-gradient(circle at 50% 30%,#a3122a,#3a0410 75%)'},{id:'natt',n:'Natt',css:'linear-gradient(#000,#14213d)'}];
+const macBgGet=()=>{try{return localStorage.getItem('medlem_bg')||'stjerner';}catch(e){return 'stjerner';}};
+const macBgImg=()=>{try{return localStorage.getItem('medlem_bgimg');}catch(e){return null;}};
+function macBgSet(k){try{localStorage.setItem('medlem_bg',k);}catch(e){}macBgApply();}
+function macBgApply(){const k=macBgGet();let css=(MAC_BGS.find(b=>b.id===k)||MAC_BGS[0]).css;if(k==='custom'){const i=macBgImg();css=i?`url(${i})`:MAC_BGS[0].css;}document.body.style.setProperty('--macbg',css);}
 function macUpdate(){const want=macWant();
   if(want!==macOn){macOn=want;document.body.classList.toggle('mac',want);if(want)macBuild();else macTear();try{resize();}catch(e){}}
   macFit();macBagPlace();}

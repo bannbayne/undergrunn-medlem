@@ -205,6 +205,18 @@ class Net:
         with self.cv:
             return sum(1 for p in self.peers.values() if p['k'].get('n'))
 
+    def online(self):
+        # navn (små bokstaver) -> rommet de er i (None når de ikke er synlige)
+        out = {}
+        with self.cv:
+            for p in self.peers.values():
+                n = p['k'].get('n')
+                if n and isinstance(n[0], str):
+                    on = p['k'].get('on')
+                    ar = p['k'].get('ar')
+                    out[n[0].lower()] = ar[0] if ar and (not on or on[0] is not False) else None
+        return out
+
 
 NET = Net()
 
@@ -221,6 +233,56 @@ def konto_file(n):
 def konto_get(n):
     k = read_json(konto_file(n))
     return k if isinstance(k, dict) and isinstance(k.get('pw'), str) else None
+
+
+def public_profile(k, on, friends=False):
+    # bare det alle kan se: aldri passord eller resten av lagringen
+    s = k.get('save') if isinstance(k.get('save'), dict) else {}
+    name = k.get('n') or s.get('name') or ''
+    st = s.get('status')
+    out = {'n': name, 'look': s.get('look') if isinstance(s.get('look'), dict) else None,
+           'c': s.get('created') if isinstance(s.get('created'), (int, float)) else None,
+           'status': st[:80] if isinstance(st, str) else '',
+           'online': name.lower() in on, 'ar': on.get(name.lower())}
+    if friends:
+        fr = []
+        for v in (s.get('venner') or [])[:4]:
+            if isinstance(v, str) and NAME_RE.match(v):
+                fk = konto_get(v)
+                if fk:
+                    fr.append(public_profile(fk, on))
+        out['venner'] = fr
+        out['nv'] = len(s.get('venner') or [])
+    return out
+
+
+def konto_search(q):
+    if not isinstance(q, str):
+        return []
+    q = q.strip().lower()[:16]
+    if not q:
+        return []
+    on = NET.online()
+    names = set()
+    try:
+        for f in os.listdir(KONTOER):
+            if f.endswith('.json'):
+                try:
+                    nm = bytes.fromhex(f[:-5]).decode('utf-8')
+                except Exception:
+                    continue
+                if q in nm:
+                    names.add(nm)
+    except Exception:
+        pass
+    ordered = sorted(names, key=lambda x: (not x.startswith(q), x not in on, x))[:25]
+    res = []
+    for nm in ordered:
+        k = konto_get(nm)
+        if k:
+            p = public_profile(k, on)
+            res.append({'n': p['n'], 'online': p['online'], 'ar': p['ar'], 'status': p['status']})
+    return res
 
 
 def mod_account_exists():
@@ -639,12 +701,20 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if not isinstance(b, dict):
             return self._json(400, {'e': 'feil'})
         op, n = b.get('op'), b.get('n')
+        if op == 'sok':
+            return self._json(200, {'res': konto_search(b.get('q'))})
         if not isinstance(n, str) or not NAME_RE.match(n):
             return self._json(400, {'e': 'navn'})
         low = n.lower()
         if op == 'ledig':
             taken = low in RESERVED or bool(konto_get(n)) or (low in MOD_NAMES and not self.lan())
             return self._json(200, {'ledig': not taken})
+        if op == 'profil':
+            k = konto_get(n)
+            on = NET.online()
+            if not k:
+                return self._json(404, {'e': 'ingen'})
+            return self._json(200, public_profile(k, on, True))
         pw = b.get('pw')
         if not isinstance(pw, str) or not (1 <= len(pw) <= 64):
             return self._json(400, {'e': 'passord'})
@@ -655,6 +725,31 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         fails = [t for t in FAILS.get(key, []) if now - t < 600]
         if len(fails) >= 8:
             return self._json(429, {'e': 'vent'})
+        if op in ('venn', 'innboks'):
+            k = konto_get(n)
+            if not k or k['pw'] != pw:
+                fails.append(now)
+                FAILS[key] = fails
+                return self._json(403, {'e': 'feil'})
+            if op == 'innboks':
+                with KLOCK:
+                    k = konto_get(n)
+                    box = k.pop('inbox', []) if k else []
+                    if box:
+                        write_json(konto_file(n), k)
+                return self._json(200, {'inbox': box})
+            til, typ = b.get('til'), b.get('type')
+            if not isinstance(til, str) or not NAME_RE.match(til) or typ not in ('req', 'ok', 'nei', 'fjern') or til.lower() == low:
+                return self._json(400, {'e': 'til'})
+            with KLOCK:
+                t = konto_get(til)
+                if not t:
+                    return self._json(404, {'e': 'ingen'})
+                box = [m for m in t.get('inbox', []) if not (isinstance(m, dict) and m.get('fra', '').lower() == low)]
+                box.append({'fra': k.get('n') or n, 't': typ, 'at': int(now * 1000)})
+                t['inbox'] = box[-50:]
+                write_json(konto_file(til), t)
+            return self._json(200, {'ok': True, 'n': t.get('n') or til})
         if op == 'hent':
             k = konto_get(n)
             if not k:
