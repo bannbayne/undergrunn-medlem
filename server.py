@@ -74,10 +74,31 @@ def save_world_state(state):
 
 
 # ----------------- Real-time Multiplayer Engine -----------------
+def now_ms():
+    return int(time.time() * 1000)
+
+
+def resolve_server_values(val, current=None):
+    # Firebase-style placeholders the client may still send: {".sv": "timestamp"} / {".sv": {"increment": n}}
+    if isinstance(val, dict):
+        if ".sv" in val:
+            sv = val[".sv"]
+            if sv == "timestamp":
+                return now_ms()
+            if isinstance(sv, dict) and isinstance(sv.get("increment"), (int, float)):
+                return (current if isinstance(current, (int, float)) else 0) + sv["increment"]
+            return None
+        return {k: resolve_server_values(v, current.get(k) if isinstance(current, dict) else None) for k, v in val.items()}
+    if isinstance(val, list):
+        return [resolve_server_values(v) for v in val]
+    return val
+
+
 class NetSyncServer:
     def __init__(self):
         self.lock = threading.Lock()
         self.cv = threading.Condition(self.lock)
+        self.sid = "%x" % now_ms()  # changes on every restart so clients can tell and re-publish themselves
         self.version = 1
         self.db = {} # path -> val
         self.history = [] # (version, path, val, client_id)
@@ -136,6 +157,7 @@ class NetSyncServer:
                 self.version += 1
                 for path, val in removals.items():
                     path = path.strip('/')
+                    val = resolve_server_values(val, self.db.get(path))
                     if val is None:
                         self.db.pop(path, None)
                         prefix = path + '/'
@@ -165,6 +187,7 @@ class NetSyncServer:
                 path = path.strip('/')
                 if client_id:
                     self.clients[client_id]['paths'].add(path)
+                val = resolve_server_values(val, self.db.get(path))
 
                 if val is None:
                     self.db.pop(path, None)
@@ -208,6 +231,7 @@ class NetSyncServer:
                                     removals[p] = None
                         for path, val in removals.items():
                             path = path.strip('/')
+                            val = resolve_server_values(val, self.db.get(path))
                             if val is None:
                                 self.db.pop(path, None)
                                 prefix = path + '/'
@@ -219,14 +243,16 @@ class NetSyncServer:
                             self.history.append((self.version, path, val, None))
                 self.cv.notify_all()
 
-            if self.version <= client_v:
+            if client_v <= self.version and self.version <= client_v:
                 self.cv.wait(timeout)
 
             # Full snapshot if client is new or history pruned
             min_hist_v = self.history[0][0] if self.history else 1
-            if client_v <= 0 or client_v < min_hist_v:
+            if client_v <= 0 or client_v < min_hist_v or client_v > self.version:
                 return {
                     'v': self.version,
+                    'sid': self.sid,
+                    't': now_ms(),
                     'full': True,
                     'updates': dict(self.db),
                     'onlineCount': len(self.clients)
@@ -239,6 +265,8 @@ class NetSyncServer:
                     changes[p] = val
             return {
                 'v': self.version,
+                'sid': self.sid,
+                't': now_ms(),
                 'full': False,
                 'updates': changes,
                 'onlineCount': len(self.clients)
