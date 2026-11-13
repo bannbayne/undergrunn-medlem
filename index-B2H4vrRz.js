@@ -5647,7 +5647,7 @@ function Xh(){
   try{localStorage.removeItem("6ix-current-user");}catch(_){}
   location.reload();
 }
-const Gj=3500,my=9e3,qj=1e4,bo={maxHp:10,swingMs:4e3,reach:2,minDmg:1,maxDmg:3},Vj=20,zj=7,Xj=5e3,Jj="Tak for alt",py="6ix-finale",Qj=(t,e,n)=>!n&&!!t&&(!!t.sealed||(!!t.open||!!t.kill)&&e>0);let Hi={state:{},inAt:0,dead:!1,ready:!1};const gy=new Set,Rg=()=>gy.forEach(t=>t(Hi)),Jh=()=>Hi,Id=t=>Qj(Hi.state,Hi.inAt,t);function $k(t){return gy.add(t),t(Hi),()=>{gy.delete(t)}}function Zj(t){let e=0,n;const i=new Promise(l=>n=l),s=()=>{++e>=3&&(Hi={...Hi,ready:!0},n())},a=[Ze(le(ce,"event/state"),l=>{Hi={...Hi,state:l.val()??{}},s(),Rg()},()=>{s()}),Ze(le(ce,`event/in/${t}`),l=>{Hi={...Hi,inAt:Number(l.val())||0},s(),Rg()},()=>{s()}),Ze(le(ce,`event/dead/${t}`),l=>{Hi={...Hi,dead:l.exists()},s(),Rg()},()=>{s()})];return window.setTimeout(n,4e3),{stop:()=>{a.forEach(l=>l()),Hi={state:{},inAt:0,dead:!1,ready:!1}},ready:i}}const Dk={song:{bytes:4e6,minMs:1e4,maxMs:18e4},beat:{bytes:1e7,minMs:1e4,maxMs:6e5},reply:{bytes:3e6,minMs:2e3,maxMs:6e4}},Og=51e4,Gm=t=>t.replace(/\.[^.]+$/,"").replace(/[_]+/g," ").trim().slice(0,40),Mi=t=>{const e=Math.round(t/1e3);return`${Math.floor(e/60)}:${String(e%60).padStart(2,"0")}`};function eF(t){return new Promise((e,n)=>{const i=new FileReader;i.onload=()=>e(String(i.result).split(",")[1]??""),i.onerror=()=>n(i.error??new Error(r?"Kunne ikke lese filen.":"Couldn't read the file.")),i.readAsDataURL(t)})}function tF(t){const e=atob(t),n=new Uint8Array(e.length);for(let i=0;i<e.length;i++)n[i]=e.charCodeAt(i);return n}async function tm(t,e,n){const i=Math.ceil(e.size/Og);for(let s=0;s<i;s++){const a=await eF(e.slice(s*Og,(s+1)*Og));await gn(le(ce,`audio/${t}/${s}`),a),n==null||n((s+1)/i)}}const El=new Map,nm=new Map,nF=12;function iF(t,e){for(El.set(t,e);El.size>nF;){const n=El.keys().next().value;El.delete(n);const i=nm.get(n);i&&(URL.revokeObjectURL(i),nm.delete(n))}}async function OM(t,e,n){const i=El.get(t);if(i)return i;const s=await Promise.all(Array.from({length:e},async(l,c)=>{let d=null;try{d=(await wt(le(ce,`audio/${t}/${c}`))).val()}catch{throw new Error(r?"Den lyd er ikke tilgjengelig.":"That sound isn't available.")}if(typeof d!="string")throw new Error(r?"Der mangler en del av den fil.":"Part of that file is missing.");return tF(d)})),a=new Blob(s,{type:n||"audio/mpeg"});return iF(t,a),a}async function zd(t,e,n){const i=nm.get(t);if(i&&El.has(t))return i;const s=await OM(t,e,n),a=URL.createObjectURL(s);return nm.set(t,a),a}function Ik(t){return new Promise(e=>{const n=new Audio,i=URL.createObjectURL(t),s=a=>{URL.revokeObjectURL(i),n.removeAttribute("src"),n.load(),e(a)};n.preload="metadata",n.addEventListener("loadedmetadata",()=>s(Number.isFinite(n.duration)?Math.round(n.duration*1e3):null),{once:!0}),n.addEventListener("error",()=>s(null),{once:!0}),window.setTimeout(()=>s(null),6e3),n.src=i})}function sF(t,e){const n=URL.createObjectURL(t),i=document.createElement("a");i.href=n,i.download=e,document.body.append(i),i.click(),i.remove(),window.setTimeout(()=>URL.revokeObjectURL(n),1e4)}function __isMacHead(cls){return /\b(cd-head|drop-title|door-head|stash-head|jb-bar|wb-head|nb-head|trade-head|case-nav|fp-head|cw-head|pw-head-bar)\b/.test(cls||"");}
+const Gj=3500,my=9e3,qj=1e4,bo={maxHp:10,swingMs:4e3,reach:2,minDmg:1,maxDmg:3},Vj=20,zj=7,Xj=5e3,Jj="Tak for alt",py="6ix-finale",Qj=(t,e,n)=>!n&&!!t&&(!!t.sealed||(!!t.open||!!t.kill)&&e>0);let Hi={state:{},inAt:0,dead:!1,ready:!1};const gy=new Set,Rg=()=>gy.forEach(t=>t(Hi)),Jh=()=>Hi,Id=t=>Qj(Hi.state,Hi.inAt,t);function $k(t){return gy.add(t),t(Hi),()=>{gy.delete(t)}}function Zj(t){let e=0,n;const i=new Promise(l=>n=l),s=()=>{++e>=3&&(Hi={...Hi,ready:!0},n())},a=[Ze(le(ce,"event/state"),l=>{Hi={...Hi,state:l.val()??{}},s(),Rg()},()=>{s()}),Ze(le(ce,`event/in/${t}`),l=>{Hi={...Hi,inAt:Number(l.val())||0},s(),Rg()},()=>{s()}),Ze(le(ce,`event/dead/${t}`),l=>{Hi={...Hi,dead:l.exists()},s(),Rg()},()=>{s()})];return window.setTimeout(n,4e3),{stop:()=>{a.forEach(l=>l()),Hi={state:{},inAt:0,dead:!1,ready:!1}},ready:i}}const Dk={song:{bytes:4e6,minMs:1e4,maxMs:18e4},beat:{bytes:1e7,minMs:1e4,maxMs:6e5},reply:{bytes:3e6,minMs:2e3,maxMs:6e4}},Og=51e4,Gm=t=>t.replace(/\.[^.]+$/,"").replace(/[_]+/g," ").trim().slice(0,40),Mi=t=>{const e=Math.round(t/1e3);return`${Math.floor(e/60)}:${String(e%60).padStart(2,"0")}`};function eF(t){return new Promise((e,n)=>{const i=new FileReader;i.onload=()=>e(String(i.result).split(",")[1]??""),i.onerror=()=>n(i.error??new Error(r?"Kunne ikke lese filen.":"Couldn't read the file.")),i.readAsDataURL(t)})}function tF(t){const e=atob(t),n=new Uint8Array(e.length);for(let i=0;i<e.length;i++)n[i]=e.charCodeAt(i);return n}async function tm(t,e,n){const i=Math.ceil(e.size/Og);for(let s=0;s<i;s++){const a=await eF(e.slice(s*Og,(s+1)*Og));await gn(le(ce,`audio/${t}/${s}`),a),n==null||n((s+1)/i)}}const El=new Map,nm=new Map,nF=12;function iF(t,e){for(El.set(t,e);El.size>nF;){const n=El.keys().next().value;El.delete(n);const i=nm.get(n);i&&(URL.revokeObjectURL(i),nm.delete(n))}}async function OM(t,e,n){const i=El.get(t);if(i)return i;const s=await Promise.all(Array.from({length:e},async(l,c)=>{let d=null;try{d=(await wt(le(ce,`audio/${t}/${c}`))).val()}catch{throw new Error(r?"Den lyd er ikke tilgjengelig.":"That sound isn't available.")}if(typeof d!="string")throw new Error(r?"Der mangler en del av den fil.":"Part of that file is missing.");return tF(d)})),a=new Blob(s,{type:n||"audio/mpeg"});return iF(t,a),a}async function zd(t,e,n){const i=nm.get(t);if(i&&El.has(t))return i;const s=await OM(t,e,n),a=URL.createObjectURL(s);return nm.set(t,a),a}function Ik(t){return new Promise(e=>{const n=new Audio,i=URL.createObjectURL(t),s=a=>{URL.revokeObjectURL(i),n.removeAttribute("src"),n.load(),e(a)};n.preload="metadata",n.addEventListener("loadedmetadata",()=>s(Number.isFinite(n.duration)?Math.round(n.duration*1e3):null),{once:!0}),n.addEventListener("error",()=>s(null),{once:!0}),window.setTimeout(()=>s(null),6e3),n.src=i})}function sF(t,e){const n=URL.createObjectURL(t),i=document.createElement("a");i.href=n,i.download=e,document.body.append(i),i.click(),i.remove(),window.setTimeout(()=>URL.revokeObjectURL(n),1e4)}function __isMacHead(cls){return /\b(cd-head|drop-title|door-head|stash-head|jb-bar|wb-head|nb-head|trade-head|case-nav|fp-head|cw-head|pw-head-bar|wd-header)\b/.test(cls||"");}
 function __cleanMacTitle(txt){
   if(!txt)return txt;
   let s=String(txt).replace(/^[\s💿🚪🎟️⚒️🖼️🧰💸🎤🎁📢💳🛡👤]+/u,"").trim();
@@ -5660,7 +5660,7 @@ function __cleanMacTitle(txt){
   else if(s==="Storage")s="Lagring";
   return s;
 }
-const __MAC_BOX_SEL=".cd-popup, .drop-win, .rt-win, .door-popup, .stash-win, .jb-win, .wb-card, .nb-card, .trade-win, .case-card, .friends-panel, .chat-window, .pw-win, .pw-card";
+const __MAC_BOX_SEL=".cd-popup, .drop-win, .rt-win, .door-popup, .stash-win, .jb-win, .wb-card, .nb-card, .trade-win, .case-card, .friends-panel, .chat-window, .pw-win, .pw-card, .wd-modal";
 function __getGameFrameRect(el){
   const st=(el&&el.closest&&el.closest(".stage"))||document.querySelector(".stage");
   if(st&&st.offsetWidth>0&&st.offsetHeight>0){
@@ -5713,7 +5713,7 @@ function __clampPopupToStage(box){
 function __macUpgradeHead(head){
   if(!head||head.nodeType!==1||!__isMacHead(head.className||""))return;
   head.classList.add("mac-win-bar");
-  const titleEl=head.querySelector("strong, .jb-title, .wb-wanted, .nb-title-big, .case-title, .confirm-title");
+  const titleEl=head.querySelector("strong, .jb-title, .wb-wanted, .nb-title-big, .case-title, .confirm-title, .wd-title");
   if(titleEl){
     const cleaned=__cleanMacTitle(titleEl.textContent);
     if(cleaned&&titleEl.textContent!==cleaned)titleEl.textContent=cleaned;
@@ -5747,7 +5747,7 @@ function __macUpgradeHead(head){
       }else if(head.classList.contains("jb-bar")){
         btn=head.querySelector(".jb-barbtn");
       }else{
-        const btns=head.querySelectorAll("button, .wb-x, .nb-x, .cw-x, .case-x");
+        const btns=head.querySelectorAll("button, .wb-x, .nb-x, .cw-x, .case-x, .wd-close");
         if(btns.length)btn=btns[btns.length-1];
       }
       if(btn){btn.click();return;}
@@ -5796,7 +5796,7 @@ if(typeof window!=="undefined"&&typeof MutationObserver!=="undefined"){
         if(nd&&nd.nodeType===1){
           if(__isMacHead(nd.className||""))__macUpgradeHead(nd);
           if(nd.querySelectorAll){
-            nd.querySelectorAll(".cd-head, .drop-title, .door-head, .stash-head, .jb-bar, .wb-head, .nb-head, .trade-head, .case-nav, .fp-head, .cw-head, .pw-head-bar").forEach(__macUpgradeHead);
+            nd.querySelectorAll(".cd-head, .drop-title, .door-head, .stash-head, .jb-bar, .wb-head, .nb-head, .trade-head, .case-nav, .fp-head, .cw-head, .pw-head-bar, .wd-header").forEach(__macUpgradeHead);
           }
         }
       }
@@ -6452,8 +6452,8 @@ const Fi=150;function Mx(t,e,n){const i=Math.floor(t*6)%6,s=t*6-Math.floor(t*6),
     overlayEl.style.setProperty("right","auto","important");
     overlayEl.style.setProperty("bottom","auto","important");
     modalEl.style.setProperty("max-height",mh+"px","important");
-    modalEl.style.setProperty("height","min(760px, "+mh+"px)","important");
-    modalEl.style.setProperty("max-width","min(440px, "+mw+"px)","important");
+    modalEl.style.setProperty("height","min(520px, "+mh+"px)","important");
+    modalEl.style.setProperty("max-width","min(380px, "+mw+"px)","important");
   };
   document.body.append(overlayEl);
   syncWdFrame();
