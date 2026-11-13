@@ -5651,3 +5651,89 @@ body:has(.lock),
   height: min(760px, calc(100% - 16px)) !important;
   max-height: calc(100% - 16px) !important;
 }
+
+
+/* Light & Dark Theme Support for Both Headers (#macTop & #macBar) and Menus (.mmenu) */
+/* Light Theme (when .dark-theme is NOT active) */
+html:not(.dark-theme) #macTop,
+body:not(.dark-theme) #macTop,
+html:not(.dark-theme) #macBar,
+body:not(.dark-theme) #macBar {
+  background: linear-gradient(180deg, #f2f2f6 0%, #dcdce2 100%) !important;
+  border-bottom: 1px solid #b5b5bd !important;
+  color: #1c1c1e !important;
+}
+
+html:not(.dark-theme) #macTop .mi,
+body:not(.dark-theme) #macTop .mi,
+html:not(.dark-theme) #macTop .mac-clock,
+body:not(.dark-theme) #macTop .mac-clock {
+  color: #1c1c1e !important;
+}
+
+html:not(.dark-theme) #macTop .mi:hover,
+body:not(.dark-theme) #macTop .mi:hover,
+html:not(.dark-theme) #macTop .mi.on,
+body:not(.dark-theme) #macTop .mi.on {
+  background: linear-gradient(#4b91f7, #1d62d1) !important;
+  color: #ffffff !important;
+}
+
+html:not(.dark-theme) #macBar .mac-bar-title,
+body:not(.dark-theme) #macBar .mac-bar-title {
+  color: #3a3a3c !important;
+}
+
+html:not(.dark-theme) .mmenu,
+body:not(.dark-theme) .mmenu {
+  background: rgba(245, 245, 247, 0.96) !important;
+  border: 1px solid rgba(0, 0, 0, 0.16) !important;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.2) !important;
+  color: #1c1c1e !important;
+}
+
+html:not(.dark-theme) .mmenu .mi2,
+body:not(.dark-theme) .mmenu .mi2 {
+  color: #1c1c1e !important;
+}
+
+html:not(.dark-theme) .mmenu .mi2:hover,
+body:not(.dark-theme) .mmenu .mi2:hover {
+  background: linear-gradient(#4b91f7, #1d62d1) !important;
+  color: #ffffff !important;
+}
+
+html:not(.dark-theme) .mmenu hr,
+body:not(.dark-theme) .mmenu hr {
+  border-top: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Dark Theme (when .dark-theme IS active) */
+html.dark-theme #macTop,
+body.dark-theme #macTop,
+html.dark-theme #macBar,
+body.dark-theme #macBar {
+  background: linear-gradient(180deg, #323234 0%, #252527 100%) !important;
+  border-bottom: 1px solid #141416 !important;
+  color: #ffffff !important;
+}
+
+html.dark-theme #macTop .mi,
+body.dark-theme #macTop .mi,
+html.dark-theme #macTop .mac-clock,
+body.dark-theme #macTop .mac-clock {
+  color: #ffffff !important;
+}
+
+html.dark-theme #macTop .mi:hover,
+body.dark-theme #macTop .mi:hover,
+html.dark-theme #macTop .mi.on,
+body.dark-theme #macTop .mi.on {
+  background: linear-gradient(#4b91f7, #1d62d1) !important;
+  color: #ffffff !important;
+}
+
+html.dark-theme #macBar .mac-bar-title,
+body.dark-theme #macBar .mac-bar-title {
+  color: #c7c7cc !important;
+}
