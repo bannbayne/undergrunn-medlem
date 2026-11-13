@@ -6201,3 +6201,31 @@ body.dark-theme #macBar .mac-bar-title {
   box-shadow: none !important;
   text-shadow: none !important;
 }
+
+/* BSD balance in the window title bar (right side) */
+#macBar .mac-bar-bsd {
+  position: absolute;
+  right: 10px;
+  top: 0;
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  cursor: default;
+}
+#macBar .mac-bar-bsd img {
+  width: 12px;
+  height: 12px;
+  flex: none;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+#macBar .mac-bar-bsd .mac-bar-bsd-unit {
+  color: #8e8e93;
+  font-weight: 500;
+}

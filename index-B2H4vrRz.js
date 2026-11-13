@@ -6431,14 +6431,13 @@ function NU(t){
     )
   );
 
-  const macBar = o("div",{id:"macBar",class:"mac-bar"},
+  const macBarBsdNum = o("span",{class:"mac-bar-bsd-num"},String(curBlood||0));   const macBarBsd = o("span",{id:"macBarBsd",class:"mac-bar-bsd",title:r?"Din BSD-saldo":"Your BSD balance"},_mkIosBloodSvg(),macBarBsdNum,o("span",{class:"mac-bar-bsd-unit"},"BSD"));   const _setBarBsd = v => { const n = Math.max(0, Math.floor(Number(v) || 0)); const txt = n.toLocaleString("nb-NO"); if (macBarBsdNum.textContent !== txt) macBarBsdNum.textContent = txt; };   window.setInterval(() => { const p = window.__currentProfile; _setBarBsd(p && typeof p.blood === "number" ? p.blood : curBlood); }, 500);   const macBar = o("div",{id:"macBar",class:"mac-bar"},
     o("div",{class:"tl"},
       o("i",{class:"r",title:r?"Lukk":"Close",onclick:()=>t.onNav("room")},"×"),
       o("i",{class:"y",title:r?"Legg bort":"Minimize",onclick:()=>t.onNav("room")},"–"),
       o("i",{class:"g",title:r?"Fullskjerm":"Fullscreen",onclick:()=>toggleFull()},"+")
     ),
-    o("span",{class:"mac-bar-title",onclick:()=>t.onNav("room")},"Medlem")
-  );
+    o("span",{class:"mac-bar-title",onclick:()=>t.onNav("room")},"Medlem"),     macBarBsd   );
 
   const wrapEl = o("header",{class:"mac-header-wrap"},macTop,macBar);
 
@@ -6447,8 +6446,7 @@ function NU(t){
     setActive(){l();},
     refreshBlood(m){
       const bVal=(typeof m==="number"&&!isNaN(m))?m:(window.__currentProfile&&typeof window.__currentProfile.blood==="number"?window.__currentProfile.blood:0);
-      curBlood = bVal;
-      const _num=document.createElement("span");
+      curBlood = bVal;       _setBarBsd(bVal);       const _num=document.createElement("span");
       _num.className="coins-num";
       _num.textContent=String(bVal);
       i.replaceChildren(_mkIosBloodSvg(),_num);
