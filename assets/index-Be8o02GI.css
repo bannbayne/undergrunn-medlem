@@ -4569,3 +4569,201 @@ body.dark-theme .cw-send:disabled {
   opacity: 0.55 !important;
   cursor: not-allowed !important;
 }
+
+/* macOS Two-Row Header (#macTop + #macBar) */
+.shell:not(.lock-shell) > .sb-status {
+  display: none !important;
+}
+.mac-header-wrap {
+  flex: 0 0 auto;
+  width: 100%;
+  position: relative;
+  z-index: 250;
+  font-family: "Lucida Grande", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+#macTop {
+  height: 22px;
+  background: linear-gradient(180deg, #323234 0%, #252527 100%);
+  border-bottom: 1px solid #141416;
+  display: flex;
+  align-items: center;
+  padding: 0 12px 0 10px;
+  font-size: 13.5px;
+  color: #ffffff;
+  user-select: none;
+}
+#macTop b.mac-app-name {
+  font-weight: 700;
+  padding: 0 9px 0 4px;
+  letter-spacing: -0.1px;
+}
+#macTop .mi {
+  padding: 0 9px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  cursor: default;
+  color: #ffffff;
+}
+#macTop .mi:hover,
+#macTop .mi.on {
+  background: linear-gradient(#4b91f7, #1d62d1);
+  color: #ffffff;
+}
+#macTop .mr {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 13.5px;
+  align-self: stretch;
+}
+#macTop .mr .mi {
+  padding: 0 4px;
+  position: relative;
+}
+#macTop .mr svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+#macTop .mac-clock {
+  white-space: nowrap;
+  color: #ffffff;
+  font-size: 13.5px;
+}
+#macTop .mac-srch-btn .badge {
+  position: absolute;
+  top: 1px;
+  right: -3px;
+  min-width: 13px;
+  height: 13px;
+  padding: 0 3px;
+  font-size: 9px;
+  line-height: 13px;
+  border-radius: 7px;
+  background: #ff3b30;
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+}
+#macBar {
+  height: 22px;
+  background: linear-gradient(180deg, #3a3a3c 0%, #2c2c2e 100%);
+  border-bottom: 1px solid #141416;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: #c7c7cc;
+  position: relative;
+  user-select: none;
+}
+#macBar .mac-bar-title {
+  cursor: default;
+}
+#macBar .tl {
+  position: absolute;
+  left: 8px;
+  top: 5px;
+  display: flex;
+  gap: 8px;
+}
+#macBar .tl i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: normal;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  color: transparent;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.28);
+  cursor: pointer;
+}
+#macBar .tl:hover i {
+  color: rgba(0, 0, 0, 0.55);
+}
+#macBar .tl .r {
+  background: #fc605c;
+}
+#macBar .tl .y {
+  background: #fdbc40;
+}
+#macBar .tl .g {
+  background: #34c84a;
+}
+.mmenu {
+  position: absolute;
+  top: 22px;
+  min-width: 185px;
+  background: rgba(40, 40, 42, 0.96);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.48);
+  padding: 4px 0;
+  font-size: 13px;
+  color: #ffffff;
+  z-index: 300;
+  user-select: none;
+}
+.mmenu .mi2 {
+  padding: 4px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  cursor: default;
+  white-space: nowrap;
+}
+.mmenu .mi2:hover {
+  background: linear-gradient(#4b91f7, #1d62d1);
+  color: #ffffff;
+}
+.mmenu hr {
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin: 4px 0;
+}
+.mac-list-pop {
+  position: absolute !important;
+  top: 24px !important;
+  right: 8px !important;
+  z-index: 300 !important;
+}
+.mac-pop-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+.mac-pop-bsd {
+  color: #ff453a;
+  font-weight: 700;
+}
+@media (max-width: 480px) {
+  #macTop {
+    font-size: 12px;
+    padding: 0 8px 0 6px;
+  }
+  #macTop .mi {
+    padding: 0 5px;
+  }
+  #macTop .mr {
+    gap: 9px;
+    font-size: 12px;
+  }
+  #macTop .mac-clock {
+    font-size: 12px;
+  }
+}
