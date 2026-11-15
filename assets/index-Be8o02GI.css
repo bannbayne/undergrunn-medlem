@@ -6229,3 +6229,12 @@ body.dark-theme #macBar .mac-bar-title {
   color: #8e8e93;
   font-weight: 500;
 }
+
+/* iOS Safari: let taps/long-press on the game reach the game (stab, walk)
+   instead of triggering text selection, the magnifier or page panning. */
+.room-canvas, .stage {
+  touch-action: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+}
