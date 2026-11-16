@@ -4300,10 +4300,12 @@ async function Se(t,e,n={}){
   }
   if (e === "stab" || e === "deadlyStab") {
     try { new Audio("./sfx/osrs/stab.wav").play().catch(()=>{}); } catch{}
-    t.blood = (t.blood || 0) + (e === "deadlyStab" ? 2000 : 500);
+    const gain = e === "deadlyStab" ? 2000 : 500;
+    t.blood = (t.blood || 0) + gain;
+    syncPlayerState(t);
     window.dispatchEvent(new Event("pocket-changed"));
-    pe(r?"+500 blod!":"+500 blood!");
-    return { success: true };
+    pe(r?`+${gain} blod!`:`+${gain} blood!`);
+    return { success: true, gain };
   }
   if (e === "light") {
     try { new Audio("./sfx/osrs/light.wav").play().catch(()=>{}); } catch{}
