@@ -60,8 +60,8 @@
         });
       }
     </script>
-    <script type="module" crossorigin src="./assets/index-offline.js?v=1794828038558"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-Be8o02GI.css?v=1794828038558">
+    <script type="module" crossorigin src="./assets/index-offline.js?v=1794829392623"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Be8o02GI.css?v=1794829392623">
       <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -82,6 +82,60 @@
         }
       } catch(e) {}
     </script>
-    <div id="app"></div>
+    <div id="app">
+      <div id="boot-splash" aria-hidden="true">
+        <div class="boot-brand">MEDLEM</div>
+        <div class="boot-spinner"></div>
+        <div id="boot-msg">Laster inn&nbsp;…</div>
+        <button id="boot-reload" type="button" onclick="location.reload()">Last inn på nytt</button>
+      </div>
+    </div>
+    <style id="boot-splash-style">
+      #boot-splash{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;
+        align-items:center;justify-content:center;gap:16px;background:#0b0d12;
+        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#e8eaf0;
+        -webkit-user-select:none;user-select:none;}
+      #boot-splash .boot-brand{font-weight:800;letter-spacing:.35em;font-size:22px;
+        padding-left:.35em;color:#fff;opacity:.92;}
+      #boot-splash .boot-spinner{width:34px;height:34px;border-radius:50%;
+        border:3px solid rgba(255,255,255,.18);border-top-color:#e23b3b;
+        animation:boot-spin .9s linear infinite;}
+      @keyframes boot-spin{to{transform:rotate(360deg);}}
+      #boot-splash #boot-msg{font-size:13px;opacity:.7;text-align:center;padding:0 24px;}
+      #boot-splash #boot-reload{display:none;margin-top:6px;padding:10px 20px;border:0;
+        border-radius:10px;background:#e23b3b;color:#fff;font-size:14px;font-weight:600;cursor:pointer;}
+    </style>
+    <script>
+      (function(){
+        var start=Date.now();
+        function mounted(){
+          var app=document.getElementById('app');
+          if(!app)return true;
+          for(var i=0;i<app.children.length;i++){
+            if(app.children[i].id!=='boot-splash')return true;
+          }
+          return false;
+        }
+        function fail(txt){
+          var m=document.getElementById('boot-msg'),b=document.getElementById('boot-reload');
+          if(m)m.textContent=txt;
+          if(b)b.style.display='';
+        }
+        var iv=setInterval(function(){
+          if(mounted()){
+            var s=document.getElementById('boot-splash');
+            if(s)s.remove();
+            clearInterval(iv);
+            return;
+          }
+          if(Date.now()-start>22000)fail('Serveren starter opp – dette kan ta et minutt. Trykk under for å prøve igjen.');
+        },350);
+        window.addEventListener('error',function(e){
+          if(e&&e.target&&e.target.tagName==='SCRIPT'&&!mounted()){
+            fail('Kunne ikke laste spillet. Prøv igjen.');
+          }
+        },true);
+      })();
+    </script>
   </body>
 </html>
