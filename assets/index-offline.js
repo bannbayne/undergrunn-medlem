@@ -3509,7 +3509,7 @@ const kO=t=>r?`du tjente ditt første blod. kom tilbake om cirka ${t}, så har j
     for(let n=0;n<dc;n++)t.inventory[n]=e.inventory[n]??null;
   }else if(!t.inventory||!Array.isArray(t.inventory)||!t.inventory.some(it=>it&&it.item)){
     try{
-      const rawInv=(t.uid&&localStorage.getItem("6ix-inventory-"+t.uid))||localStorage.getItem("6ix-offline-inventory");
+      const rawInv=(t.uid?localStorage.getItem("6ix-inventory-"+t.uid):null);
       if(rawInv){
         const parsed=JSON.parse(rawInv);
         if(Array.isArray(parsed)&&parsed.some(it=>it&&it.item))t.inventory=parsed;
@@ -5573,7 +5573,7 @@ async function Se(t,e,n={}){
     wardrobe:{},
     inventory:(()=>{
       try {
-        const rawInv = localStorage.getItem("6ix-inventory-" + t) || localStorage.getItem("6ix-offline-inventory");
+        const rawInv = localStorage.getItem("6ix-inventory-" + t);
         if (rawInv) {
           const parsed = JSON.parse(rawInv);
           if (Array.isArray(parsed) && parsed.some(it => it && it.item)) return parsed;
@@ -5671,7 +5671,7 @@ async function AM(t,e=!1){
       let inv = (Array.isArray(p.inventory) && p.inventory.some(it => it && it.item)) ? p.inventory : null;
       if (!inv) {
         try {
-          const rawInv = localStorage.getItem("6ix-inventory-" + t) || localStorage.getItem("6ix-offline-inventory");
+          const rawInv = localStorage.getItem("6ix-inventory-" + t);
           if (rawInv) {
             const parsed = JSON.parse(rawInv);
             if (Array.isArray(parsed) && parsed.some(it => it && it.item)) inv = parsed;
@@ -5735,7 +5735,7 @@ async function Uj(t,e){
   users[k]=user;
   try{
     localStorage.setItem("6ix-local-users",JSON.stringify(users));
-    localStorage.setItem("6ix-current-user",JSON.stringify(user));try{if(window.__medlemNet&&user&&user.name){window.__medlemNet.set("usernames/"+user.name.toLowerCase().trim(),user.uid);window.__medlemNet.set("profiles/"+user.uid+"/name",user.name);}}catch(_e){}
+    localStorage.setItem("6ix-current-user",JSON.stringify(user));try{if(!localStorage.getItem("6ix-inventory-"+uid)){localStorage.removeItem("6ix-offline-inventory");}}catch(_e){}try{if(window.__medlemNet&&user&&user.name){window.__medlemNet.set("usernames/"+user.name.toLowerCase().trim(),user.uid);window.__medlemNet.set("profiles/"+user.uid+"/name",user.name);}}catch(_e){}
   }catch(_){}
   await IM(uid,t);
   return user;
@@ -7338,7 +7338,7 @@ Admin > Studio > your design > Import: drop the PNG files (or a ZIP of them). On
           let preservedInv = (prof && Array.isArray(prof.inventory) && prof.inventory.some(it=>it)) ? prof.inventory : null;
           if (!preservedInv) {
             try {
-              const rawInv = localStorage.getItem("6ix-inventory-" + uid) || localStorage.getItem("6ix-offline-inventory");
+              const rawInv = localStorage.getItem("6ix-inventory-" + uid);
               if (rawInv) {
                 const parsed = JSON.parse(rawInv);
                 if (Array.isArray(parsed) && parsed.some(it=>it)) preservedInv = parsed;
@@ -7401,7 +7401,7 @@ Admin > Studio > your design > Import: drop the PNG files (or a ZIP of them). On
   if(!isBarter6){if(typeof n.blood!=="number"||isNaN(n.blood)||!localStorage.getItem("6ix-look-chosen-"+t.uid)||n.blood===10000){n.blood=0;try{localStorage.setItem("6ix-profile-"+t.uid,JSON.stringify(n));}catch(_e){}}}if(!n.owned)n.owned={};if(!n.stash)n.stash={};
   if(!n.inventory||!Array.isArray(n.inventory)||!n.inventory.some(it=>it&&it.item)){
     try{
-      const rawInv=localStorage.getItem("6ix-inventory-"+t.uid)||localStorage.getItem("6ix-offline-inventory");
+      const rawInv=localStorage.getItem("6ix-inventory-"+t.uid);
       if(rawInv){
         const parsed=JSON.parse(rawInv);
         if(Array.isArray(parsed)&&parsed.some(it=>it&&it.item)) n.inventory=parsed;
@@ -7465,7 +7465,7 @@ function uG(){
         let preservedInv = (prof && Array.isArray(prof.inventory) && prof.inventory.some(it=>it)) ? prof.inventory : null;
         if (!preservedInv) {
           try {
-            const rawInv = localStorage.getItem("6ix-inventory-" + currentUser.uid) || localStorage.getItem("6ix-offline-inventory");
+            const rawInv = localStorage.getItem("6ix-inventory-" + currentUser.uid);
             if (rawInv) {
               const parsed = JSON.parse(rawInv);
               if (Array.isArray(parsed) && parsed.some(it=>it)) preservedInv = parsed;
