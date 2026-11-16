@@ -60,8 +60,8 @@
         });
       }
     </script>
-    <script type="module" crossorigin src="./assets/index-offline.js?v=1794847067332"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-Be8o02GI.css?v=1794847067332">
+    <script type="module" crossorigin src="./assets/index-offline.js?v=1794850290923"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Be8o02GI.css?v=1794850290923">
       <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -140,6 +140,61 @@
             fail('Kunne ikke laste spillet. Prøv igjen.');
           }
         },true);
+      })();
+    </script>
+    <script id="medlem-room-sync">
+      /* Medlem rom-synk: publiser eget rom (full meta) til delt katalog (roomsMeta)
+         slik at andre kan soke det opp og se samme farger/stoerrelse. Moeblene synkes
+         via world-state. Bruker spillets egne window.__-kroker; roerer ikke spill-logikken. */
+      (function () {
+        function cu() { try { return JSON.parse(localStorage.getItem("6ix-current-user") || "null"); } catch (e) { return null; } }
+        function myUid() { var u = cu(); return (u && u.uid) || null; }
+        function net() { return window.__medlemNet; }
+        function readMeta(rid) { try { return JSON.parse(localStorage.getItem("6ix-room-meta-" + rid) || "null"); } catch (e) { return null; } }
+
+        function publishMine() {
+          try {
+            var n = net(), me = myUid();
+            if (!n || !me) return;
+            var rid = "u_" + me;
+            var meta = readMeta(rid);
+            if (!meta || typeof meta !== "object") return;   // only publish a real saved room
+            var u = cu(), entry = {};
+            for (var k in meta) entry[k] = meta[k];          // full meta (theme, w, h, access, ...)
+            entry.owner = me;
+            entry.ownerName = meta.ownerName || (u && u.name) || "";
+            if (!entry.name) entry.name = ((u && u.name) || "") + "s rom";
+            if (!entry.access) entry.access = "open";
+            n.set("roomsMeta/" + rid, entry);
+          } catch (e) {}
+        }
+
+        function mirror(all) {
+          try {
+            if (!all || typeof all !== "object") return;
+            var me = myUid();
+            for (var rid in all) {
+              if (rid.indexOf("u_") !== 0) continue;
+              var m = all[rid];
+              if (!m || typeof m !== "object" || !m.theme) continue;  // require a real meta
+              if (m.owner === me) continue;                           // keep my own local meta
+              var cur = readMeta(rid) || {}, merged = {};
+              for (var a in cur) merged[a] = cur[a];
+              for (var b in m) merged[b] = m[b];                      // server wins
+              try { localStorage.setItem("6ix-room-meta-" + rid, JSON.stringify(merged)); } catch (e) {}
+            }
+          } catch (e) {}
+        }
+
+        function start() {
+          var n = net();
+          if (!n) { setTimeout(start, 800); return; }
+          try { n.onValue("roomsMeta", function (snap) { mirror(snap && snap.val && snap.val() || {}); }); } catch (e) {}
+          setTimeout(publishMine, 3000);
+          setInterval(publishMine, 8000);
+        }
+        if (document.readyState === "complete" || document.readyState === "interactive") start();
+        else window.addEventListener("DOMContentLoaded", start);
       })();
     </script>
   </body>
