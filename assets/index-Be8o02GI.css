@@ -6238,3 +6238,14 @@ body.dark-theme #macBar .mac-bar-title {
   -webkit-user-select: none !important;
   user-select: none !important;
 }
+
+/* Seamless boot: character loader matches the HTML boot splash (no blue flash on refresh) */
+.center-screen.loading-boot{background:#000 !important;place-items:center !important}
+.center-screen.loading-boot .boot-stack{display:flex;flex-direction:column;align-items:center;gap:24px}
+.center-screen.loading-boot .boot-logo{display:flex;flex-direction:column;align-items:center;gap:12px}
+.center-screen.loading-boot .boot-logo svg{image-rendering:pixelated}
+.center-screen.loading-boot .boot-word{font-weight:700;font-size:20px;letter-spacing:.01em;color:#fff}
+.center-screen.loading-boot .boot-spin{width:34px;height:34px;position:relative}
+.center-screen.loading-boot .boot-spin i{position:absolute;left:15px;top:0;width:4px;height:10px;border-radius:2px;background:#fff;transform-origin:2px 17px;opacity:.15;animation:boot-sp 1s linear infinite}
+.center-screen.loading-boot .loading{color:#fff !important;opacity:.65;font-size:13px;font-weight:600}
+@keyframes boot-sp{0%{opacity:1}100%{opacity:.15}}
