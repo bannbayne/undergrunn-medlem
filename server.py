@@ -185,6 +185,9 @@ class NetSyncServer:
                 if not isinstance(path, str) or not path:
                     continue
                 path = path.strip('/')
+                # Only /api/username/claim may create or change username ownership.
+                if path.startswith('usernames/'):
+                    continue
                 if client_id:
                     self.clients[client_id]['paths'].add(path)
                 val = resolve_server_values(val, self.db.get(path))
@@ -323,6 +326,28 @@ class NetSyncServer:
             if found:
                 return sub
             return None
+
+    def claim_username(self, username, uid):
+        """Atomically reserve a normalized username for account creation."""
+        key = username.strip().lower()
+        path = 'usernames/' + key
+        with self.cv:
+            if path in self.db:
+                return False
+            # Older profiles may predate the username index. Treat them as taken too.
+            for profile_path, profile_name in self.db.items():
+                if (profile_path.startswith('profiles/') and profile_path.endswith('/name')
+                        and isinstance(profile_name, str)
+                        and profile_name.strip().lower() == key):
+                    return False
+            self.version += 1
+            self.db[path] = uid
+            self.history.append((self.version, path, uid, None))
+            if len(self.history) > 3000:
+                self.history = self.history[-1500:]
+            self.save_db()
+            self.cv.notify_all()
+            return True
 
 
 NET_SYNC = NetSyncServer()
@@ -498,6 +523,34 @@ class GameRequestHandler(http.server.SimpleHTTPRequestHandler):
         content_length = int(self.headers.get('Content-Length', 0))
         post_data = self.rfile.read(content_length) if content_length > 0 else b""
         p = urllib.parse.urlparse(self.path)
+
+        # Username reservations must be checked and written atomically on the server.
+        if p.path == "/api/username/claim":
+            try:
+                payload = json.loads(post_data.decode("utf-8")) if post_data else {}
+                username = payload.get("name", "")
+                uid = payload.get("uid", "")
+                if not isinstance(username, str) or not re.fullmatch(r"[A-Za-z0-9_.-]{3,16}", username):
+                    status, response = 400, {"ok": False, "error": "invalid"}
+                else:
+                    normalized = username.lower()
+                    expected_uid = "u_" + re.sub(r"[^a-z0-9]", "_", normalized)
+                    reserved = {"barter6", "admin", "administrator", "moderator", "staff", "adminsidia"}
+                    if normalized in reserved or uid != expected_uid:
+                        status, response = 400, {"ok": False, "error": "invalid"}
+                    elif NET_SYNC.claim_username(username, uid):
+                        status, response = 200, {"ok": True}
+                    else:
+                        status, response = 409, {"ok": False, "error": "taken"}
+            except Exception:
+                status, response = 400, {"ok": False, "error": "invalid"}
+            body = json.dumps(response).encode("utf-8")
+            self.send_response(status)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Content-Length', str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
 
         # Real-time Multiplayer Send
         if p.path == "/api/net/send":
