@@ -17,6 +17,9 @@ PORT = int(os.environ.get("PORT", 8080))
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 STATE_FILE = os.path.join(DIRECTORY, "world_state.json")
 NET_DB_FILE = os.path.join(DIRECTORY, "medlem_multiplayer_state.json")
+# Bump this token to wipe all accounts (profiles + usernames) on the next start,
+# forcing every player to register a new user. Rooms (roomsMeta + world_state) are kept.
+ACCOUNT_RESET_TOKEN = "reset-2026-11-16-a"
 ONLINE_LINK_FILE = os.path.join(DIRECTORY, "online_link.txt")
 PID_FILE = os.path.join(DIRECTORY, "server.pid")
 LOG_FILE = os.path.join(DIRECTORY, "server.log")
@@ -117,6 +120,21 @@ class NetSyncServer:
                         self.db = clean
             except Exception:
                 pass
+
+        # One-time account reset: when ACCOUNT_RESET_TOKEN changes, drop all
+        # accounts (profiles + usernames) so everyone must register a new user.
+        # Rooms (roomsMeta/...) and the world state are kept.
+        try:
+            if self.db.get("__account_reset") != ACCOUNT_RESET_TOKEN:
+                for k in list(self.db.keys()):
+                    if (k.startswith("profiles/") or k.startswith("usernames/")
+                            or '/players/' in k or k.startswith("presence/")):
+                        del self.db[k]
+                self.db["__account_reset"] = ACCOUNT_RESET_TOKEN
+                self.save_db()
+                print("[RESET] Accounts wiped (profiles + usernames); rooms kept.")
+        except Exception as e:
+            print(f"[RESET] feilet: {e}")
 
     def save_db(self):
         try:

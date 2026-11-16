@@ -60,8 +60,27 @@
         });
       }
     </script>
-    <script type="module" crossorigin src="./assets/index-offline.js?v=1794851863298"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-Be8o02GI.css?v=1794851863298">
+    <script id="medlem-account-reset">
+      /* Kontonullstilling: nar denne token endres, logges alle ut lokalt og ma
+         lage ny bruker ved neste lasting. Rommene (room-meta/room-furni) beholdes.
+         Hold token lik ACCOUNT_RESET_TOKEN i server.py. */
+      (function () {
+        try {
+          var TOKEN = "reset-2026-11-16-a";
+          if (localStorage.getItem("6ix-account-reset") !== TOKEN) {
+            for (var i = localStorage.length - 1; i >= 0; i--) {
+              var k = localStorage.key(i);
+              if (!k || k.indexOf("6ix-") !== 0) continue;
+              if (/^6ix-(room-meta-|room-furni-|account-reset$|theme$)/.test(k)) continue;
+              localStorage.removeItem(k);
+            }
+            localStorage.setItem("6ix-account-reset", TOKEN);
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <script type="module" crossorigin src="./assets/index-offline.js?v=1794862171781"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Be8o02GI.css?v=1794862171781">
       <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(regs) {
