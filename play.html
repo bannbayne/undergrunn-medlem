@@ -60,8 +60,8 @@
         });
       }
     </script>
-    <script type="module" crossorigin src="./assets/index-offline.js?v=1794829392623"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-Be8o02GI.css?v=1794829392623">
+    <script type="module" crossorigin src="./assets/index-offline.js?v=1794830982117"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Be8o02GI.css?v=1794830982117">
       <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -84,26 +84,31 @@
     </script>
     <div id="app">
       <div id="boot-splash" aria-hidden="true">
-        <div class="boot-brand">MEDLEM</div>
-        <div class="boot-spinner"></div>
-        <div id="boot-msg">Laster inn&nbsp;…</div>
+        <div class="boot-logo">
+          <svg viewBox="3 1 10 15" shape-rendering="crispEdges" width="60" height="84" aria-hidden="true"><path d="M7 1h2v2h1v2h1v2h1v3h1v2h-1v2h-1v1h-1v1H7v-1H6v-1H5v-2H4v-2h1V7h1V5h1V3h0z" fill="#8e0f0f"/><path d="M8 2h1v2h1v2h1v3h1v2h-1v2h-1v1H7v-1H6v-1H5v-2h1V9h1V7h1V4h0z" fill="#d32121"/><path d="M9 5h1v2H9zM7 9h1v3H7z" fill="#ff6b6b"/></svg>
+          <span class="boot-word">Medlem</span>
+        </div>
+        <div class="boot-spin" aria-hidden="true"><i style="transform:rotate(0deg);animation-delay:-1.00s"></i><i style="transform:rotate(30deg);animation-delay:-0.92s"></i><i style="transform:rotate(60deg);animation-delay:-0.83s"></i><i style="transform:rotate(90deg);animation-delay:-0.75s"></i><i style="transform:rotate(120deg);animation-delay:-0.67s"></i><i style="transform:rotate(150deg);animation-delay:-0.58s"></i><i style="transform:rotate(180deg);animation-delay:-0.50s"></i><i style="transform:rotate(210deg);animation-delay:-0.42s"></i><i style="transform:rotate(240deg);animation-delay:-0.33s"></i><i style="transform:rotate(270deg);animation-delay:-0.25s"></i><i style="transform:rotate(300deg);animation-delay:-0.17s"></i><i style="transform:rotate(330deg);animation-delay:-0.08s"></i></div>
+        <div id="boot-msg"></div>
         <button id="boot-reload" type="button" onclick="location.reload()">Last inn på nytt</button>
       </div>
     </div>
     <style id="boot-splash-style">
       #boot-splash{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;
-        align-items:center;justify-content:center;gap:16px;background:#0b0d12;
-        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#e8eaf0;
+        align-items:center;justify-content:center;gap:24px;background:#000;
+        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#fff;
         -webkit-user-select:none;user-select:none;}
-      #boot-splash .boot-brand{font-weight:800;letter-spacing:.35em;font-size:22px;
-        padding-left:.35em;color:#fff;opacity:.92;}
-      #boot-splash .boot-spinner{width:34px;height:34px;border-radius:50%;
-        border:3px solid rgba(255,255,255,.18);border-top-color:#e23b3b;
-        animation:boot-spin .9s linear infinite;}
-      @keyframes boot-spin{to{transform:rotate(360deg);}}
-      #boot-splash #boot-msg{font-size:13px;opacity:.7;text-align:center;padding:0 24px;}
-      #boot-splash #boot-reload{display:none;margin-top:6px;padding:10px 20px;border:0;
-        border-radius:10px;background:#e23b3b;color:#fff;font-size:14px;font-weight:600;cursor:pointer;}
+      #boot-splash .boot-logo{display:flex;flex-direction:column;align-items:center;gap:12px;}
+      #boot-splash .boot-logo svg{image-rendering:pixelated;}
+      #boot-splash .boot-word{font-weight:700;font-size:20px;letter-spacing:.01em;color:#fff;}
+      #boot-splash .boot-spin{width:34px;height:34px;position:relative;}
+      #boot-splash .boot-spin i{position:absolute;left:15px;top:0;width:4px;height:10px;
+        border-radius:2px;background:#fff;transform-origin:2px 17px;opacity:.15;
+        animation:boot-sp 1s linear infinite;}
+      @keyframes boot-sp{0%{opacity:1}100%{opacity:.15}}
+      #boot-splash #boot-msg{font-size:13px;opacity:.65;text-align:center;padding:0 24px;}
+      #boot-splash #boot-reload{display:none;margin-top:4px;padding:10px 20px;border:0;
+        border-radius:10px;background:#d32121;color:#fff;font-size:14px;font-weight:600;cursor:pointer;}
     </style>
     <script>
       (function(){
