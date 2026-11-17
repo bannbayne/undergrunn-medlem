@@ -6249,3 +6249,209 @@ body.dark-theme #macBar .mac-bar-title {
 .center-screen.loading-boot .boot-spin i{position:absolute;left:15px;top:0;width:4px;height:10px;border-radius:2px;background:#fff;transform-origin:2px 17px;opacity:.15;animation:boot-sp 1s linear infinite}
 .center-screen.loading-boot .loading{color:#fff !important;opacity:.65;font-size:13px;font-weight:600}
 @keyframes boot-sp{0%{opacity:1}100%{opacity:.15}}
+
+
+/* QA Bug & Performance Polish: Scrollbars, Profile Dark Mode, Compact Settings, No Pill Overlap */
+/* 1. Hide redundant floating Venner button that overlapped Send / Rom dock / Lagre / Avatar screen */
+.friends-toggle {
+  display: none !important;
+}
+
+/* 2. Sleek macOS-style thin dark scrollbars across all windows, drawers, and panels */
+.wd-body,
+.macfw .mwBody,
+.sixty-body,
+.landlord-body,
+.door-body,
+.stash-grid,
+.pw-card,
+.osrs-body,
+.chat-log,
+.cw-log,
+.fp-list,
+.wb-list,
+.nb-body,
+.jb-body,
+.fz-list {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(255, 255, 255, 0.28) transparent !important;
+}
+
+.wd-body::-webkit-scrollbar,
+.macfw .mwBody::-webkit-scrollbar,
+.sixty-body::-webkit-scrollbar,
+.landlord-body::-webkit-scrollbar,
+.door-body::-webkit-scrollbar,
+.stash-grid::-webkit-scrollbar,
+.pw-card::-webkit-scrollbar,
+.osrs-body::-webkit-scrollbar,
+.chat-log::-webkit-scrollbar,
+.cw-log::-webkit-scrollbar,
+.fp-list::-webkit-scrollbar,
+.wb-list::-webkit-scrollbar,
+.nb-body::-webkit-scrollbar,
+.jb-body::-webkit-scrollbar,
+.fz-list::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+
+.wd-body::-webkit-scrollbar-track,
+.macfw .mwBody::-webkit-scrollbar-track,
+.sixty-body::-webkit-scrollbar-track,
+.landlord-body::-webkit-scrollbar-track,
+.door-body::-webkit-scrollbar-track,
+.stash-grid::-webkit-scrollbar-track,
+.pw-card::-webkit-scrollbar-track,
+.osrs-body::-webkit-scrollbar-track,
+.chat-log::-webkit-scrollbar-track,
+.cw-log::-webkit-scrollbar-track,
+.fp-list::-webkit-scrollbar-track,
+.wb-list::-webkit-scrollbar-track,
+.nb-body::-webkit-scrollbar-track,
+.jb-body::-webkit-scrollbar-track,
+.fz-list::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.wd-body::-webkit-scrollbar-thumb,
+.macfw .mwBody::-webkit-scrollbar-thumb,
+.sixty-body::-webkit-scrollbar-thumb,
+.landlord-body::-webkit-scrollbar-thumb,
+.door-body::-webkit-scrollbar-thumb,
+.stash-grid::-webkit-scrollbar-thumb,
+.pw-card::-webkit-scrollbar-thumb,
+.osrs-body::-webkit-scrollbar-thumb,
+.chat-log::-webkit-scrollbar-thumb,
+.cw-log::-webkit-scrollbar-thumb,
+.fp-list::-webkit-scrollbar-thumb,
+.wb-list::-webkit-scrollbar-thumb,
+.nb-body::-webkit-scrollbar-thumb,
+.jb-body::-webkit-scrollbar-thumb,
+.fz-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.28) !important;
+  border-radius: 3px !important;
+}
+
+/* 3. Compact Innstillinger (.macfw) cells so everything fits without overflow and drags vertically */
+#mw_set {
+  max-height: min(460px, calc(100dvh - 64px)) !important;
+}
+.fwPad {
+  padding: 10px 12px 12px !important;
+}
+.fwPad .msSec {
+  margin: 10px 4px 4px !important;
+  font-size: 11.5px !important;
+}
+.fwPad .msCell {
+  min-height: 36px !important;
+  font-size: 14px !important;
+  padding: 0 12px !important;
+}
+.msSw {
+  transform: scale(0.84) !important;
+  transform-origin: right center !important;
+}
+
+/* 4. Readable label on light wallpaper tiles (Rosa) in Bakgrunn */
+.bgGrid button span,
+.bgGrid button {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.75) !important;
+  font-weight: 600 !important;
+}
+
+/* 5. Profile Modal (.pw-card) in OS X Dark Popup Window Format */
+.pw-card {
+  width: min(560px, calc(100% - 16px)) !important;
+  max-height: min(500px, calc(100dvh - 64px)) !important;
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-radius: 6px !important;
+  border: none !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.16), 0 18px 50px rgba(0, 0, 0, 0.72) !important;
+  padding: 0 !important;
+}
+.pw-body {
+  background: #000000 !important;
+  color: #ffffff !important;
+  min-height: 220px !important;
+}
+.pw-mid {
+  min-height: 200px !important;
+  margin: 10px 4px !important;
+}
+.pw-group,
+.pw-grow {
+  background: #1c1c1e !important;
+  border: 1px solid #2c2c2e !important;
+  color: #ffffff !important;
+}
+.pw-btn {
+  background: #1c1c1e !important;
+  color: #ffffff !important;
+  border-top: 0.5px solid #2c2c2e !important;
+  min-height: 38px !important;
+  font-size: 14.5px !important;
+}
+.pw-btn:active:not(:disabled) {
+  background: #2c2c2e !important;
+  color: #ffffff !important;
+}
+.pw-btn:disabled {
+  color: #636366 !important;
+}
+.pw-btn.primary {
+  color: #0a84ff !important;
+}
+.pw-sec {
+  color: #8e8e93 !important;
+}
+.pw-status-in {
+  background: #1c1c1e !important;
+  color: #ffffff !important;
+  border: 1px solid #3a3a3c !important;
+}
+.pw-tile {
+  background: #1c1c1e !important;
+  border: 1px solid #2c2c2e !important;
+}
+.pw-tile.empty {
+  background: rgba(28, 28, 30, 0.6) !important;
+  border: 1px dashed #48484a !important;
+  color: #636366 !important;
+}
+.pw-x {
+  display: none !important;
+}
+
+/* 6. Hide room title & online pills when Innredning (.furnish-ui) is active so they don't peek behind */
+.stage:has(.furnish-ui) > .room-title,
+.stage:has(.furnish-ui) > .online {
+  display: none !important;
+}
+
+/* 7. Improve chat log readability on light room backgrounds */
+.chat-log .line {
+  background: rgba(0, 0, 0, 0.52) !important;
+  color: #ffffff !important;
+  padding: 3px 8px !important;
+  border-radius: 6px !important;
+  margin-bottom: 3px !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+}
+
+/* 8. Prevent vertical page scrollbar on avatar onboarding (.onb) */
+.page:has(.onb) {
+  overflow-y: auto !important;
+  max-height: calc(100dvh - 44px) !important;
+}
+.onb {
+  min-height: 0 !important;
+  padding: 12px !important;
+  box-sizing: border-box !important;
+}

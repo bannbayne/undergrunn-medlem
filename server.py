@@ -377,6 +377,8 @@ class ThreadingServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
 
 
 # ----------------- HTTP Request Handler -----------------
+_GZIP_CACHE = {}
+
 class GameRequestHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
@@ -514,17 +516,24 @@ class GameRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(data)
             return
 
-        # Fast gzip static file serving
+        # Fast gzip static file serving with in-memory mtime cache
         clean_path = p.path.split('?')[0]
         file_path = self.translate_path(clean_path)
         if os.path.isfile(file_path) and any(clean_path.endswith(ext) for ext in ('.js', '.css', '.json', '.svg')):
             if "gzip" in self.headers.get("Accept-Encoding", ""):
                 try:
-                    with open(file_path, "rb") as f:
-                        raw_data = f.read()
-                    if len(raw_data) > 512:
+                    st = os.stat(file_path)
+                    if st.st_size > 512:
+                        cache_key = (file_path, st.st_mtime_ns, st.st_size)
+                        compressed = _GZIP_CACHE.get(cache_key)
+                        if compressed is None:
+                            with open(file_path, "rb") as f:
+                                raw_data = f.read()
+                            compressed = gzip.compress(raw_data, compresslevel=6)
+                            if len(_GZIP_CACHE) > 64:
+                                _GZIP_CACHE.clear()
+                            _GZIP_CACHE[cache_key] = compressed
                         ctype = self.guess_type(clean_path)
-                        compressed = gzip.compress(raw_data, compresslevel=6)
                         self.send_response(200)
                         self.send_header('Content-Type', ctype)
                         self.send_header('Content-Encoding', 'gzip')
