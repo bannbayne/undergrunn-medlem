@@ -6628,8 +6628,16 @@ html, body, #app, .shell {
   }
 }
 
-/* 6. Mobile Profile Modal (.pw-card): put active subview (edit / gift / report) at top of modal */
+/* 6. Mobile Profile Modal (.pw-card): show active subview (edit / gift / report) cleanly without avatar overlap */
+.pw-mid {
+  overflow: hidden !important;
+}
 @media (max-width: 580px) {
+  .pw-card[data-pw-mode="edit"] .pw-body,
+  .pw-card[data-pw-mode="gift"] .pw-body,
+  .pw-card[data-pw-mode="report"] .pw-body {
+    grid-template-columns: 1fr !important;
+  }
   .pw-card[data-pw-mode="edit"] .pw-left,
   .pw-card[data-pw-mode="gift"] .pw-left,
   .pw-card[data-pw-mode="report"] .pw-left {
@@ -6638,15 +6646,11 @@ html, body, #app, .shell {
   }
   .pw-card[data-pw-mode="edit"] .pw-mid,
   .pw-card[data-pw-mode="gift"] .pw-mid,
-  .pw-card[data-pw-mode="report"] .pw-mid {
-    grid-column: 1 !important;
-    grid-row: 2 !important;
-  }
+  .pw-card[data-pw-mode="report"] .pw-mid,
   .pw-card[data-pw-mode="edit"] .pw-right,
   .pw-card[data-pw-mode="gift"] .pw-right,
   .pw-card[data-pw-mode="report"] .pw-right {
-    grid-column: 2 !important;
-    grid-row: 2 !important;
+    display: none !important;
   }
 }
 
