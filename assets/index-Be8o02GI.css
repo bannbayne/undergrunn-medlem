@@ -6258,23 +6258,21 @@ body.dark-theme #macBar .mac-bar-title {
 }
 
 /* 2. Sleek macOS-style thin dark scrollbars across all windows, drawers, and panels */
-.wd-body,
-.macfw .mwBody,
-.sixty-body,
-.landlord-body,
-.door-body,
-.stash-grid,
+html.dark-theme,
+body.dark-theme,
+.macfw,
+.wd-modal,
+.cd-popup,
+.stash-win,
+.door-popup,
 .pw-card,
-.osrs-body,
-.chat-log,
-.cw-log,
-.fp-list,
-.wb-list,
-.nb-body,
-.jb-body,
-.fz-list {
-  scrollbar-width: thin !important;
-  scrollbar-color: rgba(255, 255, 255, 0.28) transparent !important;
+.sixty-card,
+.landlord-card,
+.drop-win,
+.jb-card,
+.wb-card,
+.nb-card {
+  color-scheme: dark !important;
 }
 
 .wd-body::-webkit-scrollbar,
@@ -6454,4 +6452,216 @@ body.dark-theme #macBar .mac-bar-title {
   min-height: 0 !important;
   padding: 12px !important;
   box-sizing: border-box !important;
+}
+
+
+/* =========================================================
+   MOBILE (iOS & ANDROID) QA & UX POLISH
+   ========================================================= */
+
+/* 1. Prevent page-level overflow on mobile & desktop */
+html, body, #app, .shell {
+  max-height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+/* 2. Expanded touch targets on traffic-light close/minimize buttons (.tl i) */
+.tl i {
+  position: relative !important;
+}
+.tl i::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: -8px !important;
+}
+@media (pointer: coarse), (max-width: 768px) {
+  .tl {
+    gap: 9px !important;
+  }
+  .tl i {
+    width: 13px !important;
+    height: 13px !important;
+    font-size: 10px !important;
+  }
+}
+
+/* 3. Prevent iOS Safari auto-zoom on input focus (font-size >= 16px) */
+@media (max-width: 768px), (pointer: coarse) {
+  input,
+  select,
+  textarea,
+  .chat-input,
+  .cw-input,
+  .bs-input,
+  .mini-input,
+  .stash-search,
+  .tshirt-input,
+  .pw-status-in,
+  .door-search input,
+  .fp-add input {
+    font-size: 16px !important;
+  }
+}
+
+/* 4. Restore compact 7-column Inventar, 4-column Emotes, and compact Rom panel on mobile */
+@media (max-width: 900px) {
+  .room-main {
+    display: contents !important;
+  }
+  .stage {
+    order: 1 !important;
+    min-height: 190px !important;
+  }
+  .chat-bar {
+    order: 2 !important;
+    padding-right: 0 !important;
+  }
+  .side-host {
+    order: 3 !important;
+    width: 100% !important;
+    max-height: 36vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+  .osrs-panel.collapsed .osrs-body {
+    display: none !important;
+  }
+  .osrs-tabs {
+    padding: 3px 4px !important;
+  }
+  .osrs-tab {
+    padding: 3px 0 !important;
+    height: 28px !important;
+  }
+  .tab-ico {
+    height: 20px !important;
+  }
+  .osrs-title {
+    display: none !important;
+  }
+  .osrs-body {
+    padding: 5px 6px 6px !important;
+  }
+  .inv-grid {
+    grid-template-columns: repeat(7, minmax(0, 38px)) !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    padding: 4px !important;
+  }
+  .inv-foot,
+  .drop-foot {
+    margin-top: 4px !important;
+  }
+  .inv-foot .btn,
+  .btn.drop-btn {
+    min-height: 28px !important;
+    padding: 4px 12px !important;
+    font-size: 13px !important;
+  }
+  .emote-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+    padding: 4px !important;
+  }
+  .emote-cell {
+    padding: 4px 2px !important;
+    font-size: 11px !important;
+  }
+  .emote-icon {
+    height: 24px !important;
+  }
+  .roompanel {
+    gap: 6px !important;
+    padding: 2px !important;
+  }
+  .roompanel .rp-sec {
+    padding: 8px 10px !important;
+    gap: 4px !important;
+  }
+  .roompanel .rp-chips .chip {
+    min-height: 30px !important;
+    padding: 4px 6px !important;
+    font-size: 12px !important;
+  }
+  .roompanel input.mini-input,
+  .roompanel .rp-sec .row .btn {
+    height: 32px !important;
+  }
+}
+
+/* 5. Mobile Friends & Messenger bottom sheet responsiveness */
+@media (max-width: 640px) {
+  .friends-toggle {
+    display: none !important;
+  }
+  .messenger {
+    left: 0 !important;
+    right: 0 !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0 !important;
+  }
+  .friends-col {
+    width: 100% !important;
+    align-items: stretch !important;
+  }
+  .friends-panel {
+    width: 100% !important;
+    max-height: 46vh !important;
+    border-radius: 12px 12px 0 0 !important;
+    margin-bottom: 0 !important;
+  }
+  .chat-windows {
+    width: 100% !important;
+  }
+  .chat-window {
+    width: 100% !important;
+    height: 42vh !important;
+    border-radius: 12px 12px 0 0 !important;
+  }
+  .bgGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+  }
+  .bgGrid button {
+    font-size: 11px !important;
+  }
+}
+
+/* 6. Mobile Profile Modal (.pw-card): put active subview (edit / gift / report) at top of modal */
+@media (max-width: 580px) {
+  .pw-card[data-pw-mode="edit"] .pw-left,
+  .pw-card[data-pw-mode="gift"] .pw-left,
+  .pw-card[data-pw-mode="report"] .pw-left {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+  }
+  .pw-card[data-pw-mode="edit"] .pw-mid,
+  .pw-card[data-pw-mode="gift"] .pw-mid,
+  .pw-card[data-pw-mode="report"] .pw-mid {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+  }
+  .pw-card[data-pw-mode="edit"] .pw-right,
+  .pw-card[data-pw-mode="gift"] .pw-right,
+  .pw-card[data-pw-mode="report"] .pw-right {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+  }
+}
+
+/* 7. Custom dark scrollbar for .side-host and .page */
+.side-host::-webkit-scrollbar,
+.page::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+.side-host::-webkit-scrollbar-track,
+.page::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+.side-host::-webkit-scrollbar-thumb,
+.page::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.28) !important;
+  border-radius: 3px !important;
 }
