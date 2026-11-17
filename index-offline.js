@@ -5732,6 +5732,7 @@ async function Uj(t,e){
   try{users=JSON.parse(localStorage.getItem("6ix-local-users")||"{}");}catch(_){}
   const k=t.toLowerCase();
   if(users[k])throw new Error(r?"Det brukernavnet er allerede tatt.":"Username is already taken.");
+  if(window.__medlemNet){let _taken=false;try{const _snap=await window.__medlemNet.get("usernames/"+k);_taken=!!(_snap&&_snap.val&&_snap.val()!=null);}catch(_qe){_taken=false;}if(_taken)throw new Error(r?"Det brukernavnet er allerede tatt.":"Username is already taken.");}
   const uid="u_"+k.replace(/[^a-z0-9]/g,"_");
   const user={uid,email:Mk(t),name:t,password:e,createdAt:Date.now()};
   users[k]=user;
@@ -7331,6 +7332,7 @@ Admin > Studio > your design > Import: drop the PNG files (or a ZIP of them). On
       const uname=(n.value||"").trim()||"barter6";
       const uid=uname.toLowerCase()==="barter6"?"barter6":"u_"+uname.toLowerCase().replace(/[^a-z0-9]/g,"_");
       const user={uid,name:uname,email:`${uname.toLowerCase()}@users.bobba.invalid`};
+      if(t && uname.toLowerCase()!=="barter6" && window.__medlemNet){let _taken=false;try{const _us=await window.__medlemNet.get("usernames/"+uname.toLowerCase());if(_us&&_us.val&&_us.val()!=null)_taken=true;if(!_taken){const _pn=await window.__medlemNet.get("profiles/"+uid+"/name");if(_pn&&_pn.val&&_pn.val()!=null)_taken=true;}}catch(_e){_taken=false;}if(_taken){e.textContent=r?"Det brukernavnet er allerede tatt. Logg inn, eller velg et annet.":"That username is taken. Log in, or pick another.";s.disabled=!1;return;}}
       try{
         localStorage.setItem("6ix-current-user",JSON.stringify(user));
         const pKey="6ix-profile-"+uid;
@@ -7371,6 +7373,7 @@ Admin > Studio > your design > Import: drop the PNG files (or a ZIP of them). On
           localStorage.setItem(pKey,JSON.stringify(prof));
         }
       }catch(_){}
+      try{if(t&&window.__medlemNet&&uname.toLowerCase()!=="barter6"){window.__medlemNet.set("usernames/"+uname.toLowerCase(),uid);window.__medlemNet.set("profiles/"+uid+"/name",uname);}}catch(_){}
       oD(user, true);
     }catch(p){
       console.error("Login catch:", p);
