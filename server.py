@@ -11,6 +11,8 @@ import subprocess
 import threading
 import time
 import re
+import hmac
+import hashlib
 import atexit
 
 PORT = int(os.environ.get("PORT", 8080))
@@ -20,6 +22,14 @@ NET_DB_FILE = os.path.join(DIRECTORY, "medlem_multiplayer_state.json")
 # Bump this token to wipe all accounts (profiles + usernames) on the next start,
 # forcing every player to register a new user. Rooms (roomsMeta + world_state) are kept.
 ACCOUNT_RESET_TOKEN = "reset-2026-11-16-a"
+
+def barter6_token():
+    """Signed admin token derived from BARTER6_PASSWORD. Empty when no password
+    is configured, so verification always fails until the env var is set."""
+    pw = os.environ.get("BARTER6_PASSWORD", "")
+    if not pw:
+        return ""
+    return hmac.new(pw.encode("utf-8"), b"barter6-admin-v1", hashlib.sha256).hexdigest()
 ONLINE_LINK_FILE = os.path.join(DIRECTORY, "online_link.txt")
 PID_FILE = os.path.join(DIRECTORY, "server.pid")
 LOG_FILE = os.path.join(DIRECTORY, "server.log")
@@ -129,6 +139,8 @@ class NetSyncServer:
                 for k in list(self.db.keys()):
                     if (k.startswith("profiles/") or k.startswith("usernames/")
                             or '/players/' in k or k.startswith("presence/")):
+                        if "barter6" in k.lower():
+                            continue  # keep the admin account across resets
                         del self.db[k]
                 self.db["__account_reset"] = ACCOUNT_RESET_TOKEN
                 self.save_db()
@@ -571,6 +583,48 @@ class GameRequestHandler(http.server.SimpleHTTPRequestHandler):
                         status, response = 409, {"ok": False, "error": "taken"}
             except Exception:
                 status, response = 400, {"ok": False, "error": "invalid"}
+            body = json.dumps(response).encode("utf-8")
+            self.send_response(status)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Content-Length', str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+
+        # Admin (barter6) login: verify password server-side against the
+        # BARTER6_PASSWORD env var. The password never lives in the client code.
+        if p.path == "/api/auth/barter6":
+            try:
+                payload = json.loads(post_data.decode("utf-8")) if post_data else {}
+                supplied = payload.get("password", "")
+                expected = os.environ.get("BARTER6_PASSWORD", "")
+                if not expected:
+                    status, response = 200, {"ok": False, "reason": "not_configured"}
+                elif isinstance(supplied, str) and hmac.compare_digest(supplied, expected):
+                    status, response = 200, {"ok": True, "token": barter6_token()}
+                else:
+                    status, response = 200, {"ok": False, "reason": "wrong"}
+            except Exception:
+                status, response = 400, {"ok": False, "reason": "error"}
+            body = json.dumps(response).encode("utf-8")
+            self.send_response(status)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Content-Length', str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+
+        # Verify a stored admin token on auto-resume (boot), so a manually
+        # planted barter6 session in localStorage cannot enter without the password.
+        if p.path == "/api/auth/verify-barter6":
+            try:
+                payload = json.loads(post_data.decode("utf-8")) if post_data else {}
+                token = payload.get("token", "")
+                expected = barter6_token()
+                ok = bool(expected) and isinstance(token, str) and hmac.compare_digest(token, expected)
+                status, response = 200, {"ok": ok}
+            except Exception:
+                status, response = 400, {"ok": False}
             body = json.dumps(response).encode("utf-8")
             self.send_response(status)
             self.send_header('Content-Type', 'application/json')
