@@ -23,9 +23,8 @@ NET_DB_FILE = os.path.join(DIRECTORY, "medlem_multiplayer_state.json")
 # forcing every player to register a new user. Rooms (roomsMeta + world_state) are kept.
 ACCOUNT_RESET_TOKEN = "reset-2026-11-16-a"
 
-# Admin (barter6) password. Read only from the BARTER6_PASSWORD env var so the
-# value never lives in the (public) repo. Set it in Render's Environment tab.
-BARTER6_PASSWORD = os.environ.get("BARTER6_PASSWORD", "")
+# Admin (barter6) password. Defaults to barter620 if BARTER6_PASSWORD env var is not set.
+BARTER6_PASSWORD = os.environ.get("BARTER6_PASSWORD") or "barter620"
 
 def barter6_token():
     """Signed admin token derived from the admin password. Empty when no
