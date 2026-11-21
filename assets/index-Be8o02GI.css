@@ -6440,18 +6440,14 @@ body.dark-theme,
   display: none !important;
 }
 
-/* 7. Improve chat log readability on light room backgrounds */
+/* 7. No black boxes on chat log lines */
 .chat-log .line {
-  background: rgba(0, 0, 0, 0.52) !important;
-  color: #ffffff !important;
-  padding: 3px 8px !important;
-  border-radius: 6px !important;
-  margin-bottom: 3px !important;
-  backdrop-filter: blur(4px) !important;
-  -webkit-backdrop-filter: blur(4px) !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
-  width: fit-content !important;
-  max-width: 100% !important;
+  background: transparent !important;
+  padding: 1px 0 !important;
+  border-radius: 0 !important;
+  margin-bottom: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 /* 8. Prevent vertical page scrollbar on avatar onboarding (.onb) */
