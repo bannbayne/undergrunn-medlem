@@ -23,10 +23,14 @@ NET_DB_FILE = os.path.join(DIRECTORY, "medlem_multiplayer_state.json")
 # forcing every player to register a new user. Rooms (roomsMeta + world_state) are kept.
 ACCOUNT_RESET_TOKEN = "reset-2026-11-16-a"
 
+# Admin (barter6) password. Read only from the BARTER6_PASSWORD env var so the
+# value never lives in the (public) repo. Set it in Render's Environment tab.
+BARTER6_PASSWORD = os.environ.get("BARTER6_PASSWORD", "")
+
 def barter6_token():
-    """Signed admin token derived from BARTER6_PASSWORD. Empty when no password
-    is configured, so verification always fails until the env var is set."""
-    pw = os.environ.get("BARTER6_PASSWORD", "")
+    """Signed admin token derived from the admin password. Empty when no
+    password is configured, so verification always fails in that case."""
+    pw = BARTER6_PASSWORD
     if not pw:
         return ""
     return hmac.new(pw.encode("utf-8"), b"barter6-admin-v1", hashlib.sha256).hexdigest()
@@ -84,6 +88,82 @@ def save_world_state(state):
         os.replace(tmp_file, STATE_FILE)
     except Exception as e:
         print(f"Feil ved lagring av world_state: {e}")
+
+
+# ----------------- External database (Upstash Redis, optional) -----------------
+# Render's disk is ephemeral, so the JSON state files are wiped on every
+# redeploy/restart. When UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN are
+# set, we restore the state from Upstash on boot and back it up every 30s, so
+# admin changes (rooms, NPCs, accounts) survive restarts. Without them the
+# server runs exactly as before, on local files only.
+import urllib.request as _urlreq
+UPSTASH_URL = os.environ.get("UPSTASH_REDIS_REST_URL", "").rstrip("/")
+UPSTASH_TOKEN = os.environ.get("UPSTASH_REDIS_REST_TOKEN", "")
+DB_ENABLED = bool(UPSTASH_URL and UPSTASH_TOKEN)
+DB_KEY_WORLD = "medlem:world_state"
+DB_KEY_NET = "medlem:net_db"
+
+def _upstash_cmd(args, timeout=8):
+    req = _urlreq.Request(
+        UPSTASH_URL,
+        data=json.dumps(args).encode("utf-8"),
+        headers={"Authorization": "Bearer " + UPSTASH_TOKEN,
+                 "Content-Type": "application/json"},
+    )
+    with _urlreq.urlopen(req, timeout=timeout) as r:
+        return json.loads(r.read().decode("utf-8"))
+
+def db_get(key):
+    if not DB_ENABLED:
+        return None
+    try:
+        res = _upstash_cmd(["GET", key])
+        return res.get("result") if isinstance(res, dict) else None
+    except Exception as e:
+        print(f"[DB] get {key} failed: {e}")
+        return None
+
+def db_set(key, value):
+    if not DB_ENABLED:
+        return False
+    try:
+        _upstash_cmd(["SET", key, value])
+        return True
+    except Exception as e:
+        print(f"[DB] set {key} failed: {e}")
+        return False
+
+def restore_from_db():
+    """Load persisted state from the external DB into the local files on boot."""
+    if not DB_ENABLED:
+        return
+    for key, path in ((DB_KEY_WORLD, STATE_FILE), (DB_KEY_NET, NET_DB_FILE)):
+        try:
+            blob = db_get(key)
+            if blob and isinstance(blob, str) and blob.strip().startswith(("{", "[")):
+                json.loads(blob)  # validate
+                with open(path, "w", encoding="utf-8") as f:
+                    f.write(blob)
+                print(f"[DB] restored {key} -> {os.path.basename(path)}")
+        except Exception as e:
+            print(f"[DB] restore {key} failed: {e}")
+
+def db_backup_loop():
+    """Every 30s push the two state files to the external DB when they change."""
+    last = {DB_KEY_WORLD: None, DB_KEY_NET: None}
+    while True:
+        time.sleep(30)
+        for key, path in ((DB_KEY_WORLD, STATE_FILE), (DB_KEY_NET, NET_DB_FILE)):
+            try:
+                if not os.path.exists(path):
+                    continue
+                with open(path, "r", encoding="utf-8") as f:
+                    blob = f.read()
+                if blob and blob != last[key]:
+                    if db_set(key, blob):
+                        last[key] = blob
+            except Exception as e:
+                print(f"[DB] backup {key} failed: {e}")
 
 
 # ----------------- Real-time Multiplayer Engine -----------------
@@ -380,7 +460,11 @@ class NetSyncServer:
             return True
 
 
+restore_from_db()
 NET_SYNC = NetSyncServer()
+if DB_ENABLED:
+    threading.Thread(target=db_backup_loop, daemon=True).start()
+    print("[DB] external database enabled (Upstash); state restored + 30s backup")
 
 
 class ThreadingServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
@@ -597,7 +681,7 @@ class GameRequestHandler(http.server.SimpleHTTPRequestHandler):
             try:
                 payload = json.loads(post_data.decode("utf-8")) if post_data else {}
                 supplied = payload.get("password", "")
-                expected = os.environ.get("BARTER6_PASSWORD", "")
+                expected = BARTER6_PASSWORD
                 if not expected:
                     status, response = 200, {"ok": False, "reason": "not_configured"}
                 elif isinstance(supplied, str) and hmac.compare_digest(supplied, expected):
